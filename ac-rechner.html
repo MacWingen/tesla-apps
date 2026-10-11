@@ -349,10 +349,10 @@
             </div>
 
             <div class="input-row">
-                <!-- Strompreis -->
+                <!-- Strompreis in Cent / kWh (Standard 39 Cent) -->
                 <div class="input-group" style="flex: 1;">
-                    <label for="kwhPrice">Strompreis (€ / kWh)</label>
-                    <input type="number" id="kwhPrice" value="0.39" step="0.01" min="0" oninput="calculate()">
+                    <label for="kwhPriceCents">Strompreis (Cent / kWh)</label>
+                    <input type="number" id="kwhPriceCents" value="39" step="0.5" min="0" placeholder="z.B. 39" oninput="calculate()">
                 </div>
                 <!-- Blockiergebühr-Limit -->
                 <div class="input-group" style="flex: 1;">
@@ -362,10 +362,10 @@
             </div>
 
             <div class="input-row">
-                <!-- Blockiergebühr ab Limit (€ / Min) - Standard 0 -->
+                <!-- Blockiergebühr in Cent / Min - Standard 0 -->
                 <div class="input-group" style="flex: 1;">
-                    <label for="blockFeePrice">Blockiergebühr (€ / Min)</label>
-                    <input type="number" id="blockFeePrice" value="0.00" step="0.01" min="0" placeholder="z.B. 0.10" oninput="calculate()">
+                    <label for="blockFeeCents">Blockiergebühr (Cent / Min)</label>
+                    <input type="number" id="blockFeeCents" value="0" step="1" min="0" placeholder="z.B. 10" oninput="calculate()">
                 </div>
                 <div style="flex: 1;"></div>
             </div>
@@ -439,7 +439,7 @@
         const CHARGE_POWER_AC = 11.0;
         let currentLossFactor = 1.07; // Standard 7% Verlust (Fallback)
 
-        // Wetterdaten via Open-Meteo abrufen mit absolut sicherem Fallback
+        // Wetterdaten via Open-Meteo abrufen mit absolut sicheren Fallbacks
         function fetchWeatherLossFactor() {
             let city = localStorage.getItem('tesla_dashboard_city') || 'Lünen';
             
@@ -458,11 +458,10 @@
                     if (data && data.current && data.current.temperature_2m !== undefined) {
                         let temp = data.current.temperature_2m;
                         calculateLossFactor(temp);
-                        calculate(); // Neu berechnen mit Live-Wetter
+                        calculate();
                     }
                 })
                 .catch(err => {
-                    // Fallback greift unauffällig, Berechnung läuft trotzdem weiter
                     calculateLossFactor(15);
                 });
         }
@@ -553,9 +552,9 @@
             let netCapacity = parseFloat(document.getElementById('batteryProfile').value) || 60;
             let start = parseInt(document.getElementById('startSoc').value) || 0;
             let target = parseInt(document.getElementById('targetSoc').value) || 100;
-            let pricePerKwh = parseFloat(document.getElementById('kwhPrice').value) || 0;
+            let pricePerKwhCents = parseFloat(document.getElementById('kwhPriceCents').value) || 0;
             let maxMinutes = parseInt(document.getElementById('blockLimit').value) || 0;
-            let blockFeePerMin = parseFloat(document.getElementById('blockFeePrice').value) || 0;
+            let blockFeeCentsPerMin = parseFloat(document.getElementById('blockFeeCents').value) || 0;
 
             let socDiff = target - start;
             if (socDiff < 0) socDiff = 0;
@@ -573,7 +572,8 @@
             let finishHours = String(finishTime.getHours()).padStart(2, '0');
             let finishMinutes = String(finishTime.getMinutes()).padStart(2, '0');
 
-            let energyCost = kwhWithLosses * pricePerKwh;
+            // Umrechnung Cent pro kWh in Euro für die Gesamtkosten
+            let energyCost = (kwhWithLosses * pricePerKwhCents) / 100;
             let blockFeeTotal = 0;
             let alertBox = document.getElementById('alertBox');
             let alertText = document.getElementById('alertText');
@@ -581,8 +581,8 @@
             if (maxMinutes > 0) {
                 if (totalMinutes > maxMinutes) {
                     let overMins = totalMinutes - maxMinutes;
-                    if (blockFeePerMin > 0) {
-                        blockFeeTotal = overMins * blockFeePerMin;
+                    if (blockFeeCentsPerMin > 0) {
+                        blockFeeTotal = (overMins * blockFeeCentsPerMin) / 100;
                     }
                     alertBox.className = 'alert-box warning';
                     alertBox.querySelector('span').innerText = '⚠️';
@@ -615,7 +615,7 @@
             }
         }
 
-        // Sofort beim Start initialisieren, damit Werte sofort da sind
+        // Direkt beim Start initialisieren
         window.addEventListener('DOMContentLoaded', () => {
             onProfileChange();
             fetchWeatherLossFactor();
