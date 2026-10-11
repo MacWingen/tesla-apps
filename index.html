@@ -161,7 +161,6 @@
             box-shadow: 0 0 6px #3b82f6;
         }
 
-        /* News-Badge Animation / Rot-Färbung bei neuen Eilmeldungen */
         .bar-icon-btn.has-new-news svg {
             color: #e11d48 !important;
             filter: drop-shadow(0 0 8px rgba(225, 29, 72, 0.5));
@@ -179,7 +178,6 @@
             box-shadow: 0 0 6px #e11d48;
         }
 
-        /* Eleganter Wetter-Button in der Topbar */
         .top-weather-btn {
             display: flex;
             align-items: center;
@@ -243,7 +241,6 @@
             background-color: var(--hover-bg);
         }
 
-        /* Genre Filter Text Bar */
         .genre-filter-container {
             width: 100%;
             max-width: 900px;
@@ -290,7 +287,6 @@
             flex-shrink: 0;
         }
 
-        /* Main Wrapper */
         .main-wrapper {
             width: 100%;
             max-width: 900px;
@@ -367,7 +363,6 @@
             color: var(--text-color);
         }
 
-        /* Grid View */
         .app-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
@@ -1232,7 +1227,7 @@
                         <li><strong>Webradio & Streams:</strong> 100+ Sender mit Live-Anzeige und Kachel-Stopp.</li>
                         <li><strong>Favoriten:</strong> Kachel ca. 0,7 Sek. gedrückt halten (★).</li>
                         <li><strong>Wetter & Eilmeldungen:</strong> Direkte Stichworte & Teaser in der Übersicht.</li>
-                        <li><strong>Profi Wetter-Zentrale:</strong> Integrierte Live-Radar & DWD-Unwetterwarnungen.</li>
+                        <li><strong>Produktivität & Office:</strong> E-Mails & Kalender zentral gebündelt.</li>
                     </ul>
                 </div>
 
@@ -1240,17 +1235,17 @@
 
                 <div class="modal-section">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                        <h4 style="margin: 0;">Release v1.2.2</h4>
-                        <span style="background-color: var(--hover-bg); padding: 2px 6px; border-radius: 6px; font-weight: 600; font-size: 10px; color: var(--text-color);">v1.2.2</span>
+                        <h4 style="margin: 0;">Release v1.2.6</h4>
+                        <span style="background-color: var(--hover-bg); padding: 2px 6px; border-radius: 6px; font-weight: 600; font-size: 10px; color: var(--text-color);">v1.2.6</span>
                     </div>
                     <ul>
-                        <li><strong>v1.2.2:</strong> Wetter-Zentrale (weather.html) fest als native App integriert.</li>
-                        <li><strong>v1.2.1:</strong> Speedtest & GeForce NOW als vollwertige Apps integriert.</li>
+                        <li><strong>v1.2.6:</strong> iCloud-Icon-Dateinamen auf `icloud.png` korrigiert.</li>
+                        <li><strong>v1.2.5:</strong> Kalender in „Produktivität & Office“ verschoben; Office-Reiter oben entfernt.</li>
                     </ul>
                 </div>
             </div>
             <div class="modal-footer">
-                Tesla Apps Dashboard v1.2.2 &copy; 2026 McWingen
+                Tesla Apps Dashboard v1.2.6 &copy; 2026 McWingen
             </div>
         </div>
     </div>
@@ -1291,13 +1286,13 @@
     </div>
 
     <footer style="margin-top: 40px; margin-bottom: 20px; font-size: 11px; color: var(--section-color); text-align: center; opacity: 0.7;">
-        Tesla Apps Dashboard v1.2.2 &copy; 2026 McWingen
+        Tesla Apps Dashboard v1.2.6 &copy; 2026 McWingen
     </footer>
 
     <audio id="globalAudioStream" preload="none"></audio>
 
     <script>
-        const CURRENT_VERSION = 'v1.2.2';
+        const CURRENT_VERSION = 'v1.2.6';
 
         const categories = [
             {
@@ -1323,6 +1318,17 @@
                     { id: "waiputv", name: "Waipu.TV", url: "https://www.youtube.com/redirect?q=https://app.waipu.tv/tv", image: "icons/waiputv.png", isRadio: false },
                     { id: "wow", name: "WOW", url: "https://www.youtube.com/redirect?q=https://www.wowtv.de", image: "icons/wow.png", isRadio: false },
                     { id: "zdf", name: "ZDFmediathek", url: "https://www.youtube.com/redirect?q=https://www.zdf.de", image: "icons/zdf.png", isRadio: false }
+                ]
+            },
+            {
+                id: "productivity",
+                title: "Produktivität & Office",
+                shortTitle: "Office",
+                apps: [
+                    { id: "calendarapp", name: "Kalender", url: "kalender.html", image: "icons/calendar.png", isRadio: false },
+                    { id: "gmail", name: "Gmail", url: "https://mail.google.com", image: "icons/gmail.png", isRadio: false },
+                    { id: "outlook", name: "Outlook", url: "https://outlook.live.com", image: "icons/outlook.png", isRadio: false },
+                    { id: "icloudmail", name: "iCloud", url: "https://www.icloud.com/mail", image: "icons/icloud.png", isRadio: false }
                 ]
             },
             {
@@ -1521,7 +1527,7 @@
         let activeGenre = 'all'; 
         let selectedLetter = null;
         
-        let categoryIds = ['all', 'streaming', 'musik', 'navigation', 'radio'];
+        let categoryIds = ['all', 'streaming', 'productivity', 'musik', 'navigation', 'radio'];
 
         let favorites = JSON.parse(localStorage.getItem('tesla_dashboard_favs') || '[]');
 
@@ -1658,11 +1664,10 @@
             }
         }
 
-        // --- MEDIA SESSION (Zwingt Tesla-Player zur Senderanzeige im title) ---
         function updateMediaSessionWithLiveInfo(stationName, trackTitle, artworkUrl) {
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
-                    title: stationName,  // <--- Hier steht jetzt exakt der Sendername, das Maximum was Tesla anzeigt
+                    title: stationName,
                     artist: 'Live Webradio',
                     album: 'Tesla Dashboard'
                 });
