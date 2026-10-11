@@ -1227,7 +1227,7 @@
                         <li><strong>Webradio & Streams:</strong> 100+ Sender mit Live-Anzeige und Kachel-Stopp.</li>
                         <li><strong>Favoriten:</strong> Kachel ca. 0,7 Sek. gedrückt halten (★).</li>
                         <li><strong>Wetter & Eilmeldungen:</strong> Direkte Stichworte & Teaser in der Übersicht.</li>
-                        <li><strong>Produktivität & Office:</strong> E-Mails, Kalender & WhatsApp zentral gebündelt.</li>
+                        <li><strong>Gaming & Cloud:</strong> Direkter Vollbildstart für GeForce NOW & Xbox.</li>
                     </ul>
                 </div>
 
@@ -1235,17 +1235,17 @@
 
                 <div class="modal-section">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                        <h4 style="margin: 0;">Release v1.2.7</h4>
-                        <span style="background-color: var(--hover-bg); padding: 2px 6px; border-radius: 6px; font-weight: 600; font-size: 10px; color: var(--text-color);">v1.2.7</span>
+                        <h4 style="margin: 0;">Release v1.2.9</h4>
+                        <span style="background-color: var(--hover-bg); padding: 2px 6px; border-radius: 6px; font-weight: 600; font-size: 10px; color: var(--text-color);">v1.2.9</span>
                     </div>
                     <ul>
-                        <li><strong>v1.2.7:</strong> WhatsApp-Web-App unter „Produktivität & Office“ hinzugefügt.</li>
-                        <li><strong>v1.2.6:</strong> iCloud-Icon-Dateinamen auf `icloud.png` korrigiert.</li>
+                        <li><strong>v1.2.9:</strong> YouTube-Trick bei GeForce NOW entfernt (nativ optimiert).</li>
+                        <li><strong>v1.2.8:</strong> Apple Music & Spotify URLs für native App-Ausführung angepasst.</li>
                     </ul>
                 </div>
             </div>
             <div class="modal-footer">
-                Tesla Apps Dashboard v1.2.7 &copy; 2026 McWingen
+                Tesla Apps Dashboard v1.2.9 &copy; 2026 McWingen
             </div>
         </div>
     </div>
@@ -1286,13 +1286,13 @@
     </div>
 
     <footer style="margin-top: 40px; margin-bottom: 20px; font-size: 11px; color: var(--section-color); text-align: center; opacity: 0.7;">
-        Tesla Apps Dashboard v1.2.7 &copy; 2026 McWingen
+        Tesla Apps Dashboard v1.2.9 &copy; 2026 McWingen
     </footer>
 
     <audio id="globalAudioStream" preload="none"></audio>
 
     <script>
-        const CURRENT_VERSION = 'v1.2.7';
+        const CURRENT_VERSION = 'v1.2.9';
 
         const categories = [
             {
@@ -1337,7 +1337,7 @@
                 title: "Musik & Audio",
                 shortTitle: "Musik",
                 apps: [
-                    { id: "applemusic", name: "Apple Music", url: "https://music.apple.com/de", image: "icons/applemusic.png", isRadio: false },
+                    { id: "applemusic", name: "Apple Music", url: "https://music.apple.com", image: "icons/applemusic.png", isRadio: false },
                     { id: "spotify", name: "Spotify", url: "https://open.spotify.com", image: "icons/spotify.png", isRadio: false },
                     { id: "youtubemusic", name: "YouTube Music", url: "https://music.youtube.com/?persist_app=1", image: "icons/youtubemusic.png", isRadio: false }
                 ]
@@ -1362,7 +1362,7 @@
                 title: "Gaming",
                 shortTitle: "Gaming",
                 apps: [
-                    { id: "geforcenow", name: "GeForce NOW", url: "https://www.youtube.com/redirect?q=https://play.geforcenow.com", image: "icons/geforcenow.png", isRadio: false },
+                    { id: "geforcenow", name: "GeForce NOW", url: "https://play.geforcenow.com", image: "icons/geforcenow.png", isRadio: false },
                     { id: "xbox", name: "Xbox", url: "https://www.xbox.com/play", image: "icons/xbox.png", isRadio: false }
                 ]
             },
@@ -2049,7 +2049,7 @@
 
         function updateTopBarWeather(code, temp, isDay = 1) {
             let svgMarkup = getWeatherIconSvg(code, false, isDay);
-            document.getElementById('topBarWeatherIcon').outerHTML = `<svg id="topBarWeatherIcon" viewBox="0 0 32 32">${svgMarkup.match(/<svg[^>]*>([\s\S]*)<\/svg>[^]*$/)[1]}</svg>`;
+            document.getElementById('topBarWeatherIcon').outerHTML = `<svg id="topBarWeatherIcon" viewBox="0 0 32 32">${svgMarkup.match(/<svg[^>]*>([\s\S]*)<\/svg>[^]*$|/)[1] || ''}</svg>`;
             document.getElementById('topBarTemp').innerText = `${Math.round(temp)}°`;
         }
 
