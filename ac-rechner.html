@@ -191,7 +191,7 @@
             opacity: 1;
         }
 
-        /* Sweet Spot Hinweis-Box */
+        /* Sweet Spot & Wetter Info-Box */
         .sweet-spot-box {
             background-color: var(--info-bg);
             border: 1px solid var(--info-border);
@@ -243,6 +243,12 @@
 
         .result-value.accent {
             color: var(--accent-color);
+        }
+
+        .result-sub {
+            font-size: 11px;
+            color: var(--name-color);
+            margin-top: 2px;
         }
 
         /* Status Alert Box */
@@ -354,6 +360,15 @@
                     <input type="number" id="blockLimit" value="240" step="10" min="0" placeholder="z.B. 240 Min" oninput="calculate()">
                 </div>
             </div>
+
+            <div class="input-row">
+                <!-- Blockiergebühr ab Limit (€ / Min) - Standard 0 -->
+                <div class="input-group" style="flex: 1;">
+                    <label for="blockFeePrice">Blockiergebühr (€ / Min)</label>
+                    <input type="number" id="blockFeePrice" value="0.00" step="0.01" min="0" placeholder="z.B. 0.10" oninput="calculate()">
+                </div>
+                <div style="flex: 1;"></div>
+            </div>
         </div>
 
         <!-- Ergebnis-Sektion -->
@@ -362,10 +377,12 @@
                 <div class="result-card">
                     <span class="result-label">Benötigte Energie</span>
                     <span class="result-value" id="resKwh">-- kWh</span>
+                    <span class="result-sub" id="resKwhNetto">Netto: -- kWh</span>
                 </div>
                 <div class="result-card">
                     <span class="result-label">Reale Ladezeit (11 kW AC)</span>
                     <span class="result-value accent" id="resTime">-- Std.</span>
+                    <span class="result-sub" id="resEndTime">Fertig um: --:-- Uhr</span>
                 </div>
             </div>
 
@@ -373,10 +390,12 @@
                 <div class="result-card">
                     <span class="result-label">Geschätzte Gesamtkosten</span>
                     <span class="result-value" id="resCost">-- €</span>
+                    <span class="result-sub" id="resCostDetail">Inkl. Ladeverluste</span>
                 </div>
                 <div class="result-card">
                     <span class="result-label">Ladegeschwindigkeit</span>
                     <span class="result-value">~ 64 km/h</span>
+                    <span class="result-sub" id="weatherInfoSub">Wetter: Lokal (15°C)</span>
                 </div>
             </div>
 
@@ -418,9 +437,55 @@
 
     <script>
         const CHARGE_POWER_AC = 11.0;
+        let currentLossFactor = 1.07; // Standard 7% Verlust (Fallback)
+
+        // Wetterdaten via Open-Meteo abrufen mit absolut sicherem Fallback
+        function fetchWeatherLossFactor() {
+            let city = localStorage.getItem('tesla_dashboard_city') || 'Lünen';
+            
+            fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=de&format=json`)
+                .then(res => res.json())
+                .then(geo => {
+                    if (geo.results && geo.results.length > 0) {
+                        let loc = geo.results[0];
+                        return fetch(`https://api.open-meteo.com/v1/forecast?latitude=${loc.latitude}&longitude=${loc.longitude}&current=temperature_2m&timezone=auto`);
+                    } else {
+                        throw new Error("Ort nicht gefunden");
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.current && data.current.temperature_2m !== undefined) {
+                        let temp = data.current.temperature_2m;
+                        calculateLossFactor(temp);
+                        calculate(); // Neu berechnen mit Live-Wetter
+                    }
+                })
+                .catch(err => {
+                    // Fallback greift unauffällig, Berechnung läuft trotzdem weiter
+                    calculateLossFactor(15);
+                });
+        }
+
+        function calculateLossFactor(temp) {
+            if (temp > 20) {
+                currentLossFactor = 1.04;
+                document.getElementById('weatherInfoSub').innerText = `Wetter: ${Math.round(temp)}°C (Sommer)`;
+            } else if (temp >= 10) {
+                currentLossFactor = 1.07;
+                document.getElementById('weatherInfoSub').innerText = `Wetter: ${Math.round(temp)}°C (Mild)`;
+            } else if (temp >= 0) {
+                currentLossFactor = 1.12;
+                document.getElementById('weatherInfoSub').innerText = `Wetter: ${Math.round(temp)}°C (Kühl)`;
+            } else {
+                currentLossFactor = 1.18;
+                document.getElementById('weatherInfoSub').innerText = `Wetter: ${Math.round(temp)}°C (Frost)`;
+            }
+        }
 
         function updateSweetSpotInfo() {
             let select = document.getElementById('batteryProfile');
+            if (!select || select.selectedIndex === -1) return;
             let selectedOption = select.options[select.selectedIndex];
             let infoText = selectedOption.getAttribute('data-info');
             document.getElementById('sweetSpotText').innerText = infoText;
@@ -428,18 +493,21 @@
         
         function updateLfpIndikator() {
             let select = document.getElementById('batteryProfile');
+            if (!select || select.selectedIndex === -1) return;
             let selectedOption = select.options[select.selectedIndex];
             let battType = selectedOption.getAttribute('data-type');
             
+            let mainCard = document.getElementById('mainCard');
             if (battType === 'lfp') {
-                document.getElementById('mainCard').classList.add('show-lfp');
+                mainCard.classList.add('show-lfp');
             } else {
-                document.getElementById('mainCard').classList.remove('show-lfp');
+                mainCard.classList.remove('show-lfp');
             }
         }
 
         function onProfileChange() {
             let select = document.getElementById('batteryProfile');
+            if (!select || select.selectedIndex === -1) return;
             let selectedOption = select.options[select.selectedIndex];
             let minSoc = parseInt(selectedOption.getAttribute('data-min'));
             let maxSoc = parseInt(selectedOption.getAttribute('data-max'));
@@ -475,7 +543,6 @@
             document.getElementById('startVal').innerText = start + ' %';
             document.getElementById('targetVal').innerText = target + ' %';
             
-            // Icons oben bei den Reglern aktualisieren
             document.getElementById('battIconStart').innerHTML = getBattIconHtml(start);
             document.getElementById('battIconTarget').innerHTML = getBattIconHtml(target);
             
@@ -483,53 +550,76 @@
         }
 
         function calculate() {
-            let netCapacity = parseFloat(document.getElementById('batteryProfile').value);
-            let start = parseInt(document.getElementById('startSoc').value);
-            let target = parseInt(document.getElementById('targetSoc').value);
+            let netCapacity = parseFloat(document.getElementById('batteryProfile').value) || 60;
+            let start = parseInt(document.getElementById('startSoc').value) || 0;
+            let target = parseInt(document.getElementById('targetSoc').value) || 100;
             let pricePerKwh = parseFloat(document.getElementById('kwhPrice').value) || 0;
             let maxMinutes = parseInt(document.getElementById('blockLimit').value) || 0;
+            let blockFeePerMin = parseFloat(document.getElementById('blockFeePrice').value) || 0;
 
             let socDiff = target - start;
             if (socDiff < 0) socDiff = 0;
 
-            let rawKwh = (netCapacity * socDiff) / 100;
-            let kwhWithLosses = rawKwh * 1.05;
+            let netKwh = (netCapacity * socDiff) / 100;
+            let kwhWithLosses = netKwh * currentLossFactor;
 
-            let hoursTotal = rawKwh / CHARGE_POWER_AC;
+            let hoursTotal = netKwh / CHARGE_POWER_AC;
             let totalMinutes = Math.round(hoursTotal * 60);
             let hrs = Math.floor(totalMinutes / 60);
             let mins = totalMinutes % 60;
 
-            let totalCost = kwhWithLosses * pricePerKwh;
+            let now = new Date();
+            let finishTime = new Date(now.getTime() + totalMinutes * 60000);
+            let finishHours = String(finishTime.getHours()).padStart(2, '0');
+            let finishMinutes = String(finishTime.getMinutes()).padStart(2, '0');
 
-            document.getElementById('resKwh').innerText = rawKwh.toFixed(1) + ' kWh';
-            document.getElementById('resTime').innerText = hrs > 0 ? `${hrs} Std. ${mins} Min.` : `${mins} Min.`;
-            document.getElementById('resCost').innerText = totalCost.toFixed(2) + ' €';
-
+            let energyCost = kwhWithLosses * pricePerKwh;
+            let blockFeeTotal = 0;
             let alertBox = document.getElementById('alertBox');
             let alertText = document.getElementById('alertText');
 
             if (maxMinutes > 0) {
                 if (totalMinutes > maxMinutes) {
                     let overMins = totalMinutes - maxMinutes;
+                    if (blockFeePerMin > 0) {
+                        blockFeeTotal = overMins * blockFeePerMin;
+                    }
                     alertBox.className = 'alert-box warning';
                     alertBox.querySelector('span').innerText = '⚠️';
-                    alertText.innerText = `Achtung! Ladezeit überschreitet das Standzeit-Limit um ca. ${overMins} Min. (Blockiergebühr droht!)`;
+                    let feeInfo = blockFeeTotal > 0 ? ` (+ ${blockFeeTotal.toFixed(2)} € Blockiergebühr)` : '';
+                    alertText.innerText = `Achtung! Ladezeit überschreitet Standzeit-Limit um ca. ${overMins} Min.${feeInfo}`;
                 } else {
                     let buffer = maxMinutes - totalMinutes;
                     alertBox.className = 'alert-box safe';
                     alertBox.querySelector('span').innerText = '🟢';
-                    alertText.innerText = `Alles sicher! Du hast ca. ${buffer} Minuten Puffer vor Ablauf der Standzeit.`;
+                    alertText.innerText = `Alles sicher! Ca. ${buffer} Minuten Puffer vor Ablauf der Standzeit.`;
                 }
             } else {
                 alertBox.className = 'alert-box safe';
                 alertBox.querySelector('span').innerText = 'ℹ️';
-                alertText.innerText = `Kein Standzeit-Limit hinterlegt. Ladezeit und Kosten basieren auf idealen 11 kW AC.`;
+                alertText.innerText = `Kein Standzeit-Limit hinterlegt. Ladezeit basiert auf idealen 11 kW AC.`;
+            }
+
+            let totalCost = energyCost + blockFeeTotal;
+
+            document.getElementById('resKwh').innerText = kwhWithLosses.toFixed(1) + ' kWh';
+            document.getElementById('resKwhNetto').innerText = `Netto im Akku: ${netKwh.toFixed(1)} kWh`;
+            document.getElementById('resTime').innerText = hrs > 0 ? `${hrs} Std. ${mins} Min.` : `${mins} Min.`;
+            document.getElementById('resEndTime').innerText = `Fertig um: ${finishHours}:${finishMinutes} Uhr`;
+            document.getElementById('resCost').innerText = totalCost.toFixed(2) + ' €';
+            
+            if (blockFeeTotal > 0) {
+                document.getElementById('resCostDetail').innerText = `Inkl. ${blockFeeTotal.toFixed(2)} € Blockiergebühr`;
+            } else {
+                document.getElementById('resCostDetail').innerText = `Inkl. Ladeverluste (${Math.round((currentLossFactor - 1) * 100)}%)`;
             }
         }
 
-        // Init beim Laden
-        onProfileChange();
+        // Sofort beim Start initialisieren, damit Werte sofort da sind
+        window.addEventListener('DOMContentLoaded', () => {
+            onProfileChange();
+            fetchWeatherLossFactor();
+        });
     </script>
 </body>
 </html>
