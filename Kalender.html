@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kalender, Feiertage & Brückentage</title>
+    <link rel="icon" type="image/png" href="icons/hedgehog.png">
+    <style>
+        :root {
+            --bg-color: #0b0b0e;
+            --text-color: #f3f4f6;
+            --tile-bg: #161619;
+            --tile-border: rgba(255, 255, 255, 0.06);
+            --subtext-color: #8e8e93;
+            --hover-bg: #222227;
+            --accent-blue: #0a84ff;
+            --accent-red: #ff453a;
+            --accent-green: #30d158;
+            --accent-orange: #ff9f0a;
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                --bg-color: #f2f2f7;
+                --text-color: #1c1c1e;
+                --tile-bg: #ffffff;
+                --tile-border: rgba(0, 0, 0, 0.06);
+                --subtext-color: #8e8e93;
+                --hover-bg: #e5e5ea;
+                --accent-blue: #007aff;
+                --accent-red: #ff3b30;
+                --accent-green: #34c759;
+                --accent-orange: #ff9500;
+            }
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text-color);
+            margin: 0;
+            padding: 3vw 4vw 60px 4vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100dvh;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .top-bar {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .back-btn {
+            background: var(--tile-bg);
+            border: 1px solid var(--tile-border);
+            color: var(--text-color);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .state-select {
+            background: var(--tile-bg);
+            border: 1px solid var(--tile-border);
+            color: var(--text-color);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 12px;
+            outline: none;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .options-row {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .option-chip {
+            background: var(--tile-bg);
+            border: 1px solid var(--tile-border);
+            color: var(--subtext-color);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .option-chip.active {
+            background-color: rgba(10, 132, 255, 0.12);
+            border-color: var(--accent-blue);
+            color: var(--text-color);
+        }
+
+        .calendar-card {
+            width: 100%;
+            max-width: 680px;
+            background-color: var(--tile-bg);
+            border: 1px solid var(--tile-border);
+            border-radius: 28px;
+            padding: 24px;
+            box-sizing: border-box;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.18);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .calendar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
+        }
+
+        .calendar-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-color);
+            margin: 0;
+            letter-spacing: -0.4px;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--tile-border);
+            color: var(--text-color);
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: background 0.15s ease;
+        }
+
+        .nav-btn:hover {
+            background-color: var(--hover-bg);
+        }
+
+        /* Normaler Monatsmodus */
+        .weekdays-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--subtext-color);
+            margin-bottom: 12px;
+        }
+
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+        }
+
+        .day-cell {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 500;
+            background-color: rgba(255,255,255,0.015);
+            color: var(--text-color);
+            position: relative;
+            cursor: default;
+        }
+
+        .day-cell.other-month {
+            color: var(--subtext-color);
+            opacity: 0.25;
+            background-color: transparent;
+        }
+
+        .day-cell.today {
+            background-color: rgba(10, 132, 255, 0.2);
+            color: var(--accent-blue);
+            font-weight: 700;
+            border: 1.5px solid var(--accent-blue);
+        }
+
+        .day-cell.holiday {
+            background-color: rgba(255, 69, 58, 0.2);
+            color: var(--accent-red);
+            font-weight: 700;
+        }
+
+        .day-cell.school-vacation {
+            background-color: rgba(48, 209, 88, 0.18);
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        .day-cell.bridge-day {
+            border: 1.5px dashed var(--accent-orange);
+            background-color: rgba(255, 159, 10, 0.2);
+            color: var(--accent-orange);
+            font-weight: 700;
+        }
+
+        .day-cell.sunday {
+            color: var(--accent-red);
+        }
+
+        .tooltip-text {
+            font-size: 6.5px;
+            text-align: center;
+            line-height: 1;
+            width: 90%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-top: 2px;
+            opacity: 0.85;
+        }
+
+        .holiday-tooltip { color: var(--accent-red); }
+        .bridge-tooltip { color: var(--accent-orange); }
+        .vacation-tooltip { color: var(--accent-green); }
+
+        .info-section {
+            margin-top: 28px;
+            border-top: 1px solid var(--tile-border);
+            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .info-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--subtext-color);
+            margin-bottom: 2px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--tile-border);
+            border-radius: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+        }
+
+        .info-item.holiday-bar::before { background-color: var(--accent-red); }
+        .info-item.bridge-bar::before { background-color: var(--accent-orange); }
+        .info-item.vacation-bar::before { background-color: var(--accent-green); }
+
+        .info-date {
+            font-weight: 600;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-name {
+            font-weight: 500;
+            color: var(--subtext-color);
+        }
+
+        /* Echter Jahreskalender-Modus (Grid aus 12 Mini-Monaten) */
+        .year-grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 16px;
+        }
+
+        .mini-month {
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid var(--tile-border);
+            border-radius: 16px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .mini-month-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-color);
+            text-align: center;
+            margin-bottom: 4px;
+        }
+
+        .mini-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--subtext-color);
+            margin-bottom: 4px;
+        }
+
+        .mini-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+        }
+
+        .mini-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--text-color);
+            background: rgba(255,255,255,0.01);
+        }
+
+        .mini-day.other {
+            color: var(--subtext-color);
+            opacity: 0.2;
+        }
+
+        .mini-day.holiday {
+            background-color: rgba(255, 69, 58, 0.3);
+            color: var(--accent-red);
+            font-weight: 700;
+        }
+
+        .mini-day.school-vacation {
+            background-color: rgba(48, 209, 88, 0.25);
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        .mini-day.bridge-day {
+            border: 1px dashed var(--accent-orange);
+            background-color: rgba(255, 159, 10, 0.25);
+            color: var(--accent-orange);
+            font-weight: 700;
+        }
+
+        .mini-day.sunday {
+            color: var(--accent-red);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="index.html" class="back-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
+            Dashboard
+        </a>
+        <select id="stateSelect" class="state-select" onchange="changeState()">
+            <option value="NW">Nordrhein-Westfalen (NRW)</option>
+            <option value="BW">Baden-Württemberg</option>
+            <option value="BY">Bayern</option>
+            <option value="BE">Berlin</option>
+            <option value="BB">Brandenburg</option>
+            <option value="HB">Bremen</option>
+            <option value="HH">Hamburg</option>
+            <option value="HE">Hessen</option>
+            <option value="MV">Mecklenburg-Vorpommern</option>
+            <option value="NI">Niedersachsen</option>
+            <option value="RP">Rheinland-Pfalz</option>
+            <option value="SL">Saarland</option>
+            <option value="SN">Sachsen</option>
+            <option value="ST">Sachsen-Anhalt</option>
+            <option value="SH">Schleswig-Holstein</option>
+            <option value="TH">Thüringen</option>
+        </select>
+    </div>
+
+    <div class="options-row">
+        <button class="option-chip" id="toggleVacation" onclick="toggleVacationMode()">
+            🎓 Schulferien
+        </button>
+        <button class="option-chip" id="toggleBridge" onclick="toggleBridgeMode()">
+            ✈️ Brückentage
+        </button>
+        <button class="option-chip" id="toggleYearView" onclick="toggleYearViewMode()">
+            📋 Jahreskalender
+        </button>
+    </div>
+
+    <div class="calendar-card" id="calendarCard">
+        <div class="calendar-header">
+            <button class="nav-btn" onclick="changeMonth(-1)">‹</button>
+            <h2 class="calendar-title" id="calendarTitle">Kalender</h2>
+            <button class="nav-btn" onclick="changeMonth(1)">›</button>
+        </div>
+
+        <div id="monthViewContainer">
+            <div class="weekdays-grid">
+                <div>Mo</div><div>Di</div><div>Mi</div><div>Do</div><div>Fr</div><div>Sa</div><div>So</div>
+            </div>
+            <div class="days-grid" id="daysGrid"></div>
+        </div>
+
+        <div id="yearViewContainer" style="display: none;">
+            <div class="year-grid-container" id="yearGridContainer"></div>
+        </div>
+
+        <div class="info-section" id="infoSectionWrapper">
+            <div class="info-title" id="infoListTitle">Monatsdetails</div>
+            <div id="infoListContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentDate = new Date();
+        let currentState = localStorage.getItem('tesla_dashboard_state') || 'NW';
+        let showVacations = false;
+        let showBridgeDays = false;
+        let showYearView = false;
+
+        const monthNames = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+
+        document.getElementById('stateSelect').value = currentState;
+
+        function getHolidays(year, state) {
+            let holidays = {};
+            holidays[`${year}-01-01`] = "Neujahr";
+            holidays[`${year}-05-01`] = "Tag der Arbeit";
+            holidays[`${year}-10-03`] = "Tag der Dt. Einheit";
+            holidays[`${year}-12-25`] = "1. Weihnachtstag";
+            holidays[`${year}-12-26`] = "2. Weihnachtstag";
+
+            if (state === 'BY' || state === 'BW' || state === 'ST') holidays[`${year}-01-06`] = "Heilige Drei Könige";
+            if (state === 'BE' || state === 'MV') holidays[`${year}-03-08`] = "Frauentag";
+            if (state === 'BY' || state === 'SL') holidays[`${year}-08-15`] = "Mariä Himmelfahrt";
+            if (state === 'TH') holidays[`${year}-09-20`] = "Weltkindertag";
+            if (state === 'BB' || state === 'MV' || state === 'SN' || state === 'ST' || state === 'TH') holidays[`${year}-10-31`] = "Reformationsfest";
+            if (state === 'BW' || state === 'BY' || state === 'NW' || state === 'RP' || state === 'SL') holidays[`${year}-11-01`] = "Allerheiligen";
+            if (state === 'SN') {
+                let nov30 = new Date(Date.UTC(year, 10, 30));
+                let dayOfWeek = nov30.getUTCDay();
+                let daysToSubtract = (dayOfWeek + 4) % 7 + 1;
+                let bussTag = new Date(nov30);
+                bussTag.setUTCDate(nov30.getUTCDate() - daysToSubtract);
+                holidays[bussTag.toISOString().split('T')[0]] = "Buß- und Bettag";
+            }
+
+            let a = year % 19, b = Math.floor(year / 100), c = year % 100,
+                d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25),
+                g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30,
+                i = Math.floor(c / 4), k = c % 4, L = (32 + 2 * e + 2 * i - h - k) % 7,
+                m = Math.floor((a + 11 * h + 22 * L) / 451),
+                month = Math.floor((h + L - 7 * m + 114) / 31),
+                day = ((h + L - 7 * m + 114) % 31) + 1;
+
+            let easterSunday = new Date(Date.UTC(year, month - 1, day));
+            let addDays = (date, days) => {
+                let res = new Date(date);
+                res.setUTCDate(res.getUTCDate() + days);
+                return res.toISOString().split('T')[0];
+            };
+
+            holidays[addDays(easterSunday, -2)] = "Karfreitag";
+            holidays[addDays(easterSunday, 1)] = "Ostermontag";
+            holidays[addDays(easterSunday, 39)] = "Christi Himmelfahrt";
+            holidays[addDays(easterSunday, 50)] = "Pfingstmontag";
+
+            if (state === 'BW' || state === 'BY' || state === 'NW' || state === 'RP' || state === 'SL') {
+                holidays[addDays(easterSunday, 60)] = "Fronleichnam";
+            }
+
+            return holidays;
+        }
+
+        function getVacations(year, state) {
+            let vacations = {};
+            let addRange = (startStr, endStr, name) => {
+                let curr = new Date(startStr);
+                let end = new Date(endStr);
+                while (curr <= end) {
+                    vacations[curr.toISOString().split('T')[0]] = name;
+                    curr.setDate(curr.getDate() + 1);
+                }
+            };
+
+            addRange(`${year}-03-30`, `${year}-04-11`, "Osterferien");
+            addRange(`${year}-07-01`, `${year}-08-12`, "Sommerferien");
+            addRange(`${year}-10-12`, `${year}-10-24`, "Herbstferien");
+            addRange(`${year}-12-23`, `${year}-12-31`, "Weihnachtsferien");
+
+            return vacations;
+        }
+
+        function getBridgeDays(year, state) {
+            let holidays = getHolidays(year, state);
+            let bridgeDays = {};
+
+            Object.keys(holidays).forEach(hDateStr => {
+                let parts = hDateStr.split('-');
+                let hDate = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+                let dayOfWeek = hDate.getUTCDay();
+
+                if (dayOfWeek === 4) {
+                    let b = new Date(hDate); b.setUTCDate(b.getUTCDate() + 1);
+                    bridgeDays[b.toISOString().split('T')[0]] = "Brückentag";
+                } else if (dayOfWeek === 2) {
+                    let b = new Date(hDate); b.setUTCDate(b.getUTCDate() - 1);
+                    bridgeDays[b.toISOString().split('T')[0]] = "Brückentag";
+                } else if (dayOfWeek === 3) {
+                    let b1 = new Date(hDate); b1.setUTCDate(b1.getUTCDate() - 1);
+                    let b2 = new Date(hDate); b2.setUTCDate(b2.getUTCDate() + 1);
+                    bridgeDays[b1.toISOString().split('T')[0]] = "Brückentag";
+                    bridgeDays[b2.toISOString().split('T')[0]] = "Brückentag";
+                } else if (dayOfWeek === 5) {
+                    for (let i = 1; i <= 4; i++) {
+                        let b = new Date(hDate);
+                        b.setUTCDate(b.getUTCDate() - i);
+                        bridgeDays[b.toISOString().split('T')[0]] = "Urlaubs-Paket";
+                    }
+                } else if (dayOfWeek === 1) {
+                    for (let i = 1; i <= 4; i++) {
+                        let b = new Date(hDate);
+                        b.setUTCDate(b.getUTCDate() + i);
+                        bridgeDays[b.toISOString().split('T')[0]] = "Urlaubs-Paket";
+                    }
+                }
+            });
+            return bridgeDays;
+        }
+
+        function consolidateRanges(datesList) {
+            if (datesList.length === 0) return [];
+            let sorted = datesList.sort();
+            let ranges = [];
+            let start = sorted[0];
+            let prev = sorted[0];
+
+            for (let i = 1; i < sorted.length; i++) {
+                let currDate = new Date(sorted[i]);
+                let prevDate = new Date(prev);
+                let diffTime = Math.abs(currDate - prevDate);
+                let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                if (diffDays === 1) {
+                    prev = sorted[i];
+                } else {
+                    ranges.push({ start: start, end: prev });
+                    start = sorted[i];
+                    prev = sorted[i];
+                }
+            }
+            ranges.push({ start: start, end: prev });
+            return ranges;
+        }
+
+        function formatDateReadable(dateStr) {
+            let parts = dateStr.split('-');
+            return `${parseInt(parts[2])}. ${monthNames[parseInt(parts[1]) - 1]}`;
+        }
+
+        function renderCalendar() {
+            let year = currentDate.getFullYear();
+            let month = currentDate.getMonth();
+
+            let selectElem = document.getElementById('stateSelect');
+            let stateName = selectElem.options[selectElem.selectedIndex].text;
+
+            document.getElementById('calendarTitle').innerText = showYearView ? `Jahreskalender ${year}` : `${monthNames[month]} ${year}`;
+            document.getElementById('monthViewContainer').style.display = showYearView ? 'none' : 'block';
+            document.getElementById('yearViewContainer').style.display = showYearView ? 'block' : 'none';
+            document.getElementById('infoSectionWrapper').style.display = showYearView ? 'none' : 'block';
+            document.getElementById('infoListTitle').innerText = `Monatsdetails (${stateName.split(' ')[0]})`;
+
+            let holidays = getHolidays(year, currentState);
+            let vacations = getVacations(year, currentState);
+            let bridgeDays = getBridgeDays(year, currentState);
+
+            if (showYearView) {
+                // Generiere alle 12 Mini-Monate für den echten Jahreskalender
+                let yearGridHTML = '';
+
+                for (let m = 0; m < 12; m++) {
+                    let firstDayIndex = new Date(year, m, 1).getDay();
+                    firstDayIndex = (firstDayIndex === 0) ? 6 : firstDayIndex - 1;
+                    let totalDays = new Date(year, m + 1, 0).getDate();
+                    let prevTotalDays = new Date(year, m, 0).getDate();
+
+                    let miniDaysHTML = '';
+                    // Vorherige Tage
+                    for (let i = firstDayIndex; i > 0; i--) {
+                        miniDaysHTML += `<div class="mini-day other"><span></span></div>`;
+                    }
+                    // Monatstage
+                    for (let d = 1; d <= totalDays; d++) {
+                        let mStr = String(m + 1).padStart(2, '0');
+                        let dStr = String(d).padStart(2, '0');
+                        let dateKey = `${year}-${mStr}-${dStr}`;
+
+                        let h = holidays[dateKey];
+                        let v = showVacations ? vacations[dateKey] : null;
+                        let b = showBridgeDays ? bridgeDays[dateKey] : null;
+                        let isSun = (new Date(year, m, d).getDay() === 0);
+
+                        let cName = "mini-day";
+                        if (h) cName += " holiday";
+                        else if (b) cName += " bridge-day";
+                        else if (v) cName += " school-vacation";
+                        else if (isSun) cName += " sunday";
+
+                        miniDaysHTML += `<div class="${cName}"><span>${d}</span></div>`;
+                    }
+
+                    yearGridHTML += `
+                        <div class="mini-month">
+                            <div class="mini-month-title">${monthNames[m]}</div>
+                            <div class="mini-weekdays">
+                                <div>M</div><div>D</div><div>M</div><div>D</div><div>F</div><div>S</div><div>S</div>
+                            </div>
+                            <div class="mini-days">
+                                ${miniDaysHTML}
+                            </div>
+                        </div>
+                    `;
+                }
+                document.getElementById('yearGridContainer').innerHTML = yearGridHTML;
+
+            } else {
+                // Normaler Monatsmodus
+                let firstDayIndex = new Date(year, month, 1).getDay();
+                firstDayIndex = (firstDayIndex === 0) ? 6 : firstDayIndex - 1;
+
+                let totalDays = new Date(year, month + 1, 0).getDate();
+                let prevTotalDays = new Date(year, month, 0).getDate();
+
+                let gridHTML = '';
+                let todayObj = new Date();
+                let todayStr = `${todayObj.getFullYear()}-${String(todayObj.getMonth() + 1).padStart(2, '0')}-${String(todayObj.getDate()).padStart(2, '0')}`;
+
+                for (let i = firstDayIndex; i > 0; i--) {
+                    let dayNum = prevTotalDays - i + 1;
+                    gridHTML += `<div class="day-cell other-month"><span>${dayNum}</span></div>`;
+                }
+
+                let monthHolidays = [];
+                let monthVacationsDays = [];
+                let monthBridgeDays = [];
+
+                for (let d = 1; d <= totalDays; d++) {
+                    let monthStr = String(month + 1).padStart(2, '0');
+                    let dayStr = String(d).padStart(2, '0');
+                    let dateKey = `${year}-${monthStr}-${dayStr}`;
+
+                    let isToday = (dateKey === todayStr);
+                    let holidayName = holidays[dateKey];
+                    let vacationName = showVacations ? vacations[dateKey] : null;
+                    let isBridge = showBridgeDays ? bridgeDays[dateKey] : null;
+                    
+                    let dayOfWeek = new Date(year, month, d).getDay();
+                    let isSunday = (dayOfWeek === 0);
+
+                    let classList = "day-cell";
+                    if (isToday) classList += " today";
+                    
+                    if (holidayName) {
+                        classList += " holiday";
+                        monthHolidays.push({ date: dateKey, name: holidayName });
+                    } else if (isBridge) {
+                        classList += " bridge-day";
+                        monthBridgeDays.push({ date: dateKey, name: isBridge });
+                    } else if (vacationName) {
+                        classList += " school-vacation";
+                        monthVacationsDays.push({ date: dateKey, name: vacationName });
+                    } else if (isSunday) {
+                        classList += " sunday";
+                    }
+
+                    let tooltipHTML = '';
+                    if (holidayName) tooltipHTML = `<span class="tooltip-text holiday-tooltip">${holidayName}</span>`;
+                    else if (isBridge) tooltipHTML = `<span class="tooltip-text bridge-tooltip">Urlaub</span>`;
+                    else if (vacationName) tooltipHTML = `<span class="tooltip-text vacation-tooltip">Ferien</span>`;
+
+                    gridHTML += `
+                        <div class="${classList}">
+                            <span>${d}</span>
+                            ${tooltipHTML}
+                        </div>
+                    `;
+                }
+
+                let totalCellsDrawn = firstDayIndex + totalDays;
+                let nextDaysCount = (totalCellsDrawn <= 35) ? (35 - totalCellsDrawn) : (42 - totalCellsDrawn);
+                for (let n = 1; n <= nextDaysCount; n++) {
+                    gridHTML += `<div class="day-cell other-month"><span>${n}</span></div>`;
+                }
+
+                document.getElementById('daysGrid').innerHTML = gridHTML;
+
+                let monthInfoHTML = '';
+                monthHolidays.forEach(h => {
+                    monthInfoHTML += `
+                        <div class="info-item holiday-bar">
+                            <span class="info-date">🎈 ${formatDateReadable(h.date)}</span>
+                            <span class="info-name">${h.name}</span>
+                        </div>
+                    `;
+                });
+
+                if (showBridgeDays && monthBridgeDays.length > 0) {
+                    let bDates = monthBridgeDays.map(b => b.date);
+                    let bRanges = consolidateRanges(bDates);
+                    bRanges.forEach(r => {
+                        let text = r.start === r.end ? formatDateReadable(r.start) : `${formatDateReadable(r.start)} – ${formatDateReadable(r.end)}`;
+                        monthInfoHTML += `
+                            <div class="info-item bridge-bar">
+                                <span class="info-date">✈️ ${text}</span>
+                                <span class="info-name">Top-Brückentag</span>
+                            </div>
+                        `;
+                    });
+                }
+
+                if (showVacations && monthVacationsDays.length > 0) {
+                    let vDates = monthVacationsDays.map(v => v.date);
+                    let vRanges = consolidateRanges(vDates);
+                    vRanges.forEach(r => {
+                        let text = r.start === r.end ? formatDateReadable(r.start) : `${formatDateReadable(r.start)} – ${formatDateReadable(r.end)}`;
+                        monthInfoHTML += `
+                            <div class="info-item vacation-bar">
+                                <span class="info-date">🎓 ${text}</span>
+                                <span class="info-name">Schulferien</span>
+                            </div>
+                        `;
+                    });
+                }
+
+                document.getElementById('infoListContainer').innerHTML = monthInfoHTML || `<div style="font-size:13px; color:var(--subtext-color); padding: 4px 0;">Keine Einträge in diesem Monat.</div>`;
+            }
+        }
+
+        function changeState() {
+            currentState = document.getElementById('stateSelect').value;
+            localStorage.setItem('tesla_dashboard_state', currentState);
+            renderCalendar();
+        }
+
+        function toggleVacationMode() {
+            showVacations = !showVacations;
+            document.getElementById('toggleVacation').classList.toggle('active', showVacations);
+            renderCalendar();
+        }
+
+        function toggleBridgeMode() {
+            showBridgeDays = !showBridgeDays;
+            document.getElementById('toggleBridge').classList.toggle('active', showBridgeDays);
+            renderCalendar();
+        }
+
+        function toggleYearViewMode() {
+            showYearView = !showYearView;
+            document.getElementById('toggleYearView').classList.toggle('active', showYearView);
+            renderCalendar();
+        }
+
+        function changeMonth(direction) {
+            if (showYearView) {
+                currentDate.setFullYear(currentDate.getFullYear() + direction);
+            } else {
+                currentDate.setMonth(currentDate.getMonth() + direction);
+            }
+            renderCalendar();
+        }
+
+        renderCalendar();
+    </script>
+</body>
+</html>
