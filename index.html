@@ -712,7 +712,7 @@
             color: var(--text-color);
         }
 
-        /* Modal / Popups - Optimiert für Tesla Split-Screen Touchscreens */
+        /* Modal / Popups */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -1080,7 +1080,7 @@
             flex-shrink: 0;
         }
 
-        /* EILMELDUNGEN REINER STATISCHER TEXT (KEIN HOVER, KEIN CURSOR) */
+        /* EILMELDUNGEN */
         .news-item {
             display: flex;
             flex-direction: column;
@@ -1232,6 +1232,7 @@
                         <li><strong>Webradio & Streams:</strong> 100+ Sender mit Live-Anzeige und Kachel-Stopp.</li>
                         <li><strong>Favoriten:</strong> Kachel ca. 0,7 Sek. gedrückt halten (★).</li>
                         <li><strong>Wetter & Eilmeldungen:</strong> Direkte Stichworte & Teaser in der Übersicht.</li>
+                        <li><strong>Speedtest:</strong> Als native App unter Navigation & Auto verlinkt.</li>
                     </ul>
                 </div>
 
@@ -1239,17 +1240,17 @@
 
                 <div class="modal-section">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                        <h4 style="margin: 0;">Release v1.1.1</h4>
-                        <span style="background-color: var(--hover-bg); padding: 2px 6px; border-radius: 6px; font-weight: 600; font-size: 10px; color: var(--text-color);">v1.1.1</span>
+                        <h4 style="margin: 0;">Release v1.2.1</h4>
+                        <span style="background-color: var(--hover-bg); padding: 2px 6px; border-radius: 6px; font-weight: 600; font-size: 10px; color: var(--text-color);">v1.2.1</span>
                     </div>
                     <ul>
-                        <li><strong>v1.1.1:</strong> Universeller MediaSession-Support für alle 100+ Radiosender mit automatischer Logo-Übertragung und Live-Titel im Tesla-Player.</li>
-                        <li><strong>v1.1.0:</strong> Eilmeldungen-Button dezent grau; leuchtet bei neuen Eilmeldungen rot auf.</li>
+                        <li><strong>v1.2.1:</strong> Speedtest als vollwertige App in die Kategorie "Navigation & Auto" verschoben (umgeht iframe-Restriktionen).</li>
+                        <li><strong>v1.2.0:</strong> Integrierte Wetter- und Eilmeldungs-Modals.</li>
                     </ul>
                 </div>
             </div>
             <div class="modal-footer">
-                Tesla Apps Dashboard v1.1.1 &copy; 2026 McWingen
+                Tesla Apps Dashboard v1.2.1 &copy; 2026 McWingen
             </div>
         </div>
     </div>
@@ -1290,13 +1291,13 @@
     </div>
 
     <footer style="margin-top: 40px; margin-bottom: 20px; font-size: 11px; color: var(--section-color); text-align: center; opacity: 0.7;">
-        Tesla Apps Dashboard v1.1.1 &copy; 2026 McWingen
+        Tesla Apps Dashboard v1.2.1 &copy; 2026 McWingen
     </footer>
 
     <audio id="globalAudioStream" preload="none"></audio>
 
     <script>
-        const CURRENT_VERSION = 'v1.1.1';
+        const CURRENT_VERSION = 'v1.2.1';
 
         const categories = [
             {
@@ -1344,6 +1345,7 @@
                     { id: "chargefinder", name: "ChargeFinder", url: "https://chargefinder.com", image: "icons/chargefinder.png", isRadio: false },
                     { id: "chargemap", name: "Chargemap", url: "https://chargemap.com", image: "icons/chargemap.png", isRadio: false },
                     { id: "googlemaps", name: "Google Maps", url: "https://www.google.com/maps", image: "icons/googlemaps.png", isRadio: false },
+                    { id: "speedtest", name: "Speedtest", url: "https://speed.cloudflare.com/", image: "icons/speedtest.png", isRadio: false },
                     { id: "teslacar", name: "Tesla Charger Map", url: "https://www.tesla.com/de_de/findus", image: "icons/tesla.png", isRadio: false }
                 ]
             },
@@ -1655,7 +1657,7 @@
             }
         }
 
-        // --- UNIVERSELLE MEDIA-SESSION (FÜR ALLE 100+ SENDER AUTOMATISCH) ---
+        // --- MEDIA SESSION ---
         function updateMediaSessionWithLiveInfo(stationName, trackTitle, artworkUrl) {
             if ('mediaSession' in navigator) {
                 let artworks = [];
