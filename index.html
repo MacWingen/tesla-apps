@@ -1232,7 +1232,7 @@
                         <li><strong>Webradio & Streams:</strong> 100+ Sender mit Live-Anzeige und Kachel-Stopp.</li>
                         <li><strong>Favoriten:</strong> Kachel ca. 0,7 Sek. gedrückt halten (★).</li>
                         <li><strong>Wetter & Eilmeldungen:</strong> Direkte Stichworte & Teaser in der Übersicht.</li>
-                        <li><strong>Speedtest:</strong> Als native App unter Navigation & Auto verlinkt.</li>
+                        <li><strong>Profi Wetter-Zentrale:</strong> Integrierte Live-Radar & DWD-Unwetterwarnungen.</li>
                     </ul>
                 </div>
 
@@ -1240,17 +1240,17 @@
 
                 <div class="modal-section">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                        <h4 style="margin: 0;">Release v1.2.1</h4>
-                        <span style="background-color: var(--hover-bg); padding: 2px 6px; border-radius: 6px; font-weight: 600; font-size: 10px; color: var(--text-color);">v1.2.1</span>
+                        <h4 style="margin: 0;">Release v1.2.2</h4>
+                        <span style="background-color: var(--hover-bg); padding: 2px 6px; border-radius: 6px; font-weight: 600; font-size: 10px; color: var(--text-color);">v1.2.2</span>
                     </div>
                     <ul>
+                        <li><strong>v1.2.2:</strong> Wetter-Zentrale (weather.html) fest als native App integriert.</li>
                         <li><strong>v1.2.1:</strong> Speedtest & GeForce NOW als vollwertige Apps integriert.</li>
-                        <li><strong>v1.2.0:</strong> Integrierte Wetter- und Eilmeldungs-Modals.</li>
                     </ul>
                 </div>
             </div>
             <div class="modal-footer">
-                Tesla Apps Dashboard v1.2.1 &copy; 2026 McWingen
+                Tesla Apps Dashboard v1.2.2 &copy; 2026 McWingen
             </div>
         </div>
     </div>
@@ -1291,13 +1291,13 @@
     </div>
 
     <footer style="margin-top: 40px; margin-bottom: 20px; font-size: 11px; color: var(--section-color); text-align: center; opacity: 0.7;">
-        Tesla Apps Dashboard v1.2.1 &copy; 2026 McWingen
+        Tesla Apps Dashboard v1.2.2 &copy; 2026 McWingen
     </footer>
 
     <audio id="globalAudioStream" preload="none"></audio>
 
     <script>
-        const CURRENT_VERSION = 'v1.2.1';
+        const CURRENT_VERSION = 'v1.2.2';
 
         const categories = [
             {
@@ -1340,6 +1340,7 @@
                 title: "Navigation & Auto",
                 shortTitle: "Navigation",
                 apps: [
+                    { id: "weathercentral", name: "Wetter-Zentrale", url: "weather.html", image: "icons/weather.png", isRadio: false },
                     { id: "abrp", name: "ABRP", url: "https://abetterrouteplanner.com", image: "icons/abrp.png", isRadio: false },
                     { id: "blitzerdemap", name: "Blitzer.de Map", url: "https://www.blitzer.de/karte/", image: "icons/blitzerdemap.png", isRadio: false },
                     { id: "chargefinder", name: "ChargeFinder", url: "https://chargefinder.com", image: "icons/chargefinder.png", isRadio: false },
@@ -2042,7 +2043,7 @@
 
         function updateTopBarWeather(code, temp, isDay = 1) {
             let svgMarkup = getWeatherIconSvg(code, false, isDay);
-            document.getElementById('topBarWeatherIcon').outerHTML = `<svg id="topBarWeatherIcon" viewBox="0 0 32 32">${svgMarkup.match(/<svg[^>]*>([\s\S]*)<\/svg>/)[1]}</svg>`;
+            document.getElementById('topBarWeatherIcon').outerHTML = `<svg id="topBarWeatherIcon" viewBox="0 0 32 32">${svgMarkup.match(/<svg[^>]*>([\s\S]*)<\/svg>[^]*$/)[1]}</svg>`;
             document.getElementById('topBarTemp').innerText = `${Math.round(temp)}°`;
         }
 
