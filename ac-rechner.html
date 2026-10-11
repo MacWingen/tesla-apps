@@ -22,7 +22,6 @@
             --info-bg: rgba(59, 130, 246, 0.1);
             --info-border: rgba(59, 130, 246, 0.25);
             
-            /* Batteriefarben */
             --batt-red: #ef4444;
             --batt-orange: #f97316;
             --batt-yellow: #eab308;
@@ -61,7 +60,6 @@
             -webkit-user-select: none;
         }
 
-        /* Top Bar */
         .top-bar {
             width: 100%;
             max-width: 600px;
@@ -100,7 +98,6 @@
             margin: 0;
         }
 
-        /* Main Container */
         .calc-container {
             width: 100%;
             max-width: 600px;
@@ -174,7 +171,6 @@
             color: var(--text-color);
         }
         
-        /* LFP Optimum Indikator */
         .lfp-optimum-dot {
             height: 8px;
             width: 8px;
@@ -191,7 +187,6 @@
             opacity: 1;
         }
 
-        /* Sweet Spot & Wetter Info-Box */
         .sweet-spot-box {
             background-color: var(--info-bg);
             border: 1px solid var(--info-border);
@@ -211,7 +206,6 @@
             margin-top: -1px;
         }
 
-        /* Results Box */
         .result-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -251,7 +245,6 @@
             margin-top: 2px;
         }
 
-        /* Status Alert Box */
         .alert-box {
             padding: 12px 16px;
             border-radius: 10px;
@@ -274,7 +267,6 @@
             color: var(--warn-color);
         }
         
-        /* Batteriesymbole */
         .batt-icon {
             height: 1.1em;
             width: auto;
@@ -308,9 +300,8 @@
 
     <div class="calc-container">
         <div class="card" id="mainCard">
-            <!-- Akku-Profil -->
             <div class="input-group">
-                <label for="batteryProfile">Tesla Akku-Profil <span id="lfpDot" class="lfp-optimum-dot" title="LFP Optimum (16-84%)"></span></label>
+                <label for="batteryProfile">Tesla Akku-Profil <span id="lfpDot" class="lfp-optimum-dot" title="NMC Optimum aktiv"></span></label>
                 <select id="batteryProfile" onchange="onProfileChange()">
                     <option value="60" data-min="16" data-max="84" data-info="LFP-Optimum (SoH-schonend): 16% bis 84%. Darunter fällt die Zellspannung extrem steil ab, darüber schießt die Kurve steil nach oben. (Hinweis: Für das BMS gelegentlich auf 100% vollladen!)" data-type="lfp">Model 3 / Y RWD (LFP ~60 kWh)</option>
                     <option value="79" data-min="26" data-max="77" data-info="NMC/NCA-Optimum (SoH-schonend): 26% bis 77%. Vermeidet die extremen Spannungsspitzen an den Rändern für minimale chemische Degradation." data-type="nmc">Model 3 / Y Long Range / Performance (NMC ~79 kWh)</option>
@@ -318,13 +309,12 @@
                 </select>
             </div>
 
-            <!-- Sweet Spot Info-Box -->
+            <!-- Akku-Info / Sweet Spot Box wieder integriert -->
             <div class="sweet-spot-box" id="sweetSpotBox">
                 <span class="icon">💡</span>
                 <span id="sweetSpotText">Lade Info...</span>
             </div>
 
-            <!-- Start SoC -->
             <div class="input-group">
                 <label>
                     <span>Start Akkustand (SoC)</span>
@@ -336,7 +326,6 @@
                 <input type="range" id="startSoc" min="0" max="99" value="16" oninput="updateValues()">
             </div>
 
-            <!-- Ziel SoC -->
             <div class="input-group">
                 <label>
                     <span>Ziel Akkustand (SoC)</span>
@@ -349,12 +338,10 @@
             </div>
 
             <div class="input-row">
-                <!-- Strompreis in Cent / kWh (Standard 39 Cent) -->
                 <div class="input-group" style="flex: 1;">
                     <label for="kwhPriceCents">Strompreis (Cent / kWh)</label>
-                    <input type="number" id="kwhPriceCents" value="39" step="0.5" min="0" placeholder="z.B. 39" oninput="calculate()">
+                    <input type="number" id="kwhPriceCents" value="38" step="0.5" min="0" placeholder="z.B. 38" oninput="calculate()">
                 </div>
-                <!-- Blockiergebühr-Limit -->
                 <div class="input-group" style="flex: 1;">
                     <label for="blockLimit">Max. Standzeit (Min)</label>
                     <input type="number" id="blockLimit" value="240" step="10" min="0" placeholder="z.B. 240 Min" oninput="calculate()">
@@ -362,16 +349,14 @@
             </div>
 
             <div class="input-row">
-                <!-- Blockiergebühr in Cent / Min - Standard 0 -->
                 <div class="input-group" style="flex: 1;">
                     <label for="blockFeeCents">Blockiergebühr (Cent / Min)</label>
-                    <input type="number" id="blockFeeCents" value="0" step="1" min="0" placeholder="z.B. 10" oninput="calculate()">
+                    <input type="number" id="blockFeeCents" value="10" step="1" min="0" placeholder="z.B. 10" oninput="calculate()">
                 </div>
                 <div style="flex: 1;"></div>
             </div>
         </div>
 
-        <!-- Ergebnis-Sektion -->
         <div class="card" style="gap: 12px;">
             <div class="result-grid">
                 <div class="result-card">
@@ -393,13 +378,12 @@
                     <span class="result-sub" id="resCostDetail">Inkl. Ladeverluste</span>
                 </div>
                 <div class="result-card">
-                    <span class="result-label">Ladegeschwindigkeit</span>
-                    <span class="result-value">~ 64 km/h</span>
+                    <span class="result-label">Ladeleistung</span>
+                    <span class="result-value" style="font-size: 16px;">11 kW AC</span>
                     <span class="result-sub" id="weatherInfoSub">Wetter: Lokal (15°C)</span>
                 </div>
             </div>
 
-            <!-- Warnung / Status -->
             <div id="alertBox" class="alert-box safe">
                 <span>🟢</span>
                 <span id="alertText">Ladezeit liegt im sicheren Zeitfenster.</span>
@@ -411,7 +395,6 @@
         Tesla AC-Laderechner &copy; 2026 McWingen
     </footer>
     
-    <!-- SVGs für die Batterien als Inline-Symbole -->
     <svg style="display:none;">
         <symbol id="batt-low" viewBox="0 0 64 32">
             <path fill="none" stroke="currentColor" stroke-width="4" d="M52 4H8a4 4 0 0 0-4 4v16a4 4 0 0 0 4 4h44a4 4 0 0 0 4-4V8a4 4 0 0 0-4-4zm4 8h4v8h-4z"/>
@@ -437,9 +420,8 @@
 
     <script>
         const CHARGE_POWER_AC = 11.0;
-        let currentLossFactor = 1.07; // Standard 7% Verlust (Fallback)
+        let currentLossFactor = 1.07;
 
-        // Wetterdaten via Open-Meteo abrufen mit absolut sicheren Fallbacks
         function fetchWeatherLossFactor() {
             let city = localStorage.getItem('tesla_dashboard_city') || 'Lünen';
             
@@ -486,8 +468,7 @@
             let select = document.getElementById('batteryProfile');
             if (!select || select.selectedIndex === -1) return;
             let selectedOption = select.options[select.selectedIndex];
-            let infoText = selectedOption.getAttribute('data-info');
-            document.getElementById('sweetSpotText').innerText = infoText;
+            document.getElementById('sweetSpotText').innerText = selectedOption.getAttribute('data-info');
         }
         
         function updateLfpIndikator() {
@@ -497,7 +478,7 @@
             let battType = selectedOption.getAttribute('data-type');
             
             let mainCard = document.getElementById('mainCard');
-            if (battType === 'lfp') {
+            if (battType === 'nmc') {
                 mainCard.classList.add('show-lfp');
             } else {
                 mainCard.classList.remove('show-lfp');
@@ -521,10 +502,10 @@
 
         function getBattIconHtml(soc) {
             let iconId, iconClass;
-            if (soc <= 20) { iconId = 'batt-low'; iconClass = 'batt-0'; }
-            else if (soc <= 40) { iconId = 'batt-25'; iconClass = 'batt-25'; }
-            else if (soc <= 60) { iconId = 'batt-50'; iconClass = 'batt-50'; }
-            else if (soc <= 80) { iconId = 'batt-75'; iconClass = 'batt-75'; }
+            if (soc <= 5) { iconId = 'batt-low'; iconClass = 'batt-0'; }
+            else if (soc <= 25) { iconId = 'batt-25'; iconClass = 'batt-25'; }
+            else if (soc <= 50) { iconId = 'batt-50'; iconClass = 'batt-50'; }
+            else if (soc <= 75) { iconId = 'batt-75'; iconClass = 'batt-75'; }
             else { iconId = 'batt-100'; iconClass = 'batt-100'; }
             
             return `<svg class="batt-icon ${iconClass}"><use xlink:href="#${iconId}"></use></svg>`;
@@ -539,8 +520,11 @@
                 target = start + 1;
             }
 
-            document.getElementById('startVal').innerText = start + ' %';
-            document.getElementById('targetVal').innerText = target + ' %';
+            let startText = start === 0 ? "Leer (0 %)" : start + " %";
+            let targetText = target === 100 ? "Voll (100 %)" : target + " %";
+
+            document.getElementById('startVal').innerText = startText;
+            document.getElementById('targetVal').innerText = targetText;
             
             document.getElementById('battIconStart').innerHTML = getBattIconHtml(start);
             document.getElementById('battIconTarget').innerHTML = getBattIconHtml(target);
@@ -572,7 +556,6 @@
             let finishHours = String(finishTime.getHours()).padStart(2, '0');
             let finishMinutes = String(finishTime.getMinutes()).padStart(2, '0');
 
-            // Umrechnung Cent pro kWh in Euro für die Gesamtkosten
             let energyCost = (kwhWithLosses * pricePerKwhCents) / 100;
             let blockFeeTotal = 0;
             let alertBox = document.getElementById('alertBox');
@@ -615,7 +598,6 @@
             }
         }
 
-        // Direkt beim Start initialisieren
         window.addEventListener('DOMContentLoaded', () => {
             onProfileChange();
             fetchWeatherLossFactor();
