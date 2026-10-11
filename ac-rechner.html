@@ -21,6 +21,12 @@
             --success-color: #10b981;
             --info-bg: rgba(59, 130, 246, 0.1);
             --info-border: rgba(59, 130, 246, 0.25);
+            
+            /* Batteriefarben */
+            --batt-red: #ef4444;
+            --batt-orange: #f97316;
+            --batt-yellow: #eab308;
+            --batt-green: #22c55e;
         }
 
         @media (prefers-color-scheme: light) {
@@ -35,6 +41,7 @@
                 --hover-bg: #e5e7eb;
                 --info-bg: rgba(59, 130, 246, 0.08);
                 --info-border: rgba(59, 130, 246, 0.2);
+                --batt-yellow: #ca8a04;
             }
         }
 
@@ -123,6 +130,9 @@
             font-size: 13px;
             font-weight: 500;
             color: var(--section-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .input-row {
@@ -143,7 +153,6 @@
             transition: border-color 0.2s;
         }
 
-        /* Browser-Standard Pfeile (Spinbuttons) für Nummerneingaben komplett ausblenden */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { 
             -webkit-appearance: none; 
@@ -157,10 +166,29 @@
             border-color: var(--accent-color);
         }
 
-        .range-val {
+        .range-val-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             font-weight: 600;
             color: var(--text-color);
-            float: right;
+        }
+        
+        /* LFP Optimum Indikator */
+        .lfp-optimum-dot {
+            height: 8px;
+            width: 8px;
+            background-color: var(--success-color);
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 8px;
+            vertical-align: middle;
+            box-shadow: 0 0 6px var(--success-color);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .show-lfp .lfp-optimum-dot {
+            opacity: 1;
         }
 
         /* Sweet Spot Hinweis-Box */
@@ -239,6 +267,18 @@
             border-color: rgba(239, 68, 68, 0.3);
             color: var(--warn-color);
         }
+        
+        /* Batteriesymbole */
+        .batt-icon {
+            height: 1.1em;
+            width: auto;
+            vertical-align: middle;
+        }
+        .batt-0 { color: var(--batt-red); }
+        .batt-25 { color: var(--batt-orange); }
+        .batt-50 { color: var(--batt-yellow); }
+        .batt-75 { color: var(--batt-green); }
+        .batt-100 { color: var(--batt-green); }
 
         footer {
             margin-top: 40px;
@@ -261,14 +301,14 @@
     </div>
 
     <div class="calc-container">
-        <div class="card">
+        <div class="card" id="mainCard">
             <!-- Akku-Profil -->
             <div class="input-group">
-                <label for="batteryProfile">Tesla Akku-Profil</label>
+                <label for="batteryProfile">Tesla Akku-Profil <span id="lfpDot" class="lfp-optimum-dot" title="LFP Optimum (16-84%)"></span></label>
                 <select id="batteryProfile" onchange="onProfileChange()">
-                    <option value="60" data-min="16" data-max="84" data-info="LFP-Optimum (SoH-schonend): 16% bis 84%. Darunter fällt die Zellspannung extrem steil ab, darüber schießt die Kurve steil nach oben. (Hinweis: Für das BMS gelegentlich auf 100% vollladen!)">Model 3 / Y RWD (LFP ~60 kWh)</option>
-                    <option value="79" data-min="26" data-max="77" data-info="NMC/NCA-Optimum (SoH-schonend): 26% bis 77%. Vermeidet die extremen Spannungsspitzen an den Rändern für minimale chemische Degradation.">Model 3 / Y Long Range / Performance (NMC ~79 kWh)</option>
-                    <option value="55" data-min="15" data-max="85" data-info="Älteres LFP-Profil: Ca. 15% bis 85% als flacher, stressfreier Arbeitsbereich im Spannungsverlauf.">Model 3 SR+ älteren Baujahrs (LFP ~55 kWh)</option>
+                    <option value="60" data-min="16" data-max="84" data-info="LFP-Optimum (SoH-schonend): 16% bis 84%. Darunter fällt die Zellspannung extrem steil ab, darüber schießt die Kurve steil nach oben. (Hinweis: Für das BMS gelegentlich auf 100% vollladen!)" data-type="lfp">Model 3 / Y RWD (LFP ~60 kWh)</option>
+                    <option value="79" data-min="26" data-max="77" data-info="NMC/NCA-Optimum (SoH-schonend): 26% bis 77%. Vermeidet die extremen Spannungsspitzen an den Rändern für minimale chemische Degradation." data-type="nmc">Model 3 / Y Long Range / Performance (NMC ~79 kWh)</option>
+                    <option value="55" data-min="15" data-max="85" data-info="Älteres LFP-Profil: Ca. 15% bis 85% als flacher, stressfreier Arbeitsbereich im Spannungsverlauf." data-type="lfp">Model 3 SR+ älteren Baujahrs (LFP ~55 kWh)</option>
                 </select>
             </div>
 
@@ -280,13 +320,25 @@
 
             <!-- Start SoC -->
             <div class="input-group">
-                <label>Start Akkustand (SoC): <span id="startVal" class="range-val">16 %</span></label>
+                <label>
+                    <span>Start Akkustand (SoC)</span>
+                    <span class="range-val-container">
+                        <span id="startVal">16 %</span>
+                        <span id="battIconStart"></span>
+                    </span>
+                </label>
                 <input type="range" id="startSoc" min="0" max="99" value="16" oninput="updateValues()">
             </div>
 
             <!-- Ziel SoC -->
             <div class="input-group">
-                <label>Ziel Akkustand (SoC): <span id="targetVal" class="range-val">84 %</span></label>
+                <label>
+                    <span>Ziel Akkustand (SoC)</span>
+                    <span class="range-val-container">
+                        <span id="targetVal">84 %</span>
+                        <span id="battIconTarget"></span>
+                    </span>
+                </label>
                 <input type="range" id="targetSoc" min="1" max="100" value="84" oninput="updateValues()">
             </div>
 
@@ -339,15 +391,51 @@
     <footer>
         Tesla AC-Laderechner &copy; 2026 McWingen
     </footer>
+    
+    <!-- SVGs für die Batterien als Inline-Symbole -->
+    <svg style="display:none;">
+        <symbol id="batt-low" viewBox="0 0 64 32">
+            <path fill="none" stroke="currentColor" stroke-width="4" d="M52 4H8a4 4 0 0 0-4 4v16a4 4 0 0 0 4 4h44a4 4 0 0 0 4-4V8a4 4 0 0 0-4-4zm4 8h4v8h-4z"/>
+            <path fill="currentColor" d="M10 10h8v12h-8z"/>
+        </symbol>
+        <symbol id="batt-25" viewBox="0 0 64 32">
+            <path fill="none" stroke="currentColor" stroke-width="4" d="M52 4H8a4 4 0 0 0-4 4v16a4 4 0 0 0 4 4h44a4 4 0 0 0 4-4V8a4 4 0 0 0-4-4zm4 8h4v8h-4z"/>
+            <path fill="currentColor" d="M10 10h16v12h-16z"/>
+        </symbol>
+        <symbol id="batt-50" viewBox="0 0 64 32">
+            <path fill="none" stroke="currentColor" stroke-width="4" d="M52 4H8a4 4 0 0 0-4 4v16a4 4 0 0 0 4 4h44a4 4 0 0 0 4-4V8a4 4 0 0 0-4-4zm4 8h4v8h-4z"/>
+            <path fill="currentColor" d="M10 10h24v12h-24z"/>
+        </symbol>
+        <symbol id="batt-75" viewBox="0 0 64 32">
+            <path fill="none" stroke="currentColor" stroke-width="4" d="M52 4H8a4 4 0 0 0-4 4v16a4 4 0 0 0 4 4h44a4 4 0 0 0 4-4V8a4 4 0 0 0-4-4zm4 8h4v8h-4z"/>
+            <path fill="currentColor" d="M10 10h32v12h-32z"/>
+        </symbol>
+        <symbol id="batt-100" viewBox="0 0 64 32">
+            <path fill="none" stroke="currentColor" stroke-width="4" d="M52 4H8a4 4 0 0 0-4 4v16a4 4 0 0 0 4 4h44a4 4 0 0 0 4-4V8a4 4 0 0 0-4-4zm4 8h4v8h-4z"/>
+            <path fill="currentColor" d="M10 10h40v12h-40z"/>
+        </symbol>
+    </svg>
 
     <script>
-        const CHARGE_POWER_AC = 11.0; // Fix 11 kW AC Onboard-Charger
+        const CHARGE_POWER_AC = 11.0;
 
         function updateSweetSpotInfo() {
             let select = document.getElementById('batteryProfile');
             let selectedOption = select.options[select.selectedIndex];
             let infoText = selectedOption.getAttribute('data-info');
             document.getElementById('sweetSpotText').innerText = infoText;
+        }
+        
+        function updateLfpIndikator() {
+            let select = document.getElementById('batteryProfile');
+            let selectedOption = select.options[select.selectedIndex];
+            let battType = selectedOption.getAttribute('data-type');
+            
+            if (battType === 'lfp') {
+                document.getElementById('mainCard').classList.add('show-lfp');
+            } else {
+                document.getElementById('mainCard').classList.remove('show-lfp');
+            }
         }
 
         function onProfileChange() {
@@ -361,6 +449,18 @@
 
             updateValues();
             updateSweetSpotInfo();
+            updateLfpIndikator();
+        }
+
+        function getBattIconHtml(soc) {
+            let iconId, iconClass;
+            if (soc <= 20) { iconId = 'batt-low'; iconClass = 'batt-0'; }
+            else if (soc <= 40) { iconId = 'batt-25'; iconClass = 'batt-25'; }
+            else if (soc <= 60) { iconId = 'batt-50'; iconClass = 'batt-50'; }
+            else if (soc <= 80) { iconId = 'batt-75'; iconClass = 'batt-75'; }
+            else { iconId = 'batt-100'; iconClass = 'batt-100'; }
+            
+            return `<svg class="batt-icon ${iconClass}"><use xlink:href="#${iconId}"></use></svg>`;
         }
 
         function updateValues() {
@@ -369,10 +469,15 @@
 
             if (start >= target) {
                 document.getElementById('targetSoc').value = start + 1;
+                target = start + 1;
             }
 
-            document.getElementById('startVal').innerText = document.getElementById('startSoc').value + ' %';
-            document.getElementById('targetVal').innerText = document.getElementById('targetSoc').value + ' %';
+            document.getElementById('startVal').innerText = start + ' %';
+            document.getElementById('targetVal').innerText = target + ' %';
+            
+            // Icons oben bei den Reglern aktualisieren
+            document.getElementById('battIconStart').innerHTML = getBattIconHtml(start);
+            document.getElementById('battIconTarget').innerHTML = getBattIconHtml(target);
             
             calculate();
         }
@@ -424,8 +529,7 @@
         }
 
         // Init beim Laden
-        updateSweetSpotInfo();
-        calculate();
+        onProfileChange();
     </script>
 </body>
 </html>
