@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Tesla AC-Laderechner</title>
     <link rel="icon" type="image/png" href="icons/hedgehog.png">
     
@@ -285,6 +285,48 @@
             text-align: center;
             opacity: 0.7;
         }
+    
+        /* Responsive Optimierungen – Tesla-Funktionen und bestehendes Design bleiben erhalten */
+        *, *::before, *::after { box-sizing: border-box; }
+        html { width: 100%; max-width: 100%; }
+        body { width: 100%; max-width: 100%; overflow-x: hidden; }
+        .top-bar, .calc-container { width: 100%; max-width: 600px; min-width: 0; }
+        .top-bar > *, .card, .input-group, .input-row > *, .result-card { min-width: 0; }
+        select, input, .sweet-spot-box, .alert-box { max-width: 100%; }
+        .page-title, .result-label, .result-sub, .sweet-spot-box, .alert-box { overflow-wrap: anywhere; }
+        @media (max-width: 640px) {
+            body {
+                padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(28px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+                min-height: 100vh; min-height: 100dvh;
+            }
+            .top-bar { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: center; margin-bottom: 16px; padding-bottom: 12px; }
+            .top-bar > div { display: none; }
+            .back-btn { padding: 8px 10px; font-size: 13px; white-space: nowrap; gap: 5px; }
+            .page-title { font-size: clamp(14px, 3.8vw, 17px); line-height: 1.25; text-align: right; overflow-wrap: anywhere; }
+            .calc-container { gap: 14px; }
+            .card { padding: clamp(12px, 3.8vw, 18px); border-radius: 14px; gap: 16px; }
+            .input-group label { gap: 8px; line-height: 1.35; }
+            .range-val-container { flex: 0 0 auto; gap: 6px; white-space: nowrap; }
+            .input-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+            .input-row > .input-group, .input-row > div { width: auto; min-width: 0; flex: initial !important; }
+            select, input:not([type="range"]) { width: 100%; min-width: 0; min-height: 44px; font-size: 16px; }
+            input[type="range"] { width: 100%; min-width: 0; }
+            .sweet-spot-box { font-size: 13px; line-height: 1.45; padding: 12px; }
+            .result-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+            .result-card { padding: 11px 9px; }
+            .result-label { font-size: 10px; line-height: 1.35; letter-spacing: .2px; }
+            .result-value { font-size: clamp(15px, 4.3vw, 20px); overflow-wrap: anywhere; }
+            .result-sub { font-size: 10px; line-height: 1.35; }
+            .alert-box { align-items: flex-start; padding: 11px 12px; line-height: 1.4; }
+        }
+        @media (max-width: 390px) {
+            .top-bar { grid-template-columns: minmax(0, 1fr); gap: 10px; justify-items: start; }
+            .page-title { text-align: left; font-size: 17px; }
+            .input-row, .result-grid { grid-template-columns: minmax(0, 1fr); }
+            .card { padding: 14px 12px; }
+        }
+        @media (min-width: 900px) { body { padding: 24px 24px 60px; } }
+
     </style>
 </head>
 <body>
@@ -546,7 +588,7 @@
             let netKwh = (netCapacity * socDiff) / 100;
             let kwhWithLosses = netKwh * currentLossFactor;
 
-            let hoursTotal = netKwh / CHARGE_POWER_AC;
+            let hoursTotal = kwhWithLosses / CHARGE_POWER_AC;
             let totalMinutes = Math.round(hoursTotal * 60);
             let hrs = Math.floor(totalMinutes / 60);
             let mins = totalMinutes % 60;
