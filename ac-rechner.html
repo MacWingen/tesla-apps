@@ -7,153 +7,647 @@
     <link rel="icon" type="image/png" href="icons/hedgehog.png">
     
     <!-- PWA & Mobile / Tesla Browser Leisten-Farben -->
-    <meta name="theme-color" content="#121214" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#f3f4f6" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#090a0f" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f1f5f9" media="(prefers-color-scheme: light)">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     
     <style>
         :root {
-            --bg-color: #121214;
-            --text-color: #f1f1f1;
-            --title-color: #d1d5db;
-            --tile-bg: #1b1b1e;
-            --tile-border: rgba(255, 255, 255, 0.08);
-            --name-color: #9e9ea6;
-            --section-color: #9ca3af;
-            --hover-bg: #2a2a2e;
-            --accent-color: #3b82f6;
-            --warn-color: #ef4444;
-            --success-color: #10b981;
-            --info-bg: rgba(59, 130, 246, 0.1);
-            --info-border: rgba(59, 130, 246, 0.25);
+            --bg-color: #090a0f;
+            --card-bg: rgba(18, 19, 26, 0.78);
+            --card-inner: rgba(26, 27, 36, 0.7);
+            --text-color: #f8fafc;
+            --title-color: #f1f5f9;
+            --subtext-color: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --hover-bg: rgba(255, 255, 255, 0.06);
             
-            --batt-red: #ef4444;
-            --batt-orange: #f97316;
-            --batt-yellow: #eab308;
-            --batt-green: #22c55e;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+
+            --batt-glow: rgba(16, 185, 129, 0.45);
+            --slider-track: #1e2029;
         }
 
         @media (prefers-color-scheme: light) {
             :root {
-                --bg-color: #f3f4f6;
-                --text-color: #1f2937;
-                --title-color: #374151;
-                --tile-bg: #ffffff;
-                --tile-border: rgba(0, 0, 0, 0.08);
-                --name-color: #4b5563;
-                --section-color: #4b5563;
-                --hover-bg: #e5e7eb;
-                --info-bg: rgba(59, 130, 246, 0.08);
-                --info-border: rgba(59, 130, 246, 0.2);
-                --batt-yellow: #ca8a04;
+                --bg-color: #f1f5f9;
+                --card-bg: rgba(255, 255, 255, 0.85);
+                --card-inner: rgba(248, 250, 252, 0.8);
+                --text-color: #0f172a;
+                --title-color: #1e293b;
+                --subtext-color: #64748b;
+                --border-color: rgba(0, 0, 0, 0.08);
+                --hover-bg: rgba(0, 0, 0, 0.04);
+                --slider-track: #e2e8f0;
+                --batt-glow: rgba(16, 185, 129, 0.25);
             }
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(ellipse at 85% 10%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 15% 90%, rgba(16, 185, 129, 0.07) 0%, transparent 50%);
+            background-attachment: fixed;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             color: var(--text-color);
             margin: 0;
-            padding: 3vw 4vw 60px 4vw;
+            padding: 12px 16px 36px 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
             min-height: 100dvh;
             box-sizing: border-box;
-            user-select: none;
-            -webkit-user-select: none;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease;
         }
 
+        /* Top Header */
         .top-bar {
             width: 100%;
-            max-width: 600px;
+            max-width: 960px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 24px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--tile-border);
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            gap: 12px;
         }
 
         .back-btn {
-            background: transparent;
-            border: 1px solid var(--tile-border);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
             color: var(--text-color);
-            padding: 6px 12px;
-            border-radius: 8px;
+            padding: 7px 12px;
+            border-radius: 10px;
             cursor: pointer;
             font-size: 13px;
-            font-weight: 500;
-            transition: background 0.2s;
+            font-weight: 600;
+            transition: all 0.2s ease;
             text-decoration: none;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            flex-shrink: 0;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
         .back-btn:hover {
             background-color: var(--hover-bg);
+            border-color: rgba(255, 255, 255, 0.18);
+            transform: translateX(-2px);
         }
 
         .page-title {
             font-size: 16px;
-            font-weight: 600;
-            color: var(--text-color);
+            font-weight: 700;
+            color: var(--title-color);
             margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .calc-container {
+        .title-bolt-wrap {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.25);
+        }
+
+        .top-spacer {
+            width: 90px;
+            flex-shrink: 0;
+        }
+
+        /* 2-Spalten Layout: Passt standardmäßig auf Breitbild & Tesla-Halbbildschirm */
+        .layout-grid {
             width: 100%;
-            max-width: 600px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+            max-width: 960px;
+            display: grid;
+            grid-template-columns: 1.15fr 1fr;
+            gap: 16px;
+            align-items: start;
         }
 
+        /* Glassmorphism Karten Design */
         .card {
-            background-color: var(--tile-bg);
-            border: 1px solid var(--tile-border);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            background-color: var(--card-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 18px 20px;
+            box-shadow: 0 12px 36px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 13px;
+            min-width: 0;
+            position: relative;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 9px;
+            margin-bottom: 2px;
+        }
+
+        .card-title {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--subtext-color);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 7px;
         }
 
         .input-group {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
         }
 
-        .input-group label {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--section-color);
+        .input-label-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--title-color);
         }
 
-        .input-row {
-            display: flex;
-            gap: 12px;
+        .badge-type {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2.5px 8px;
+            border-radius: 6px;
+            border: 1px solid transparent;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
 
-        select, input {
-            background-color: var(--bg-color);
-            border: 1px solid var(--tile-border);
+        .badge-lfp {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.18) 0%, rgba(5, 150, 105, 0.25) 100%);
+            color: #34d399;
+            border-color: rgba(16, 185, 129, 0.4);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
+        }
+
+        .badge-nmc {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.18) 0%, rgba(37, 99, 235, 0.25) 100%);
+            color: #60a5fa;
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.15);
+        }
+
+        select {
+            background-color: var(--card-inner);
+            border: 1px solid var(--border-color);
             color: var(--text-color);
-            font-size: 15px;
-            padding: 10px 14px;
-            border-radius: 10px;
+            font-size: 13.5px;
+            font-weight: 500;
+            padding: 9px 12px;
+            border-radius: 11px;
             outline: none;
             width: 100%;
+            transition: all 0.2s ease;
             box-sizing: border-box;
-            transition: border-color 0.2s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        select:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25), inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* Sliders & HUD Badges */
+        .slider-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .hud-pill {
+            font-size: 13px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 6px;
+            letter-spacing: -0.2px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .hud-start {
+            background: rgba(148, 163, 184, 0.15);
+            color: #cbd5e1;
+            border: 1px solid rgba(148, 163, 184, 0.25);
+        }
+
+        .hud-target {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.2) 100%);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 9px;
+            border-radius: 8px;
+            background: var(--slider-track);
+            outline: none;
+            margin: 5px 0;
+            cursor: pointer;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.5);
+            transition: background 0.1s ease;
+        }
+
+        #startSoc {
+            background: linear-gradient(to right, #64748b 0%, #64748b var(--start-pct, 16%), var(--slider-track) var(--start-pct, 16%), var(--slider-track) 100%);
+        }
+
+        #targetSoc {
+            background: linear-gradient(to right, #10b981 0%, #10b981 var(--target-pct, 84%), var(--slider-track) var(--target-pct, 84%), var(--slider-track) 100%);
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            border: 2px solid var(--accent-blue);
+        }
+
+        #startSoc::-webkit-slider-thumb {
+            border-color: #94a3b8;
+            box-shadow: 0 0 10px rgba(148, 163, 184, 0.5), 0 3px 6px rgba(0,0,0,0.4);
+        }
+
+        #targetSoc::-webkit-slider-thumb {
+            border-color: #10b981;
+            box-shadow: 0 0 14px rgba(16, 185, 129, 0.65), 0 3px 6px rgba(0,0,0,0.4);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover, input[type="range"]:active::-webkit-slider-thumb {
+            transform: scale(1.18);
+        }
+
+        /* Preset Chips */
+        .preset-chips {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-top: 2px;
+        }
+
+        .chip-btn {
+            background: linear-gradient(180deg, rgba(35, 35, 45, 0.75) 0%, rgba(22, 22, 28, 0.9) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            color: var(--subtext-color);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 5px 8px;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .chip-btn:hover {
+            color: var(--text-color);
+            background: var(--hover-bg);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .chip-btn:active {
+            transform: translateY(0) scale(0.96);
+        }
+
+        .chip-btn.active {
+            background: linear-gradient(180deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.35) 100%);
+            color: #6ee7b7;
+            border-color: #10b981;
+            font-weight: 700;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .chip-sub {
+            font-size: 8.5px;
+            opacity: 0.85;
+            padding: 1px 3px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 4px;
+            line-height: 1;
+        }
+
+        .chip-btn.active .chip-sub {
+            background: rgba(16, 185, 129, 0.3);
+            color: #ffffff;
+        }
+
+        /* Tesla BMS Assist Box */
+        .sweet-spot-box {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(30, 41, 59, 0.35) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            border-left: 3px solid #3b82f6;
+            border-radius: 11px;
+            padding: 8px 11px;
+            font-size: 11px;
+            color: var(--text-color);
+            display: flex;
+            gap: 9px;
+            align-items: center;
+            line-height: 1.35;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+        }
+
+        .sweet-spot-icon-wrap {
+            width: 24px;
+            height: 24px;
+            border-radius: 7px;
+            background: rgba(59, 130, 246, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .sweet-spot-body {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .sweet-spot-title {
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 0.6px;
+            color: #60a5fa;
+            text-transform: uppercase;
+        }
+
+        /* ========================================================
+           MODERNE COCKPIT LADELEISTUNG-CONSOLE & STEPPERS
+           ======================================================== */
+        .power-spec-badge {
+            font-size: 10px;
+            font-weight: 700;
+            color: #60a5fa;
+            background: rgba(59, 130, 246, 0.14);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 2px 7px;
+            border-radius: 6px;
+            letter-spacing: 0.2px;
+            white-space: nowrap;
+        }
+
+        .power-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+
+        .power-btn {
+            background: linear-gradient(180deg, rgba(35, 37, 48, 0.8) 0%, rgba(20, 21, 28, 0.95) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            border-radius: 10px;
+            padding: 8px 4px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            color: var(--subtext-color);
+        }
+
+        .power-btn:hover {
+            background: var(--hover-bg);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .power-btn:active {
+            transform: translateY(0) scale(0.96);
+        }
+
+        .power-btn.active {
+            background: linear-gradient(180deg, rgba(59, 130, 246, 0.28) 0%, rgba(37, 99, 235, 0.38) 100%);
+            border-color: var(--accent-blue);
+            color: #ffffff;
+            box-shadow: 0 0 14px rgba(59, 130, 246, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+        }
+
+        .power-btn-val {
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            color: var(--text-color);
+        }
+
+        .power-btn.active .power-btn-val {
+            color: #93c5fd;
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
+        }
+
+        .power-btn-sub {
+            font-size: 8.5px;
+            font-weight: 600;
+            opacity: 0.75;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .power-btn.active .power-btn-sub {
+            opacity: 0.95;
+            color: #bfdbfe;
+        }
+
+        /* Feinjustierung Bar */
+        .power-fine-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 8px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 9px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            margin-top: 1px;
+        }
+
+        .power-fine-label {
+            font-size: 10.5px;
+            font-weight: 600;
+            color: var(--subtext-color);
+        }
+
+        .cockpit-stepper-mini {
+            display: flex;
+            align-items: center;
+            background: var(--card-inner);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2px 4px;
+            gap: 4px;
+        }
+
+        .step-btn-mini {
+            background: rgba(255, 255, 255, 0.06);
+            border: none;
+            color: var(--text-color);
+            width: 22px;
+            height: 22px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+
+        .step-btn-mini:hover {
+            background: rgba(59, 130, 246, 0.35);
+            color: #ffffff;
+        }
+
+        .cockpit-stepper-mini input {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 12px;
+            font-weight: 700;
+            width: 40px;
+            text-align: center;
+            padding: 0;
+            outline: none;
+        }
+
+        .step-unit-mini {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--subtext-color);
+            padding-right: 2px;
+        }
+
+        /* Cockpit Stepper für Preis & Standzeit */
+        .cockpit-stepper {
+            background: var(--card-inner);
+            border: 1px solid var(--border-color);
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 3px 6px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.25);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .cockpit-stepper:focus-within {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25), inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .step-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: var(--text-color);
+            width: 26px;
+            height: 26px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+            flex-shrink: 0;
+        }
+
+        .step-btn:hover {
+            background: rgba(59, 130, 246, 0.3);
+            border-color: rgba(59, 130, 246, 0.5);
+            color: #ffffff;
+            transform: scale(1.06);
+        }
+
+        .step-btn:active {
+            transform: scale(0.94);
+        }
+
+        .stepper-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .stepper-center input {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 13.5px;
+            font-weight: 700;
+            width: 44px;
+            text-align: right;
+            padding: 2px 0;
+            outline: none;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .stepper-unit {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--subtext-color);
+            white-space: nowrap;
         }
 
         input[type=number]::-webkit-inner-spin-button, 
@@ -161,280 +655,1026 @@
             -webkit-appearance: none; 
             margin: 0; 
         }
-        input[type=number] {
-            -moz-appearance: field;
-            -moz-appearance: textfield;
-        }
 
-        select:focus, input:focus {
-            border-color: var(--accent-color);
-        }
-
-        .range-val-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-            color: var(--text-color);
-        }
-        
-        .optimum-badge {
-            font-size: 11px;
-            font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 6px;
-            display: inline-block;
-            margin-left: 8px;
-            background-color: rgba(59, 130, 246, 0.15);
-            color: var(--accent-color);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-        }
-
-        .sweet-spot-box {
-            background-color: var(--info-bg);
-            border: 1px solid var(--info-border);
-            border-radius: 10px;
-            padding: 12px 14px;
-            font-size: 12px;
-            color: var(--text-color);
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-            line-height: 1.4;
-        }
-
-        .sweet-spot-box span.icon {
-            font-size: 16px;
-            flex-shrink: 0;
-            margin-top: -1px;
-        }
-
-        .result-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .result-card {
-            background-color: var(--bg-color);
-            border: 1px solid var(--tile-border);
-            border-radius: 12px;
-            padding: 14px;
+        /* VISUELLE TESLA BATTERIE GAUGE MIT ENERGIE-FLOW */
+        .battery-gauge-card {
+            background: linear-gradient(145deg, var(--card-inner) 0%, rgba(15, 23, 42, 0.6) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 13px 14px;
             display: flex;
             flex-direction: column;
+            gap: 9px;
+            position: relative;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        }
+
+        .gauge-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .gauge-label {
+            font-size: 11.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--subtext-color);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .gauge-charged-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent-green);
+            display: flex;
+            align-items: center;
             gap: 4px;
         }
 
-        .result-label {
-            font-size: 11px;
-            color: var(--section-color);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .charge-pulse-icon {
+            display: inline-block;
+            animation: pulseBolt 1.6s ease-in-out infinite;
         }
 
-        .result-value {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-color);
+        @keyframes pulseBolt {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px #10b981); }
+            50% { transform: scale(1.2); filter: drop-shadow(0 0 8px #10b981); }
         }
 
-        .result-value.accent {
-            color: var(--accent-color);
+        .battery-frame-container {
+            width: 100%;
+            padding-right: 7px; /* Platz für Batterie-Pluspol */
+            box-sizing: border-box;
         }
 
-        .result-sub {
-            font-size: 11px;
-            color: var(--name-color);
-            margin-top: 2px;
-        }
-
-        .alert-box {
-            padding: 12px 16px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 500;
+        .battery-outer-frame {
+            width: 100%;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.55);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 3px;
+            position: relative;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.6);
             display: flex;
             align-items: center;
-            gap: 10px;
-            background-color: var(--bg-color);
-            border: 1px solid var(--tile-border);
+        }
+
+        /* Batterie Pluspol rechts */
+        .battery-outer-frame::after {
+            content: "";
+            position: absolute;
+            right: -7px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 16px;
+            background: linear-gradient(180deg, #64748b 0%, #334155 100%);
+            border: 1px solid var(--border-color);
+            border-left: none;
+            border-radius: 0 3px 3px 0;
+            box-shadow: 0 0 6px rgba(0,0,0,0.4);
+        }
+
+        .battery-cell-ticks {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 4;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent calc(20% - 1px),
+                rgba(255, 255, 255, 0.1) calc(20% - 1px),
+                rgba(255, 255, 255, 0.1) 20%
+            );
+        }
+
+        .battery-track {
+            width: 100%;
+            height: 100%;
+            border-radius: 7px;
+            position: relative;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .battery-base-bar {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(180deg, #475569 0%, #334155 100%);
+            border-radius: 7px 0 0 7px;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+        }
+
+        .battery-charge-bar {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, #059669 0%, #10b981 35%, #34d399 75%, #6ee7b7 100%);
+            box-shadow: 0 0 16px var(--batt-glow);
+            border-radius: 0 7px 7px 0;
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        /* Fließender Energie-Lichtstrahl */
+        .charge-shimmer-wave {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.35) 50%,
+                transparent 100%
+            );
+            background-size: 200% 100%;
+            animation: shimmerWave 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            pointer-events: none;
+        }
+
+        @keyframes shimmerWave {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
+        }
+
+        .battery-scale {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9.5px;
+            font-weight: 600;
+            color: var(--subtext-color);
+            padding: 0 3px;
+        }
+
+        /* HERO FINISH TIME COCKPIT INSTRUMENT */
+        .finish-hero {
+            background: radial-gradient(ellipse at 50% 0%, rgba(99, 102, 241, 0.25) 0%, rgba(15, 23, 42, 0.85) 75%);
+            border: 1px solid rgba(129, 140, 248, 0.35);
+            border-radius: 14px;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 2px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(165, 180, 252, 0.2);
+            position: relative;
+        }
+
+        .hero-top-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .live-beacon {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: #10b981;
+            box-shadow: 0 0 8px #10b981;
+            display: inline-block;
+            position: relative;
+        }
+
+        .live-beacon::after {
+            content: "";
+            position: absolute;
+            top: -3px; left: -3px; right: -3px; bottom: -3px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(16, 185, 129, 0.6);
+            animation: beaconPulse 2s cubic-bezier(0.2, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes beaconPulse {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(2.4); opacity: 0; }
+        }
+
+        .finish-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #a5b4fc;
+        }
+
+        .finish-time-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 1px 0;
+        }
+
+        .finish-time-giant {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.8px;
+            background: linear-gradient(180deg, #ffffff 30%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.15;
+            white-space: nowrap;
+        }
+
+        .day-diff-badge {
+            background: rgba(6, 182, 212, 0.18);
+            border: 1px solid rgba(6, 182, 212, 0.45);
+            color: #22d3ee;
+            border-radius: 6px;
+            padding: 2px 7px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+            box-shadow: 0 0 8px rgba(6, 182, 212, 0.25);
+        }
+
+        .finish-duration-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--subtext-color);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 3px 9px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        /* 4 METRIKEN TILES MIT BELEUCHTETEN ICONS */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px;
+        }
+
+        .metric-tile {
+            background: var(--card-inner);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px 11px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            min-width: 0;
+            transition: transform 0.15s ease, border-color 0.15s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-tile::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+        }
+
+        .metric-tile:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .metric-icon-wrap {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .icon-cyan {
+            background: rgba(6, 182, 212, 0.15);
+            color: #22d3ee;
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            box-shadow: 0 0 8px rgba(6, 182, 212, 0.15);
+        }
+
+        .icon-emerald {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.15);
+        }
+
+        .icon-blue {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.15);
+        }
+
+        .icon-amber {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            box-shadow: 0 0 8px rgba(245, 158, 11, 0.15);
+        }
+
+        .metric-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .metric-name {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--subtext-color);
+            letter-spacing: 0.4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .metric-val {
+            font-size: 16.5px;
+            font-weight: 700;
+            color: var(--text-color);
+            line-height: 1.15;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .val-emerald {
+            color: #34d399 !important;
+        }
+
+        .metric-sub {
+            font-size: 10px;
+            color: var(--subtext-color);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ALERT BOX MIT PULSIERENDEM STATUS */
+        .alert-box {
+            padding: 9px 12px;
+            border-radius: 11px;
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            line-height: 1.35;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
         }
 
         .alert-box.safe {
-            border-color: rgba(16, 185, 129, 0.3);
-            color: var(--success-color);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(5, 150, 105, 0.05) 100%);
+            border-color: rgba(16, 185, 129, 0.25);
+            color: var(--accent-green);
+        }
+
+        .alert-box.safe .alert-icon-wrap {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
         }
 
         .alert-box.warning {
-            border-color: rgba(239, 68, 68, 0.3);
-            color: var(--warn-color);
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(185, 28, 28, 0.06) 100%);
+            border-color: rgba(239, 68, 68, 0.35);
+            color: #f87171;
+            animation: alertPulse 2.5s ease-in-out infinite;
         }
-        
-        .batt-icon {
-            height: 1.1em;
-            width: auto;
-            vertical-align: middle;
+
+        .alert-box.warning .alert-icon-wrap {
+            background: rgba(239, 68, 68, 0.25);
+            color: #f87171;
         }
-        .batt-0 { color: var(--batt-red); }
-        .batt-25 { color: var(--batt-orange); }
-        .batt-50 { color: var(--batt-yellow); }
-        .batt-75 { color: var(--batt-green); }
-        .batt-100 { color: var(--batt-green); }
+
+        @keyframes alertPulse {
+            0%, 100% { border-color: rgba(239, 68, 68, 0.35); box-shadow: 0 0 0 rgba(239, 68, 68, 0); }
+            50% { border-color: rgba(239, 68, 68, 0.6); box-shadow: 0 0 12px rgba(239, 68, 68, 0.25); }
+        }
+
+        .alert-icon-wrap {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
 
         footer {
-            margin-top: 40px;
+            margin-top: 24px;
             font-size: 11px;
-            color: var(--section-color);
+            color: var(--subtext-color);
             text-align: center;
             opacity: 0.7;
+        }
+
+        /* ========================================================
+           TESLA HALB-BILDSCHIRM & SPLIT-SCREEN OPTIMIERUNG
+           ======================================================== */
+        @media (max-width: 860px) {
+            body {
+                padding: 8px 10px 18px 10px;
+            }
+
+            .top-bar {
+                margin-bottom: 10px;
+                padding-bottom: 8px;
+                gap: 8px;
+            }
+
+            .page-title {
+                font-size: 15px;
+                gap: 6px;
+            }
+
+            .title-bolt-wrap {
+                width: 24px;
+                height: 24px;
+            }
+
+            .top-spacer {
+                width: 10px;
+            }
+
+            .back-btn {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+
+            .layout-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .card {
+                padding: 12px 13px;
+                gap: 8px;
+                border-radius: 14px;
+            }
+
+            .card-header {
+                padding-bottom: 6px;
+                margin-bottom: 0;
+            }
+
+            .card-title {
+                font-size: 11.5px;
+            }
+
+            .badge-type {
+                font-size: 10px;
+                padding: 1.5px 6px;
+            }
+
+            .input-group {
+                gap: 3.5px;
+            }
+
+            .input-label-row {
+                font-size: 11.5px;
+            }
+
+            .hud-pill {
+                font-size: 12px;
+                padding: 1px 6px;
+            }
+
+            select {
+                padding: 7px 9px;
+                font-size: 12px;
+                border-radius: 9px;
+            }
+
+            .sweet-spot-box {
+                padding: 6px 9px;
+                font-size: 10.5px;
+                line-height: 1.35;
+                gap: 6px;
+                border-radius: 9px;
+            }
+
+            .sweet-spot-icon-wrap {
+                width: 20px;
+                height: 20px;
+            }
+
+            input[type="range"] {
+                height: 7px;
+                margin: 4px 0;
+            }
+
+            input[type="range"]::-webkit-slider-thumb {
+                width: 20px;
+                height: 20px;
+            }
+
+            .preset-chips {
+                gap: 4px;
+                margin-top: 1px;
+            }
+
+            .chip-btn {
+                padding: 4px 6px;
+                font-size: 9.5px;
+                border-radius: 6px;
+            }
+
+            /* Ladeleistung & Steppers im Halbbildschirm */
+            .power-grid {
+                gap: 4px;
+            }
+
+            .power-btn {
+                padding: 5px 3px;
+                border-radius: 8px;
+            }
+
+            .power-btn-val {
+                font-size: 11.5px;
+            }
+
+            .power-btn-sub {
+                font-size: 7.5px;
+            }
+
+            .power-fine-row {
+                padding: 2px 5px;
+            }
+
+            .power-fine-label {
+                font-size: 9.5px;
+            }
+
+            .step-btn-mini {
+                width: 18px;
+                height: 18px;
+                font-size: 12px;
+            }
+
+            .cockpit-stepper-mini input {
+                font-size: 11px;
+                width: 32px;
+            }
+
+            .cockpit-stepper {
+                padding: 2.5px 4px;
+                border-radius: 9px;
+            }
+
+            .step-btn {
+                width: 22px;
+                height: 22px;
+                font-size: 13px;
+                border-radius: 6px;
+            }
+
+            .stepper-center input {
+                font-size: 12px;
+                width: 34px;
+            }
+
+            .stepper-unit {
+                font-size: 9px;
+            }
+
+            .battery-gauge-card {
+                padding: 9px 11px;
+                gap: 6px;
+                border-radius: 12px;
+            }
+
+            .gauge-label {
+                font-size: 10.5px;
+            }
+
+            .gauge-charged-text {
+                font-size: 12px;
+            }
+
+            .battery-outer-frame {
+                height: 30px;
+                padding: 2.5px;
+                border-radius: 9px;
+            }
+
+            .battery-outer-frame::after {
+                right: -6px;
+                width: 3.5px;
+                height: 12px;
+            }
+
+            .battery-scale {
+                font-size: 8.5px;
+            }
+
+            .finish-hero {
+                padding: 8px 10px;
+                border-radius: 12px;
+                gap: 1px;
+            }
+
+            .finish-label {
+                font-size: 9.5px;
+            }
+
+            .finish-time-giant {
+                font-size: 23px;
+                margin: 0;
+            }
+
+            .day-diff-badge {
+                font-size: 10px;
+                padding: 1px 5px;
+            }
+
+            .finish-duration-badge {
+                font-size: 11px;
+                padding: 2px 7px;
+            }
+
+            .metrics-grid {
+                gap: 7px;
+            }
+
+            .metric-tile {
+                padding: 7px 8px;
+                gap: 7px;
+                border-radius: 9px;
+            }
+
+            .metric-icon-wrap {
+                width: 25px;
+                height: 25px;
+                border-radius: 6px;
+            }
+
+            .metric-name {
+                font-size: 9.5px;
+            }
+
+            .metric-val {
+                font-size: 15px;
+            }
+
+            .metric-sub {
+                font-size: 9.5px;
+            }
+
+            .alert-box {
+                padding: 7px 9px;
+                font-size: 10.5px;
+                line-height: 1.3;
+                gap: 6px;
+                border-radius: 9px;
+            }
+
+            footer {
+                margin-top: 14px;
+                font-size: 10px;
+            }
+        }
+
+        /* ========================================================
+           SCHMALE MOBIL-ANSICHT (< 619px)
+           ======================================================== */
+        @media (max-width: 619px) {
+            .top-spacer {
+                display: none;
+            }
+
+            .layout-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .finish-time-giant {
+                font-size: 26px;
+            }
         }
     </style>
 </head>
 <body>
 
+    <!-- Header -->
     <div class="top-bar">
         <a href="index.html" class="back-btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
             Dashboard
         </a>
-        <h1 class="page-title">Tesla AC-Laderechner</h1>
-        <div style="width: 70px;"></div>
+        <h1 class="page-title">
+            <div class="title-bolt-wrap">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+            Tesla AC-Laderechner
+        </h1>
+        <div class="top-spacer"></div>
     </div>
 
-    <div class="calc-container">
-        <div class="card" id="mainCard">
+    <!-- 2-Spalten Breitbild & Tesla-Halbbildschirm Layout -->
+    <div class="layout-grid">
+
+        <!-- LINKE SPALTE: EINSTELLUNGEN -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9L2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+                    Fahrzeug & Akku
+                </span>
+                <span id="battTypeBadge" class="badge-type badge-lfp">LFP Akku</span>
+            </div>
+
             <div class="input-group">
-                <label for="batteryProfile">
-                    <span>Tesla Akku-Profil</span>
-                    <span id="battTypeBadge" class="optimum-badge">LFP Akku</span>
+                <label class="input-label-row" for="batteryProfile">
+                    <span>Modell & Batteriegröße</span>
                 </label>
                 <select id="batteryProfile" onchange="onProfileChange()">
-                    <option value="60" data-min="16" data-max="84" data-info="LFP-Optimum (SoH-schonend): 16% bis 84%. Darunter fällt die Zellspannung extrem steil ab, darüber schießt die Kurve steil nach oben. (Hinweis: Für das BMS gelegentlich auf 100% vollladen!)" data-type="lfp">Model 3 / Y RWD (LFP ~60 kWh)</option>
-                    <option value="79" data-min="20" data-max="80" data-info="NMC/NCA-Optimum (SoH-schonend): 20% bis 80%. Vermeidet die extremen Spannungsspitzen an den Rändern für minimale chemische Degradation." data-type="nmc">Model 3 / Y Long Range / Performance (NMC ~79 kWh)</option>
-                    <option value="100" data-min="20" data-max="80" data-info="Model S / X (NMC ~100 kWh): 20% bis 80% empfohlen für den täglichen Pendelverkehr zur Schonung der Zellen." data-type="nmc">Model S / X Long Range & Plaid (NMC ~100 kWh)</option>
-                    <option value="55" data-min="15" data-max="85" data-info="Älteres LFP-Profil: Ca. 15% bis 85% als flacher, stressfreier Arbeitsbereich im Spannungsverlauf." data-type="lfp">Model 3 SR+ älteren Baujahrs (LFP ~55 kWh)</option>
+                    <option value="60" data-min="16" data-max="84" data-info="LFP-Optimum: 16% bis 84% (flache Zellkurve). Für das BMS gelegentlich auf 100% vollladen!" data-type="lfp">Model 3 / Y RWD (LFP ~60 kWh)</option>
+                    <option value="79" data-min="20" data-max="80" data-info="NMC-Optimum: 20% bis 80%. Vermeidet Zellstress und minimiert chemische Degradation." data-type="nmc">Model 3 / Y LR & Perf (NMC ~79 kWh)</option>
+                    <option value="100" data-min="20" data-max="80" data-info="NMC-Optimum: 20% bis 80% empfohlen für den täglichen Pendelverkehr." data-type="nmc">Model S / X Plaid/LR (NMC ~100 kWh)</option>
+                    <option value="55" data-min="15" data-max="85" data-info="Älteres LFP-Profil: Ca. 15% bis 85% als flacher, schonender Arbeitsbereich." data-type="lfp">Model 3 SR+ älter (LFP ~55 kWh)</option>
                 </select>
             </div>
 
-            <!-- Akku-Info / Sweet Spot Box -->
+            <!-- Tesla BMS Assist Box -->
             <div class="sweet-spot-box" id="sweetSpotBox">
-                <span class="icon">💡</span>
-                <span id="sweetSpotText">Lade Info...</span>
+                <div class="sweet-spot-icon-wrap">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.3"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </div>
+                <div class="sweet-spot-body">
+                    <span class="sweet-spot-title">BMS Empfehlung</span>
+                    <span id="sweetSpotText">Lade-Empfehlung wird geladen...</span>
+                </div>
             </div>
 
-            <div class="input-group">
-                <label>
-                    <span>Start Akkustand (SoC)</span>
-                    <span class="range-val-container">
-                        <span id="startVal">16 %</span>
-                        <span id="battIconStart"></span>
-                    </span>
-                </label>
+            <!-- Start SoC Slider mit HUD-Pill -->
+            <div class="input-group slider-wrapper">
+                <div class="input-label-row">
+                    <span>Start Akkustand</span>
+                    <span id="startVal" class="hud-pill hud-start">16 %</span>
+                </div>
                 <input type="range" id="startSoc" min="0" max="99" value="16" oninput="updateValues()">
             </div>
 
-            <div class="input-group">
-                <label>
-                    <span>Ziel Akkustand (SoC)</span>
-                    <span class="range-val-container">
-                        <span id="targetVal">84 %</span>
-                        <span id="battIconTarget"></span>
-                    </span>
-                </label>
+            <!-- Ziel SoC Slider mit HUD-Pill & 1-Klick Presets -->
+            <div class="input-group slider-wrapper">
+                <div class="input-label-row">
+                    <span>Ziel Akkustand</span>
+                    <span id="targetVal" class="hud-pill hud-target">84 %</span>
+                </div>
                 <input type="range" id="targetSoc" min="1" max="100" value="84" oninput="updateValues()">
-            </div>
-
-            <div class="input-row">
-                <div class="input-group" style="flex: 1;">
-                    <label for="chargePowerSelect">Ladeleistung (AC)</label>
-                    <select id="chargePowerSelect" onchange="calculate()">
-                        <option value="11.0" selected>11 kW (Standard Wallbox / Säule)</option>
-                        <option value="22.0">22 kW (Doppellader / Model S alt)</option>
-                        <option value="3.7">3,7 kW (1-phasig 16A blau / Camping)</option>
-                        <option value="2.3">2,3 kW (Schuko Notladekabel 10A)</option>
-                    </select>
-                </div>
-                <div class="input-group" style="flex: 1;">
-                    <label for="kwhPriceCents">Strompreis (Cent / kWh)</label>
-                    <input type="number" id="kwhPriceCents" value="38" step="0.5" min="0" placeholder="z.B. 38" oninput="calculate()">
+                <div class="preset-chips">
+                    <button class="chip-btn" onclick="setTargetPreset(50)">50%</button>
+                    <button class="chip-btn" onclick="setTargetPreset(70)">70%</button>
+                    <button class="chip-btn" onclick="setTargetPreset(80)" title="NMC Empfehlung">80% <span class="chip-sub">NMC</span></button>
+                    <button class="chip-btn" onclick="setTargetPreset(84)" title="LFP Empfehlung">84% <span class="chip-sub">LFP</span></button>
+                    <button class="chip-btn" onclick="setTargetPreset(90)">90%</button>
+                    <button class="chip-btn" onclick="setTargetPreset(100)" title="Trip">100%</button>
                 </div>
             </div>
 
-            <div class="input-row">
-                <div class="input-group" style="flex: 1;">
-                    <label for="blockLimit">Max. Standzeit (Min)</label>
-                    <input type="number" id="blockLimit" value="240" step="10" min="0" placeholder="z.B. 240 Min" oninput="calculate()">
+            <div style="border-top: 1px solid var(--border-color); margin: 2px 0;"></div>
+
+            <!-- MODERNE COCKPIT LADELEISTUNG CONSOLE -->
+            <div class="input-group">
+                <div class="input-label-row">
+                    <span>Ladeleistung</span>
+                    <span class="power-spec-badge" id="powerSpecBadge">AC 3-phasig • 16A</span>
                 </div>
-                <div class="input-group" style="flex: 1;">
-                    <label for="blockFeeCents">Blockiergebühr (Cent / Min)</label>
-                    <input type="number" id="blockFeeCents" value="10" step="1" min="0" placeholder="z.B. 10" oninput="calculate()">
+                
+                <!-- 4 Taktile Cockpit-Power-Buttons -->
+                <div class="power-grid">
+                    <button type="button" class="power-btn active" data-power="11.0" onclick="setPower(11.0)">
+                        <span class="power-btn-val">11 kW</span>
+                        <span class="power-btn-sub">Standard</span>
+                    </button>
+                    <button type="button" class="power-btn" data-power="22.0" onclick="setPower(22.0)">
+                        <span class="power-btn-val">22 kW</span>
+                        <span class="power-btn-sub">Doppel</span>
+                    </button>
+                    <button type="button" class="power-btn" data-power="3.7" onclick="setPower(3.7)">
+                        <span class="power-btn-val">3,7 kW</span>
+                        <span class="power-btn-sub">Camping</span>
+                    </button>
+                    <button type="button" class="power-btn" data-power="2.3" onclick="setPower(2.3)">
+                        <span class="power-btn-val">2,3 kW</span>
+                        <span class="power-btn-sub">Schuko</span>
+                    </button>
+                </div>
+
+                <!-- Feinjustierung Stepper -->
+                <div class="power-fine-row">
+                    <span class="power-fine-label">Feinjustierung:</span>
+                    <div class="cockpit-stepper-mini">
+                        <button type="button" class="step-btn-mini" onclick="stepPower(-0.5)">−</button>
+                        <input type="number" id="chargePowerInput" value="11.0" step="0.1" min="1.0" max="22.0" oninput="onCustomPowerInput()">
+                        <span class="step-unit-mini">kW</span>
+                        <button type="button" class="step-btn-mini" onclick="stepPower(0.5)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strompreis & Standzeit mit Cockpit-Steppern -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <!-- STROMPREIS -->
+                <div class="input-group">
+                    <div class="input-label-row">
+                        <span>Strompreis</span>
+                    </div>
+                    <div class="cockpit-stepper">
+                        <button type="button" class="step-btn" onclick="stepPrice(-1)">−</button>
+                        <div class="stepper-center">
+                            <input type="number" id="kwhPriceCents" value="38" step="0.5" min="0" oninput="calculate()">
+                            <span class="stepper-unit">ct/kWh</span>
+                        </div>
+                        <button type="button" class="step-btn" onclick="stepPrice(1)">+</button>
+                    </div>
+                </div>
+
+                <!-- STANDZEIT LIMIT -->
+                <div class="input-group">
+                    <div class="input-label-row">
+                        <span>Standzeit-Limit</span>
+                    </div>
+                    <div class="cockpit-stepper">
+                        <button type="button" class="step-btn" onclick="stepLimit(-30)">−</button>
+                        <div class="stepper-center">
+                            <input type="number" id="blockLimit" value="240" step="10" min="0" oninput="calculate()">
+                            <span class="stepper-unit">Min.</span>
+                        </div>
+                        <button type="button" class="step-btn" onclick="stepLimit(30)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blockiergebühr mit Cockpit-Stepper & Quick Chips -->
+            <div class="input-group">
+                <div class="input-label-row">
+                    <span>Blockiergebühr (nach Ablauf)</span>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <div class="cockpit-stepper" style="flex: 1;">
+                        <button type="button" class="step-btn" onclick="stepFee(-5)">−</button>
+                        <div class="stepper-center">
+                            <input type="number" id="blockFeeCents" value="10" step="1" min="0" oninput="calculate()">
+                            <span class="stepper-unit">ct/Min.</span>
+                        </div>
+                        <button type="button" class="step-btn" onclick="stepFee(5)">+</button>
+                    </div>
+                    <div class="preset-chips" style="margin-top: 0;">
+                        <button type="button" class="chip-btn" onclick="setFee(0)">0 ct</button>
+                        <button type="button" class="chip-btn" onclick="setFee(10)">10 ct</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="card" style="gap: 12px;">
-            <div class="result-grid">
-                <div class="result-card">
-                    <span class="result-label">Benötigte Energie</span>
-                    <span class="result-value" id="resKwh">-- kWh</span>
-                    <span class="result-sub" id="resKwhNetto">Netto: -- kWh</span>
+        <!-- RECHTE SPALTE: LIVE DASHBOARD & BATTERIE-GAUGE -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20v-6M6 20V10M18 20V4"/></svg>
+                    Live Lade-Prognose
+                </span>
+                <span id="weatherInfoSub" style="font-size: 11px; color: var(--subtext-color); font-weight: 600;">Wetter: Lokal (15°C)</span>
+            </div>
+
+            <!-- VISUELLER TESLA AKKU-BALKEN MIT ENERGIE-FLOW -->
+            <div class="battery-gauge-card">
+                <div class="gauge-header">
+                    <span class="gauge-label">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="7" width="16" height="10" rx="2"/><line x1="22" y1="11" x2="22" y2="13"/></svg>
+                        Akkustand-Hub
+                    </span>
+                    <span class="gauge-charged-text" id="gaugeHubText">
+                        <span class="charge-pulse-icon">⚡</span> +68 % geladen
+                    </span>
                 </div>
-                <div class="result-card">
-                    <span class="result-label">Reale Ladezeit (inkl. Verluste)</span>
-                    <span class="result-value accent" id="resTime">-- Std.</span>
-                    <span class="result-sub" id="resEndTime">Fertig um: --:-- Uhr</span>
+                
+                <div class="battery-frame-container">
+                    <div class="battery-outer-frame">
+                        <!-- Interne Batteriezellen-Gittermarkierungen -->
+                        <div class="battery-cell-ticks"></div>
+
+                        <div class="battery-track">
+                            <!-- Start-Akkustand (Grau) -->
+                            <div class="battery-base-bar" id="batteryBaseBar" style="width: 16%;"></div>
+                            <!-- Zu ladender Teil (Grün leuchtend mit fließender Lichtwelle) -->
+                            <div class="battery-charge-bar" id="batteryChargeBar" style="left: 16%; width: 68%;">
+                                <div class="charge-shimmer-wave"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="battery-scale">
+                    <span>0%</span>
+                    <span>20%</span>
+                    <span>40%</span>
+                    <span>60%</span>
+                    <span>80%</span>
+                    <span>100%</span>
                 </div>
             </div>
 
-            <div class="result-grid">
-                <div class="result-card">
-                    <span class="result-label">Geschätzte Gesamtkosten</span>
-                    <span class="result-value" id="resCost">-- €</span>
-                    <span class="result-sub" id="resCostDetail">Inkl. Ladeverluste</span>
+            <!-- FERTIG UM COCKPIT HERO MIT LIVE-BEACON -->
+            <div class="finish-hero">
+                <div class="hero-top-status">
+                    <span class="live-beacon"></span>
+                    <span class="finish-label">Voll geladen um ca.</span>
                 </div>
-                <div class="result-card">
-                    <span class="result-label">Ladeleistung</span>
-                    <span class="result-value" style="font-size: 16px;" id="resPowerDisplay">11 kW AC</span>
-                    <span class="result-sub" id="weatherInfoSub">Wetter: Lokal (15°C)</span>
+                <div class="finish-time-row">
+                    <span class="finish-time-giant" id="resEndTime">--:-- Uhr</span>
+                    <span class="day-diff-badge" id="dayDiffBadge" style="display:none;">+1 Tag</span>
+                </div>
+                <div class="finish-duration-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span id="resTime">Dauer: -- Std. -- Min.</span>
                 </div>
             </div>
 
+            <!-- 4 KERN-METRIKEN TILES MIT BELEUCHTETEN ICONS -->
+            <div class="metrics-grid">
+                <div class="metric-tile">
+                    <div class="metric-icon-wrap icon-cyan">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    </div>
+                    <div class="metric-content">
+                        <span class="metric-name">Brutto Energie</span>
+                        <span class="metric-val" id="resKwh">-- kWh</span>
+                        <span class="metric-sub" id="resKwhNetto">Netto: -- kWh</span>
+                    </div>
+                </div>
+
+                <div class="metric-tile">
+                    <div class="metric-icon-wrap icon-emerald">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                    </div>
+                    <div class="metric-content">
+                        <span class="metric-name">Gesamtkosten</span>
+                        <span class="metric-val val-emerald" id="resCost">-- €</span>
+                        <span class="metric-sub" id="resCostDetail">Inkl. Verluste</span>
+                    </div>
+                </div>
+
+                <div class="metric-tile">
+                    <div class="metric-icon-wrap icon-blue">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    </div>
+                    <div class="metric-content">
+                        <span class="metric-name">Leistung</span>
+                        <span class="metric-val" id="resPowerDisplay">11 kW</span>
+                        <span class="metric-sub" id="resPowerPhase">AC 3-phasig</span>
+                    </div>
+                </div>
+
+                <div class="metric-tile">
+                    <div class="metric-icon-wrap icon-amber">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+                    </div>
+                    <div class="metric-content">
+                        <span class="metric-name">Ladeverlust</span>
+                        <span class="metric-val" id="lossPercentDisplay">ca. 7 %</span>
+                        <span class="metric-sub" id="lossTempText">Temperaturbasiert</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STANDZEIT ALERT STATUS MIT ICON -->
             <div id="alertBox" class="alert-box safe">
-                <span>🟢</span>
+                <div class="alert-icon-wrap">
+                    <svg id="alertSvg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
                 <span id="alertText">Ladezeit liegt im sicheren Zeitfenster.</span>
             </div>
         </div>
+
     </div>
 
     <footer>
-        Tesla AC-Laderechner &copy; 2026 McWingen
+        Tesla AC-Laderechner &copy; 2026 McWingen &bull; Optimiert für das Tesla Fahrzeug-Cockpit
     </footer>
-    
-    <svg style="display:none;">
-        <symbol id="batt-low" viewBox="0 0 64 32">
-            <path fill="none" stroke="currentColor" stroke-width="4" d="M52 4H8a4 4 0 0 0-4 4v16a4 4 0 0 0 4 4h44a4 4 0 0 0 4-4V8a4 4 0 0 0-4-4zm4 8h4v8h-4z"/>
-            <path fill="currentColor" d="M10 10h8v12h-8z"/>
-        </symbol>
-        <symbol id="batt-25" viewBox="0 0 64 32">
-            <path fill="none" stroke="currentColor" stroke-width="4" d="M52 4H8a4 4 0 0 0-4 4v16a4 4 0 0 0 4 4h44a4 4 0 0 0 4-4V8a4 4 0 0 0-4-4zm4 8h4v8h-4z"/>
-            <path fill="currentColor" d="M10 10h16v12h-16z"/>
-        </symbol>
-        <symbol id="batt-50" viewBox="0 0 64 32">
-            <path fill="none" stroke="currentColor" stroke-width="4" d="M52 4H8a4 4 0 0 0-4 4v16a4 4 0 0 0 4 4h44a4 4 0 0 0 4-4V8a4 4 0 0 0-4-4zm4 8h4v8h-4z"/>
-            <path fill="currentColor" d="M10 10h24v12h-24z"/>
-        </symbol>
-        <symbol id="batt-75" viewBox="0 0 64 32">
-            <path fill="none" stroke="currentColor" stroke-width="4" d="M52 4H8a4 4 0 0 0-4 4v16a4 4 0 0 0 4 4h44a4 4 0 0 0 4-4V8a4 4 0 0 0-4-4zm4 8h4v8h-4z"/>
-            <path fill="currentColor" d="M10 10h32v12h-32z"/>
-        </symbol>
-        <symbol id="batt-100" viewBox="0 0 64 32">
-            <path fill="none" stroke="currentColor" stroke-width="4" d="M52 4H8a4 4 0 0 0-4 4v16a4 4 0 0 0 4 4h44a4 4 0 0 0 4-4V8a4 4 0 0 0-4-4zm4 8h4v8h-4z"/>
-            <path fill="currentColor" d="M10 10h40v12h-40z"/>
-        </symbol>
-    </svg>
 
     <script>
         let currentLossFactor = 1.07;
+        let currentChargePower = 11.0;
 
         function fetchWeatherLossFactor() {
             let city = localStorage.getItem('tesla_dashboard_city') || 'Lünen';
@@ -463,18 +1703,23 @@
         }
 
         function calculateLossFactor(temp) {
+            let tempRound = Math.round(temp);
             if (temp > 20) {
                 currentLossFactor = 1.04;
-                document.getElementById('weatherInfoSub').innerText = `Wetter: ${Math.round(temp)}°C (Sommer)`;
+                document.getElementById('weatherInfoSub').innerText = `Wetter: ${tempRound}°C (Sommer)`;
+                document.getElementById('lossPercentDisplay').innerText = `ca. 4 %`;
             } else if (temp >= 10) {
                 currentLossFactor = 1.07;
-                document.getElementById('weatherInfoSub').innerText = `Wetter: ${Math.round(temp)}°C (Mild)`;
+                document.getElementById('weatherInfoSub').innerText = `Wetter: ${tempRound}°C (Mild)`;
+                document.getElementById('lossPercentDisplay').innerText = `ca. 7 %`;
             } else if (temp >= 0) {
                 currentLossFactor = 1.12;
-                document.getElementById('weatherInfoSub').innerText = `Wetter: ${Math.round(temp)}°C (Kühl)`;
+                document.getElementById('weatherInfoSub').innerText = `Wetter: ${tempRound}°C (Kühl)`;
+                document.getElementById('lossPercentDisplay').innerText = `ca. 12 %`;
             } else {
                 currentLossFactor = 1.18;
-                document.getElementById('weatherInfoSub').innerText = `Wetter: ${Math.round(temp)}°C (Frost)`;
+                document.getElementById('weatherInfoSub').innerText = `Wetter: ${tempRound}°C (Frost)`;
+                document.getElementById('lossPercentDisplay').innerText = `ca. 18 %`;
             }
         }
 
@@ -488,14 +1733,10 @@
             let badge = document.getElementById('battTypeBadge');
             if (battType === 'nmc') {
                 badge.innerText = 'NMC Akku';
-                badge.style.color = '#38bdf8';
-                badge.style.backgroundColor = 'rgba(56, 189, 248, 0.15)';
-                badge.style.borderColor = 'rgba(56, 189, 248, 0.3)';
+                badge.className = 'badge-type badge-nmc';
             } else {
                 badge.innerText = 'LFP Akku';
-                badge.style.color = '#34d399';
-                badge.style.backgroundColor = 'rgba(52, 211, 153, 0.15)';
-                badge.style.borderColor = 'rgba(52, 211, 153, 0.3)';
+                badge.className = 'badge-type badge-lfp';
             }
         }
 
@@ -513,15 +1754,13 @@
             updateSweetSpotInfo();
         }
 
-        function getBattIconHtml(soc) {
-            let iconId, iconClass;
-            if (soc <= 5) { iconId = 'batt-low'; iconClass = 'batt-0'; }
-            else if (soc <= 25) { iconId = 'batt-25'; iconClass = 'batt-25'; }
-            else if (soc <= 50) { iconId = 'batt-50'; iconClass = 'batt-50'; }
-            else if (soc <= 75) { iconId = 'batt-75'; iconClass = 'batt-75'; }
-            else { iconId = 'batt-100'; iconClass = 'batt-100'; }
-            
-            return `<svg class="batt-icon ${iconClass}"><use href="#${iconId}" xlink:href="#${iconId}"></use></svg>`;
+        function setTargetPreset(val) {
+            let start = parseInt(document.getElementById('startSoc').value);
+            if (val <= start) {
+                document.getElementById('startSoc').value = Math.max(0, val - 10);
+            }
+            document.getElementById('targetSoc').value = val;
+            updateValues();
         }
 
         function updateValues() {
@@ -533,15 +1772,112 @@
                 target = start + 1;
             }
 
-            let startText = start === 0 ? "Leer (0 %)" : start + " %";
-            let targetText = target === 100 ? "Voll (100 %)" : target + " %";
+            document.getElementById('startVal').innerText = start + " %";
+            document.getElementById('targetVal').innerText = target + " %";
 
-            document.getElementById('startVal').innerText = startText;
-            document.getElementById('targetVal').innerText = targetText;
+            // Dynamische Neon-Füllung der Slider-Spuren
+            document.getElementById('startSoc').style.setProperty('--start-pct', start + '%');
+            document.getElementById('targetSoc').style.setProperty('--target-pct', target + '%');
+
+            // Visuelle Batterie aktualisieren
+            let hub = target - start;
+            document.getElementById('batteryBaseBar').style.width = start + "%";
+            document.getElementById('batteryChargeBar').style.left = start + "%";
+            document.getElementById('batteryChargeBar').style.width = hub + "%";
+            document.getElementById('gaugeHubText').innerHTML = `<span class="charge-pulse-icon">⚡</span> +${hub} % geladen`;
+
+            // Preset-Buttons Highlighting
+            document.querySelectorAll('.chip-btn').forEach(btn => {
+                let pVal = parseInt(btn.innerText);
+                if (pVal === target) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
             
-            document.getElementById('battIconStart').innerHTML = getBattIconHtml(start);
-            document.getElementById('battIconTarget').innerHTML = getBattIconHtml(target);
-            
+            calculate();
+        }
+
+        /* Ladeleistung Cockpit-Funktionen */
+        function setPower(val) {
+            currentChargePower = val;
+            document.getElementById('chargePowerInput').value = val.toFixed(1);
+            updatePowerUI();
+            calculate();
+        }
+
+        function stepPower(delta) {
+            let newPower = Math.round((currentChargePower + delta) * 10) / 10;
+            if (newPower < 1.0) newPower = 1.0;
+            if (newPower > 22.0) newPower = 22.0;
+            currentChargePower = newPower;
+            document.getElementById('chargePowerInput').value = newPower.toFixed(1);
+            updatePowerUI();
+            calculate();
+        }
+
+        function onCustomPowerInput() {
+            let val = parseFloat(document.getElementById('chargePowerInput').value);
+            if (!isNaN(val) && val >= 1.0 && val <= 22.0) {
+                currentChargePower = val;
+                updatePowerUI();
+                calculate();
+            }
+        }
+
+        function updatePowerUI() {
+            document.querySelectorAll('.power-btn').forEach(btn => {
+                let p = parseFloat(btn.getAttribute('data-power'));
+                if (Math.abs(p - currentChargePower) < 0.05) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            let badge = document.getElementById('powerSpecBadge');
+            if (currentChargePower === 11.0) {
+                badge.innerText = 'AC 3-phasig • 16A';
+            } else if (currentChargePower === 22.0) {
+                badge.innerText = 'AC 3-phasig • 32A';
+            } else if (currentChargePower === 3.7) {
+                badge.innerText = 'AC 1-phasig • 16A';
+            } else if (currentChargePower === 2.3) {
+                badge.innerText = 'AC 1-phasig • 10A';
+            } else {
+                let phase = currentChargePower >= 11.0 ? '3-phasig' : '1-phasig';
+                badge.innerText = `Individuell • ${phase}`;
+            }
+        }
+
+        /* Stepper Funktionen für Preis, Standzeit & Gebühr */
+        function stepPrice(delta) {
+            let inp = document.getElementById('kwhPriceCents');
+            let val = parseFloat(inp.value) || 0;
+            val = Math.max(0, Math.round((val + delta) * 10) / 10);
+            inp.value = val;
+            calculate();
+        }
+
+        function stepLimit(delta) {
+            let inp = document.getElementById('blockLimit');
+            let val = parseInt(inp.value) || 0;
+            val = Math.max(0, val + delta);
+            inp.value = val;
+            calculate();
+        }
+
+        function stepFee(delta) {
+            let inp = document.getElementById('blockFeeCents');
+            let val = parseFloat(inp.value) || 0;
+            val = Math.max(0, val + delta);
+            inp.value = val;
+            calculate();
+        }
+
+        function setFee(val) {
+            document.getElementById('blockFeeCents').value = val;
             calculate();
         }
 
@@ -549,12 +1885,13 @@
             let netCapacity = parseFloat(document.getElementById('batteryProfile').value) || 60;
             let start = parseInt(document.getElementById('startSoc').value) || 0;
             let target = parseInt(document.getElementById('targetSoc').value) || 100;
-            let chargePower = parseFloat(document.getElementById('chargePowerSelect').value) || 11.0;
+            let chargePower = currentChargePower;
             let pricePerKwhCents = parseFloat(document.getElementById('kwhPriceCents').value) || 0;
             let maxMinutes = parseInt(document.getElementById('blockLimit').value) || 0;
             let blockFeeCentsPerMin = parseFloat(document.getElementById('blockFeeCents').value) || 0;
 
-            document.getElementById('resPowerDisplay').innerText = `${chargePower.toFixed(1).replace('.0', '')} kW AC`;
+            document.getElementById('resPowerDisplay').innerText = `${chargePower.toFixed(1).replace('.0', '')} kW`;
+            document.getElementById('resPowerPhase').innerText = chargePower >= 11 ? "AC 3-phasig" : "AC 1-phasig";
 
             let socDiff = target - start;
             if (socDiff < 0) socDiff = 0;
@@ -562,7 +1899,7 @@
             let netKwh = (netCapacity * socDiff) / 100;
             let kwhWithLosses = netKwh * currentLossFactor;
 
-            // KORRIGIERTE FORMEL: Die Ladesäule muss die Bruttoenergie (inkl. Ladeverluste) liefern!
+            // Ladesäule liefert Brutto-Energie (kwhWithLosses)
             let hoursTotal = kwhWithLosses / chargePower;
             let totalMinutes = Math.round(hoursTotal * 60);
             let hrs = Math.floor(totalMinutes / 60);
@@ -573,12 +1910,18 @@
             let finishHours = String(finishTime.getHours()).padStart(2, '0');
             let finishMinutes = String(finishTime.getMinutes()).padStart(2, '0');
 
-            let dayDiff = finishTime.getDate() !== now.getDate() ? " (+1 Tag)" : "";
+            let dayDiffBadge = document.getElementById('dayDiffBadge');
+            if (finishTime.getDate() !== now.getDate()) {
+                dayDiffBadge.style.display = 'inline-flex';
+            } else {
+                dayDiffBadge.style.display = 'none';
+            }
 
             let energyCost = (kwhWithLosses * pricePerKwhCents) / 100;
             let blockFeeTotal = 0;
             let alertBox = document.getElementById('alertBox');
             let alertText = document.getElementById('alertText');
+            let alertSvg = document.getElementById('alertSvg');
 
             if (maxMinutes > 0) {
                 if (totalMinutes > maxMinutes) {
@@ -587,33 +1930,33 @@
                         blockFeeTotal = (overMins * blockFeeCentsPerMin) / 100;
                     }
                     alertBox.className = 'alert-box warning';
-                    alertBox.querySelector('span').innerText = '⚠️';
+                    alertSvg.innerHTML = '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>';
                     let feeInfo = blockFeeTotal > 0 ? ` (+ ${blockFeeTotal.toFixed(2)} € Blockiergebühr)` : '';
                     alertText.innerText = `Achtung! Ladezeit überschreitet Standzeit-Limit um ca. ${overMins} Min.${feeInfo}`;
                 } else {
                     let buffer = maxMinutes - totalMinutes;
                     alertBox.className = 'alert-box safe';
-                    alertBox.querySelector('span').innerText = '🟢';
+                    alertSvg.innerHTML = '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>';
                     alertText.innerText = `Alles sicher! Ca. ${buffer} Minuten Puffer vor Ablauf der Standzeit.`;
                 }
             } else {
                 alertBox.className = 'alert-box safe';
-                alertBox.querySelector('span').innerText = 'ℹ️';
-                alertText.innerText = `Kein Standzeit-Limit hinterlegt. Berechnung basiert auf ${chargePower} kW AC.`;
+                alertSvg.innerHTML = '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>';
+                alertText.innerText = `Kein Standzeit-Limit hinterlegt. Ladezeit basiert auf ${chargePower} kW AC.`;
             }
 
             let totalCost = energyCost + blockFeeTotal;
 
             document.getElementById('resKwh').innerText = kwhWithLosses.toFixed(1) + ' kWh';
-            document.getElementById('resKwhNetto').innerText = `Netto im Akku: ${netKwh.toFixed(1)} kWh`;
-            document.getElementById('resTime').innerText = hrs > 0 ? `${hrs} Std. ${mins} Min.` : `${mins} Min.`;
-            document.getElementById('resEndTime').innerText = `Fertig um: ${finishHours}:${finishMinutes} Uhr${dayDiff}`;
+            document.getElementById('resKwhNetto').innerText = `Netto: ${netKwh.toFixed(1)} kWh`;
+            document.getElementById('resTime').innerText = hrs > 0 ? `Dauer: ${hrs} Std. ${mins} Min.` : `Dauer: ${mins} Min.`;
+            document.getElementById('resEndTime').innerText = `${finishHours}:${finishMinutes} Uhr`;
             document.getElementById('resCost').innerText = totalCost.toFixed(2) + ' €';
             
             if (blockFeeTotal > 0) {
                 document.getElementById('resCostDetail').innerText = `Inkl. ${blockFeeTotal.toFixed(2)} € Blockiergebühr`;
             } else {
-                document.getElementById('resCostDetail').innerText = `Inkl. Ladeverluste (${Math.round((currentLossFactor - 1) * 100)}%)`;
+                document.getElementById('resCostDetail').innerText = `Inkl. Verluste (${Math.round((currentLossFactor - 1) * 100)}%)`;
             }
         }
 
