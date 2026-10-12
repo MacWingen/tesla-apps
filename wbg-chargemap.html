@@ -6,27 +6,23 @@
     <title>WBG Chargemap</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #090d16; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
-        #map { width: 100%; height: 100%; min-height: 300px; background: #0b0f19; }
         input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 8px; background: #1e2029; outline: none; margin: 3px 0; }
         input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #ffffff; cursor: pointer; border: 2px solid #10b981; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
     </style>
 </head>
-<body class="bg-gray-950 text-gray-100 h-screen flex flex-col md:flex-row overflow-hidden">
+<body class="bg-gray-950 text-gray-100 h-screen flex flex-col items-center justify-center overflow-hidden">
 
-    <!-- Sidebar / Steuerung -->
-    <aside class="w-full md:w-[480px] bg-gray-900 border-r border-gray-800 flex flex-col h-full z-10 shadow-2xl shrink-0">
-        <!-- Header -->
-        <div class="p-4 border-b border-gray-800 flex items-center justify-between bg-gray-900/50 backdrop-blur">
+    <!-- Hauptcontainer (Füllt den Bildschirm exakt aus, kein ungewolltes Body-Scrollen) -->
+    <div class="w-full h-full max-w-2xl bg-gray-900 border-x border-gray-800 flex flex-col shadow-2xl overflow-hidden">
+        
+        <!-- Header (Fixiert) -->
+        <div class="p-4 border-b border-gray-800 flex items-center justify-between bg-gray-900/90 backdrop-blur shrink-0">
             <div class="flex items-center space-x-3">
                 <div class="bg-emerald-500/10 border border-emerald-500/30 p-2.5 rounded-xl text-emerald-400">
                     <i class="fa-solid fa-bolt text-xl"></i>
@@ -42,8 +38,8 @@
             </div>
         </div>
 
-        <!-- UNIVERSAL LADE- & WETTER-RECHNER -->
-        <div class="p-3 bg-gray-950 border-b border-gray-800 space-y-2 text-xs">
+        <!-- UNIVERSAL LADE- & WETTER-RECHNER (Fixiert) -->
+        <div class="p-3 bg-gray-950 border-b border-gray-800 space-y-2 text-xs shrink-0">
             <div class="flex items-center justify-between font-semibold text-gray-300">
                 <span class="flex items-center space-x-1.5 text-emerald-400">
                     <i class="fa-solid fa-calculator"></i>
@@ -61,7 +57,6 @@
                         <span>kWh</span>
                     </div>
                 </div>
-                <!-- Schnellwahl-Buttons für gängige Akkutypen -->
                 <div class="grid grid-cols-4 gap-1.5 pt-0.5">
                     <button onclick="setBatterySize(40)" class="bg-gray-900 hover:bg-gray-800 border border-gray-800 text-gray-300 py-1 rounded text-[10px] transition">40 kWh</button>
                     <button onclick="setBatterySize(60)" class="bg-gray-900 hover:bg-gray-800 border border-gray-800 text-gray-300 py-1 rounded text-[10px] transition">60 kWh</button>
@@ -83,8 +78,8 @@
             </div>
         </div>
 
-        <!-- PLZ & Standort Eingabe -->
-        <div class="p-3 border-b border-gray-800 space-y-2.5 bg-gray-900/30">
+        <!-- PLZ & Standort Eingabe (Fixiert) -->
+        <div class="p-3 border-b border-gray-800 space-y-2.5 bg-gray-900/30 shrink-0">
             <div class="relative">
                 <input type="text" id="searchInput" placeholder="PLZ oder Ort eingeben..." value="Winkel 13, 44536 Lünen"
                     class="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-2.5 pl-9 text-xs focus:outline-none focus:border-emerald-500 transition">
@@ -94,14 +89,13 @@
                 </button>
             </div>
             
-            <!-- Schnellauswahl-Pillen -->
             <div class="flex items-center space-x-1.5 overflow-x-auto pb-1 text-[11px] custom-scrollbar">
                 <span class="text-gray-500 font-medium shrink-0 mr-1">Schnell:</span>
-                <button onclick="jumpToCity('Lünen', 51.6074, 7.5286, 14)" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-2.5 py-1 rounded-md shrink-0 transition">Lünen</button>
-                <button onclick="jumpToCity('Kamen', 51.5865, 7.6600, 14)" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-2.5 py-1 rounded-md shrink-0 transition">Kamen</button>
-                <button onclick="jumpToCity('Werne', 51.6620, 7.6350, 14)" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-2.5 py-1 rounded-md shrink-0 transition">Werne</button>
-                <button onclick="jumpToCity('Bergkamen', 51.6150, 7.6300, 14)" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-2.5 py-1 rounded-md shrink-0 transition">Bergkamen</button>
-                <button onclick="jumpToCity('Selm', 51.7080, 7.4650, 14)" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-2.5 py-1 rounded-md shrink-0 transition">Selm</button>
+                <button onclick="setBaseLocation('Lünen', 51.6074, 7.5286)" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-2.5 py-1 rounded-md shrink-0 transition">Lünen</button>
+                <button onclick="setBaseLocation('Kamen', 51.5865, 7.6600)" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-2.5 py-1 rounded-md shrink-0 transition">Kamen</button>
+                <button onclick="setBaseLocation('Werne', 51.6620, 7.6350)" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-2.5 py-1 rounded-md shrink-0 transition">Werne</button>
+                <button onclick="setBaseLocation('Bergkamen', 51.6150, 7.6300)" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-2.5 py-1 rounded-md shrink-0 transition">Bergkamen</button>
+                <button onclick="setBaseLocation('Selm', 51.7080, 7.4650)" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-2.5 py-1 rounded-md shrink-0 transition">Selm</button>
             </div>
 
             <div class="flex items-center justify-between text-xs pt-1 border-t border-gray-800/50">
@@ -113,8 +107,8 @@
             </div>
         </div>
 
-        <!-- Status & Zähler -->
-        <div class="px-4 py-2 bg-gray-950 border-b border-gray-800 flex items-center justify-between text-xs">
+        <!-- Status & Zähler (Fixiert) -->
+        <div class="px-4 py-2 bg-gray-950 border-b border-gray-800 flex items-center justify-between text-xs shrink-0">
             <span id="stationCount" class="text-gray-400 font-medium">Lade Standorte...</span>
             <button id="refreshBtn" class="bg-gray-800 hover:bg-gray-700 text-gray-200 px-2.5 py-1 rounded-lg flex items-center space-x-1.5 transition">
                 <i class="fa-solid fa-rotate"></i>
@@ -122,27 +116,21 @@
             </button>
         </div>
 
-        <!-- Stationsliste & Dynamisches Favoriten-Menü -->
+        <!-- Stationsliste (Nimmt den restlichen Platz ein und ist komplett scrollbar) -->
         <div id="stationList" class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-3">
             <!-- Wird dynamisch befüllt -->
         </div>
-    </aside>
 
-    <!-- Karte -->
-    <main class="flex-1 h-full relative">
-        <div id="map"></div>
-    </main>
+    </div>
 
     <!-- JavaScript Logik -->
     <script>
         let userLat = 51.5974;
         let userLon = 7.4561; 
-        let map, markersLayer = L.layerGroup();
         let wbgStations = [];
         let favorites = JSON.parse(localStorage.getItem('wbg_favorites')) || [];
-        let currentLossFactor = 1.07; // Standard mild (7% Verlust)
+        let currentLossFactor = 1.07;
 
-        // Feinjustierte, korrigierte Koordinaten für Lünen und Umgebung
         const rawWbgData = [
             { id: 'winkel13', title: 'Winkel 13 (Deine Säule)', address: 'Winkel 13, 44536 Lünen', lat: 51.5974, lon: 7.4561, power: '11 kW AC', price: 0.38, custom: true },
             { id: 'asternweg2', title: 'Asternweg 2', address: 'Asternweg 2, 44536 Lünen', lat: 51.6234, lon: 7.5112, power: '11 kW AC', price: 0.38 },
@@ -167,33 +155,18 @@
             { id: 'campus', title: 'Campus 6 b/c (Selm)', address: 'Campus 6 b/c, 59379 Selm', lat: 51.7092, lon: 7.4675, power: '11 kW AC', price: 0.38 }
         ];
 
-        function initMap() {
+        function initApp() {
             const savedLat = parseFloat(localStorage.getItem('wbg_lat'));
             const savedLon = parseFloat(localStorage.getItem('wbg_lon'));
             const savedPlz = localStorage.getItem('wbg_plz');
 
-            if (savedLat && savedLon && savedLat > 49 && savedLat < 54 && savedLon > 6 && savedLon < 10) {
+            if (savedLat && savedLon) {
                 userLat = savedLat;
                 userLon = savedLon;
                 if (savedPlz) document.getElementById('searchInput').value = savedPlz;
-            } else {
-                userLat = 51.5974;
-                userLon = 7.4561;
             }
-
-            map = L.map('map', { zoomControl: false }).setView([userLat, userLon], 16);
-            L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-            L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '&copy; OpenStreetMap contributors'
-            }).addTo(map);
-
-            markersLayer.addTo(map);
             fetchWeather();
             processStations();
-
-            setTimeout(() => map.invalidateSize(), 200);
         }
 
         function fetchWeather() {
@@ -232,7 +205,7 @@
             let socDiff = target - start;
             let netKwh = (netCapacity * socDiff) / 100;
             let grossKwh = netKwh * currentLossFactor;
-            let power = 11.0; // Fester AC Standard
+            let power = 11.0; 
             let hours = grossKwh / power;
             let totalMins = Math.round(hours * 60);
             let hrs = Math.floor(totalMins / 60);
@@ -278,33 +251,33 @@
             processStations();
         }
 
-        function shareStation(title, address, lat, lon) {
-            const shareData = {
-                title: title,
-                text: `Ladesäule: ${title}\nAdresse: ${address}\nTarif: 0,38 €/kWh`,
-                url: `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`
-            };
+        function shareStation(title, address) {
+            const shareText = `Ladesäule: ${title}\nAdresse: ${address}\nTarif: 0,38 €/kWh`;
+            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+            const fullShareString = `${shareText}\nNavigieren: ${mapsUrl}`;
+
             if (navigator.share) {
-                navigator.share(shareData).catch(() => {});
+                navigator.share({ title: title, text: shareText, url: mapsUrl }).catch(() => {});
             } else {
-                navigator.clipboard.writeText(`${title}, ${address} (Google Maps: https://www.google.com/maps/search/?api=1&query=${lat},${lon})`);
-                alert("Ladesäulendaten in die Zwischenablage kopiert!");
+                navigator.clipboard.writeText(fullShareString);
+                alert("Ladesäulendaten & exakte Adresse in die Zwischenablage kopiert!");
             }
         }
 
         function createCardHtml(st, isFav, isNearest, metrics) {
             const distText = st.distance < 1 ? (st.distance * 1000).toFixed(0) + ' m' : st.distance.toFixed(1) + ' km';
             const starClass = isFav ? "fa-solid text-amber-400" : "fa-regular text-gray-500 hover:text-amber-300";
+            const mapsQueryUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(st.address)}`;
 
             return `
-                <div class="bg-gray-950 border ${isNearest ? 'border-emerald-500/85 shadow-lg shadow-emerald-950/40' : 'border-gray-800/80'} hover:border-emerald-500/50 rounded-xl p-3.5 transition cursor-pointer space-y-2" onclick="focusStation(${st.lat}, ${st.lon})">
+                <div class="bg-gray-950 border ${isNearest ? 'border-emerald-500/85 shadow-lg shadow-emerald-950/40' : 'border-gray-800/80'} hover:border-emerald-500/50 rounded-xl p-3.5 transition space-y-2">
                     <div class="flex items-start justify-between">
                         <div>
                             <div class="flex items-center space-x-2">
                                 ${isNearest ? '<span class="bg-emerald-500 text-gray-950 text-[10px] font-extrabold px-1.5 py-0.5 rounded">NÄCHSTE SÄULE</span>' : ''}
                                 <h3 class="font-semibold text-sm ${st.custom ? 'text-emerald-400 font-bold' : 'text-gray-200'}">${st.title}</h3>
                             </div>
-                            <p class="text-xs text-gray-400 truncate max-w-[210px]">${st.address}</p>
+                            <p class="text-xs text-gray-400">${st.address}</p>
                         </div>
                         <div class="text-right">
                             <span class="text-base font-black text-emerald-400">${metrics.cost} €</span>
@@ -321,10 +294,10 @@
                             <span class="text-gray-400 text-[11px]">(Dauer: ${metrics.duration})</span>
                         </div>
                         <div class="flex items-center space-x-3">
-                            <button onclick="event.stopPropagation(); shareStation('${st.title}', '${st.address}', ${st.lat}, ${st.lon})" class="text-emerald-400 hover:text-emerald-300 font-medium">
+                            <button onclick="shareStation('${st.title}', '${st.address}')" class="text-emerald-400 hover:text-emerald-300 font-medium">
                                 <i class="fa-solid fa-share-nodes mr-1"></i>Teilen
                             </button>
-                            <a href="https://www.google.com/maps/search/?api=1&query=${st.lat},${st.lon}" target="_blank" onclick="event.stopPropagation()" class="text-blue-400 hover:text-blue-300 font-medium">
+                            <a href="${mapsQueryUrl}" target="_blank" class="text-blue-400 hover:text-blue-300 font-medium">
                                 <i class="fa-solid fa-diamond-turn-right mr-1"></i>Navigieren
                             </a>
                         </div>
@@ -333,11 +306,7 @@
             `;
         }
 
-        let activeMarkers = {};
-
         function processStations() {
-            markersLayer.clearLayers();
-            activeMarkers = {};
             const listContainer = document.getElementById('stationList');
             listContainer.innerHTML = '';
 
@@ -351,7 +320,6 @@
             wbgStations.sort((a, b) => a.distance - b.distance);
             document.getElementById('stationCount').innerText = `${wbgStations.length} Standorte geladen`;
 
-            // Favoriten Sektion oben
             const favStations = wbgStations.filter(st => favorites.includes(st.id));
             if (favStations.length > 0) {
                 const favSection = document.createElement('div');
@@ -369,7 +337,6 @@
                 listContainer.appendChild(favSection);
             }
 
-            // Alle Standorte
             const allHeader = document.createElement('div');
             allHeader.className = "text-xs font-bold text-gray-500 uppercase tracking-wider px-1 pt-1";
             allHeader.innerText = "Alle Standorte";
@@ -379,23 +346,13 @@
                 const isFav = favorites.includes(st.id);
                 const isNearest = (index === 0);
 
-                if (!activeMarkers[st.id]) {
-                    const marker = L.marker([st.lat, st.lon]).addTo(markersLayer);
-                    marker.bindPopup(`<b>${st.title}</b><br>Kosten: ${metrics.cost} €<br>Fertig um: <b>${metrics.finishTimeStr}</b>`);
-                    activeMarkers[st.id] = marker;
-                }
-
                 const cardWrapper = document.createElement('div');
                 cardWrapper.innerHTML = createCardHtml(st, isFav, isNearest, metrics);
                 listContainer.appendChild(cardWrapper.firstElementChild);
             });
         }
 
-        function focusStation(lat, lon) {
-            map.setView([lat, lon], 18, { animate: true });
-        }
-
-        function jumpToCity(cityName, lat, lon, zoom) {
+        function setBaseLocation(cityName, lat, lon) {
             userLat = lat;
             userLon = lon;
             document.getElementById('searchInput').value = cityName;
@@ -404,9 +361,7 @@
             localStorage.setItem('wbg_lon', userLon);
             localStorage.setItem('wbg_plz', cityName);
 
-            map.setView([userLat, userLon], zoom, { animate: true });
             processStations();
-            setTimeout(() => map.invalidateSize(), 150);
         }
 
         document.getElementById('searchBtn').onclick = async () => {
@@ -416,7 +371,7 @@
                 const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ', Deutschland')}`);
                 const results = await res.json();
                 if (results.length > 0) {
-                    jumpToCity(query, parseFloat(results[0].lat), parseFloat(results[0].lon), 14);
+                    setBaseLocation(query, parseFloat(results[0].lat), parseFloat(results[0].lon));
                 } else {
                     alert("Ort oder PLZ nicht gefunden.");
                 }
@@ -439,20 +394,18 @@
                     localStorage.setItem('wbg_lon', userLon);
                     localStorage.setItem('wbg_plz', 'GPS');
 
-                    map.setView([userLat, userLon], 15, { animate: true });
                     document.getElementById('locationLabel').innerText = "GPS-Standort aktiv";
                     processStations();
-                    setTimeout(() => map.invalidateSize(), 150);
                 }, () => alert("GPS konnte nicht ermittelt werden."));
             }
         };
 
         document.getElementById('refreshBtn').onclick = () => {
-            jumpToCity('Winkel 13, Lünen', 51.5974, 7.4561, 16);
+            setBaseLocation('Winkel 13, Lünen', 51.5974, 7.4561);
             document.getElementById('locationLabel').innerText = "Basis: Winkel 13, Lünen";
         };
 
-        window.onload = initMap;
+        window.onload = initApp;
     </script>
 </body>
 </html>
