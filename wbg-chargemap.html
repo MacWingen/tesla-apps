@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WBG Chargemap</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #090d16; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+        #map { width: 100%; height: 100%; min-height: 300px; background: #0b0f19; }
+        input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 8px; background: #1e2029; outline: none; margin: 3px 0; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #ffffff; cursor: pointer; border: 2px solid #10b981; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-100 h-screen flex flex-col md:flex-row overflow-hidden">
+
+    <!-- Sidebar / Steuerung -->
+    <aside class="w-full md:w-[480px] bg-gray-900 border-r border-gray-800 flex flex-col h-full z-10 shadow-2xl shrink-0">
+        <!-- Header -->
+        <div class="p-4 border-b border-gray-800 flex items-center justify-between bg-gray-900/50 backdrop-blur">
+            <div class="flex items-center space-x-3">
+                <div class="bg-emerald-500/10 border border-emerald-500/30 p-2.5 rounded-xl text-emerald-400">
+                    <i class="fa-solid fa-bolt text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg tracking-tight">WBG Chargemap</h1>
+                    <p class="text-xs text-emerald-400" id="weatherSub">Quartiers-Ladeinfrastruktur</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2 py-1 rounded-full block mb-1">Mieter-Tarif (0,38 €)</span>
+                <span class="text-[10px] text-gray-500 block">Stand: 12.10.2026</span>
+            </div>
+        </div>
+
+        <!-- UNIVERSAL LADE- & WETTER-RECHNER -->
+        <div class="p-3 bg-gray-950 border-b border-gray-800 space-y-2 text-xs">
+            <div class="flex items-center justify-between font-semibold text-gray-300">
+                <span class="flex items-center space-x-1.5 text-emerald-400">
+                    <i class="fa-solid fa-calculator"></i>
+                    <span>Ladekosten & Wetter-Kalkulator</span>
+                </span>
+                <span id="weatherInfoBadge" class="bg-gray-800 text-gray-300 border border-gray-700 px-2 py-0.5 rounded text-[10px]">Lünen: --°C (Verlust: --%)</span>
+            </div>
+
+            <!-- Akkugröße & Schnellwahl -->
+            <div class="space-y-1">
+                <div class="flex justify-between items-center text-[11px] text-gray-400">
+                    <span>Akkukapazität</span>
+                    <div class="flex items-center space-x-1">
+                        <input type="number" id="batterySizeInput" value="60" min="10" max="200" step="1" oninput="calculateAll()" class="w-14 bg-gray-900 border border-gray-800 rounded px-1.5 py-0.5 text-right font-bold text-emerald-400 outline-none">
+                        <span>kWh</span>
+                    </div>
+                </div>
+                <!-- Schnellwahl-Buttons für gängige Akkutypen -->
+                <div class="grid grid-cols-4 gap-1.5 pt-0.5">
+                    <button onclick="setBatterySize(40)" class="bg-gray-900 hover:bg-gray-800 border border-gray-800 text-gray-300 py-1 rounded text-[10px] transition">40 kWh</button>
+                    <button onclick="setBatterySize(60)" class="bg-gray-900 hover:bg-gray-800 border border-gray-800 text-gray-300 py-1 rounded text-[10px] transition">60 kWh</button>
+                    <button onclick="setBatterySize(75)" class="bg-gray-900 hover:bg-gray-800 border border-gray-800 text-gray-300 py-1 rounded text-[10px] transition">75 kWh</button>
+                    <button onclick="setBatterySize(100)" class="bg-gray-900 hover:bg-gray-800 border border-gray-800 text-gray-300 py-1 rounded text-[10px] transition">100 kWh</button>
+                </div>
+            </div>
+
+            <!-- Slider für SoC (Von / Bis) -->
+            <div class="space-y-1 pt-1 border-t border-gray-900">
+                <div class="flex justify-between text-[11px] text-gray-400">
+                    <span>Von Stand: <strong id="startVal" class="text-gray-200">20%</strong></span>
+                    <span>Ziel Stand: <strong id="targetVal" class="text-emerald-400">80%</strong></span>
+                </div>
+                <div class="flex space-x-2">
+                    <input type="range" id="startSoc" min="0" max="95" value="20" oninput="calculateAll()" class="w-1/2">
+                    <input type="range" id="targetSoc" min="5" max="100" value="80" oninput="calculateAll()" class="w-1/2">
+                </div>
+            </div>
+        </div>
+
+        <!-- PLZ & Standort Eingabe -->
+        <div class="p-3 border-b border-gray-800 space-y-2.5 bg-gray-900/30">
+            <div class="relative">
+                <input type="text" id="searchInput" placeholder="PLZ oder Ort eingeben..." value="Winkel 13, 44536 Lünen"
+                    class="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-2.5 pl-9 text-xs focus:outline-none focus:border-emerald-500 transition">
+                <i class="fa-solid fa-map-pin absolute left-3 top-3 text-gray-500 text-xs"></i>
+                <button id="searchBtn" class="absolute right-1.5 top-1.5 bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded-lg text-xs transition">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+            
+            <!-- Schnellauswahl-Pillen -->
+            <div class="flex items-center space-x-1.5 overflow-x-auto pb-1 text-[11px] custom-scrollbar">
+                <span class="text-gray-500 font-medium shrink-0 mr-1">Schnell:</span>
+                <button onclick="jumpToCity('Lünen', 51.6074, 7.5286, 14)" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-2.5 py-1 rounded-md shrink-0 transition">Lünen</button>
+                <button onclick="jumpToCity('Kamen', 51.5865, 7.6600, 14)" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-2.5 py-1 rounded-md shrink-0 transition">Kamen</button>
+                <button onclick="jumpToCity('Werne', 51.6620, 7.6350, 14)" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-2.5 py-1 rounded-md shrink-0 transition">Werne</button>
+                <button onclick="jumpToCity('Bergkamen', 51.6150, 7.6300, 14)" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-2.5 py-1 rounded-md shrink-0 transition">Bergkamen</button>
+                <button onclick="jumpToCity('Selm', 51.7080, 7.4650, 14)" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-2.5 py-1 rounded-md shrink-0 transition">Selm</button>
+            </div>
+
+            <div class="flex items-center justify-between text-xs pt-1 border-t border-gray-800/50">
+                <button id="gpsBtn" class="text-emerald-400 hover:text-emerald-300 flex items-center space-x-1.5 transition">
+                    <i class="fa-solid fa-location-crosshairs"></i>
+                    <span>GPS-Standort nutzen</span>
+                </button>
+                <span id="locationLabel" class="text-gray-400 font-medium">Basis: Winkel 13, Lünen</span>
+            </div>
+        </div>
+
+        <!-- Status & Zähler -->
+        <div class="px-4 py-2 bg-gray-950 border-b border-gray-800 flex items-center justify-between text-xs">
+            <span id="stationCount" class="text-gray-400 font-medium">Lade Standorte...</span>
+            <button id="refreshBtn" class="bg-gray-800 hover:bg-gray-700 text-gray-200 px-2.5 py-1 rounded-lg flex items-center space-x-1.5 transition">
+                <i class="fa-solid fa-rotate"></i>
+                <span>Reset</span>
+            </button>
+        </div>
+
+        <!-- Stationsliste & Dynamisches Favoriten-Menü -->
+        <div id="stationList" class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-3">
+            <!-- Wird dynamisch befüllt -->
+        </div>
+    </aside>
+
+    <!-- Karte -->
+    <main class="flex-1 h-full relative">
+        <div id="map"></div>
+    </main>
+
+    <!-- JavaScript Logik -->
+    <script>
+        let userLat = 51.5974;
+        let userLon = 7.4561; 
+        let map, markersLayer = L.layerGroup();
+        let wbgStations = [];
+        let favorites = JSON.parse(localStorage.getItem('wbg_favorites')) || [];
+        let currentLossFactor = 1.07; // Standard mild (7% Verlust)
+
+        // Feinjustierte, korrigierte Koordinaten für Lünen und Umgebung
+        const rawWbgData = [
+            { id: 'winkel13', title: 'Winkel 13 (Deine Säule)', address: 'Winkel 13, 44536 Lünen', lat: 51.5974, lon: 7.4561, power: '11 kW AC', price: 0.38, custom: true },
+            { id: 'asternweg2', title: 'Asternweg 2', address: 'Asternweg 2, 44536 Lünen', lat: 51.6234, lon: 7.5112, power: '11 kW AC', price: 0.38 },
+            { id: 'vogelsberg', title: 'Am Vogelsberg 106', address: 'Am Vogelsberg 106, 44532 Lünen', lat: 51.6158, lon: 7.5365, power: '11 kW AC', price: 0.38 },
+            { id: 'bebelstr', title: 'Bebelstraße 188', address: 'Bebelstraße 188, 44532 Lünen', lat: 51.5962, lon: 7.5215, power: '11 kW AC', price: 0.38 },
+            { id: 'christianstr', title: 'Christian-Morgenstern-Str. 9', address: 'Christian-Morgenstern-Straße 9, Lünen', lat: 51.6112, lon: 7.5168, power: '11 kW AC', price: 0.38 },
+            { id: 'kurtstr', title: 'Kurt-Schumacher-Straße 11', address: 'Kurt-Schumacher-Straße 11, Lünen', lat: 51.6041, lon: 7.5180, power: '11 kW AC', price: 0.38 },
+            { id: 'luisenstr', title: 'Luisenhüttenstraße 24', address: 'Luisenhüttenstraße 24, 44532 Lünen', lat: 51.6192, lon: 7.5325, power: '11 kW AC', price: 0.38 },
+            { id: 'moltkestr', title: 'Moltkestraße 75', address: 'Moltkestraße 75, 44532 Lünen', lat: 51.6105, lon: 7.5222, power: '11 kW AC', price: 0.38 },
+            { id: 'nelkenweg', title: 'Nelkenweg 6', address: 'Nelkenweg 6, 44536 Lünen', lat: 51.6225, lon: 7.5132, power: '11 kW AC', price: 0.38 },
+            { id: 'ottoklug', title: 'Otto-Klug-Weg 14', address: 'Otto-Klug-Weg 14, 44532 Lünen', lat: 51.6092, lon: 7.5415, power: '11 kW AC', price: 0.38 },
+            { id: 'parkstr', title: 'Parkstraße 19', address: 'Parkstraße 19, 44532 Lünen', lat: 51.6052, lon: 7.5338, power: '11 kW AC', price: 0.38 },
+            { id: 'schachtweg', title: 'Schachtweg 8b', address: 'Schachtweg 8 b, 44532 Lünen', lat: 51.6012, lon: 7.5298, power: '11 kW AC', price: 0.38 },
+            { id: 'schulstr', title: 'Schulstraße 76', address: 'Schulstraße 76, 44532 Lünen', lat: 51.6142, lon: 7.5195, power: '11 kW AC', price: 0.38 },
+            { id: 'wilhelmallee', title: 'Wilhelm-Löbbe-Allee 24', address: 'Wilhelm-Löbbe-Allee 24, 44532 Lünen', lat: 51.6062, lon: 7.5268, power: '11 kW AC', price: 0.38 },
+            { id: 'goldbach', title: 'Goldbach 51 (Kamen)', address: 'Goldbach 51, 59174 Kamen', lat: 51.5855, lon: 7.6635, power: '11 kW AC', price: 0.38 },
+            { id: 'grillostr', title: 'Grillostraße 103 (Kamen)', address: 'Grillostraße 103, 59174 Kamen', lat: 51.5892, lon: 7.6668, power: '11 kW AC', price: 0.38 },
+            { id: 'lessingstr', title: 'Lessingstraße 6 (Kamen)', address: 'Lessingstraße 6, 59174 Kamen', lat: 51.5912, lon: 7.6610, power: '11 kW AC', price: 0.38 },
+            { id: 'westickerstr', title: 'Westicker Straße 16 (Kamen)', address: 'Westicker Straße 16, 59174 Kamen', lat: 51.5792, lon: 7.6620, power: '11 kW AC', price: 0.38 },
+            { id: 'horsterstr', title: 'Horster Straße 83a (Werne)', address: 'Horster Straße 83a, 59368 Werne', lat: 51.6632, lon: 7.6372, power: '11 kW AC', price: 0.38 },
+            { id: 'johannstr', title: 'Johann-Heuser-Straße 9 (Bergkamen)', address: 'Johann-Heuser-Straße 9, 59192 Bergkamen', lat: 51.6162, lon: 7.6325, power: '11 kW AC', price: 0.38 },
+            { id: 'campus', title: 'Campus 6 b/c (Selm)', address: 'Campus 6 b/c, 59379 Selm', lat: 51.7092, lon: 7.4675, power: '11 kW AC', price: 0.38 }
+        ];
+
+        function initMap() {
+            const savedLat = parseFloat(localStorage.getItem('wbg_lat'));
+            const savedLon = parseFloat(localStorage.getItem('wbg_lon'));
+            const savedPlz = localStorage.getItem('wbg_plz');
+
+            if (savedLat && savedLon && savedLat > 49 && savedLat < 54 && savedLon > 6 && savedLon < 10) {
+                userLat = savedLat;
+                userLon = savedLon;
+                if (savedPlz) document.getElementById('searchInput').value = savedPlz;
+            } else {
+                userLat = 51.5974;
+                userLon = 7.4561;
+            }
+
+            map = L.map('map', { zoomControl: false }).setView([userLat, userLon], 16);
+            L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+            L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            markersLayer.addTo(map);
+            fetchWeather();
+            processStations();
+
+            setTimeout(() => map.invalidateSize(), 200);
+        }
+
+        function fetchWeather() {
+            fetch(`https://api.open-meteo.com/v1/forecast?latitude=51.6074&longitude=7.5286&current=temperature_2m&timezone=auto`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.current) {
+                        let temp = data.current.temperature_2m;
+                        if (temp > 20) currentLossFactor = 1.04;
+                        else if (temp >= 10) currentLossFactor = 1.07;
+                        else if (temp >= 0) currentLossFactor = 1.12;
+                        else currentLossFactor = 1.18;
+                        
+                        let lossPct = Math.round((currentLossFactor - 1) * 100);
+                        document.getElementById('weatherInfoBadge').innerText = `Lünen: ${Math.round(temp)}°C (Verlust: ~${lossPct}%)`;
+                        calculateAll();
+                    }
+                })
+                .catch(() => {});
+        }
+
+        function setBatterySize(size) {
+            document.getElementById('batterySizeInput').value = size;
+            calculateAll();
+        }
+
+        function calculateMetrics() {
+            let netCapacity = parseFloat(document.getElementById('batterySizeInput').value) || 60;
+            let start = parseInt(document.getElementById('startSoc').value) || 20;
+            let target = parseInt(document.getElementById('targetSoc').value) || 80;
+            if (start >= target) target = start + 5;
+
+            document.getElementById('startVal').innerText = start + '%';
+            document.getElementById('targetVal').innerText = target + '%';
+
+            let socDiff = target - start;
+            let netKwh = (netCapacity * socDiff) / 100;
+            let grossKwh = netKwh * currentLossFactor;
+            let power = 11.0; // Fester AC Standard
+            let hours = grossKwh / power;
+            let totalMins = Math.round(hours * 60);
+            let hrs = Math.floor(totalMins / 60);
+            let mins = totalMins % 60;
+
+            let now = new Date();
+            let finishTime = new Date(now.getTime() + totalMins * 60000);
+            let finishHours = String(finishTime.getHours()).padStart(2, '0');
+            let finishMinutes = String(finishTime.getMinutes()).padStart(2, '0');
+            let timeString = `${finishHours}:${finishMinutes} Uhr`;
+
+            let cost = (grossKwh * 0.38);
+
+            return {
+                netKwh: netKwh.toFixed(1),
+                grossKwh: grossKwh.toFixed(1),
+                duration: hrs > 0 ? `${hrs} Std. ${mins} Min.` : `${mins} Min.`,
+                finishTimeStr: timeString,
+                cost: cost.toFixed(2)
+            };
+        }
+
+        function calculateAll() {
+            processStations();
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+        }
+
+        function toggleFavorite(id, event) {
+            event.stopPropagation();
+            const index = favorites.indexOf(id);
+            if (index > -1) favorites.splice(index, 1);
+            else favorites.push(id);
+            localStorage.setItem('wbg_favorites', JSON.stringify(favorites));
+            processStations();
+        }
+
+        function shareStation(title, address, lat, lon) {
+            const shareData = {
+                title: title,
+                text: `Ladesäule: ${title}\nAdresse: ${address}\nTarif: 0,38 €/kWh`,
+                url: `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`
+            };
+            if (navigator.share) {
+                navigator.share(shareData).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(`${title}, ${address} (Google Maps: https://www.google.com/maps/search/?api=1&query=${lat},${lon})`);
+                alert("Ladesäulendaten in die Zwischenablage kopiert!");
+            }
+        }
+
+        function createCardHtml(st, isFav, isNearest, metrics) {
+            const distText = st.distance < 1 ? (st.distance * 1000).toFixed(0) + ' m' : st.distance.toFixed(1) + ' km';
+            const starClass = isFav ? "fa-solid text-amber-400" : "fa-regular text-gray-500 hover:text-amber-300";
+
+            return `
+                <div class="bg-gray-950 border ${isNearest ? 'border-emerald-500/85 shadow-lg shadow-emerald-950/40' : 'border-gray-800/80'} hover:border-emerald-500/50 rounded-xl p-3.5 transition cursor-pointer space-y-2" onclick="focusStation(${st.lat}, ${st.lon})">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                ${isNearest ? '<span class="bg-emerald-500 text-gray-950 text-[10px] font-extrabold px-1.5 py-0.5 rounded">NÄCHSTE SÄULE</span>' : ''}
+                                <h3 class="font-semibold text-sm ${st.custom ? 'text-emerald-400 font-bold' : 'text-gray-200'}">${st.title}</h3>
+                            </div>
+                            <p class="text-xs text-gray-400 truncate max-w-[210px]">${st.address}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-base font-black text-emerald-400">${metrics.cost} €</span>
+                            <span class="text-[10px] font-bold text-blue-400 block">Fertig um: ${metrics.finishTimeStr}</span>
+                            <button onclick="toggleFavorite('${st.id}', event)" class="mt-0.5 p-1 text-base transition">
+                                <i class="${starClass} fa-star"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between text-xs text-gray-400 pt-2 border-t border-gray-900">
+                        <div class="flex items-center space-x-2.5">
+                            <span><i class="fa-solid fa-location-dot mr-1 text-emerald-500"></i>${distText}</span>
+                            <span class="text-gray-300 font-semibold"><i class="fa-solid fa-bolt mr-1 text-amber-400"></i>${st.power}</span>
+                            <span class="text-gray-400 text-[11px]">(Dauer: ${metrics.duration})</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <button onclick="event.stopPropagation(); shareStation('${st.title}', '${st.address}', ${st.lat}, ${st.lon})" class="text-emerald-400 hover:text-emerald-300 font-medium">
+                                <i class="fa-solid fa-share-nodes mr-1"></i>Teilen
+                            </button>
+                            <a href="https://www.google.com/maps/search/?api=1&query=${st.lat},${st.lon}" target="_blank" onclick="event.stopPropagation()" class="text-blue-400 hover:text-blue-300 font-medium">
+                                <i class="fa-solid fa-diamond-turn-right mr-1"></i>Navigieren
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        let activeMarkers = {};
+
+        function processStations() {
+            markersLayer.clearLayers();
+            activeMarkers = {};
+            const listContainer = document.getElementById('stationList');
+            listContainer.innerHTML = '';
+
+            const metrics = calculateMetrics();
+
+            wbgStations = rawWbgData.map(st => {
+                const dist = calculateDistance(userLat, userLon, st.lat, st.lon);
+                return { ...st, distance: dist };
+            });
+
+            wbgStations.sort((a, b) => a.distance - b.distance);
+            document.getElementById('stationCount').innerText = `${wbgStations.length} Standorte geladen`;
+
+            // Favoriten Sektion oben
+            const favStations = wbgStations.filter(st => favorites.includes(st.id));
+            if (favStations.length > 0) {
+                const favSection = document.createElement('div');
+                favSection.className = "bg-amber-500/10 border border-amber-500/30 rounded-2xl p-3 space-y-2 mb-3";
+                favSection.innerHTML = `<div class="text-xs font-bold text-amber-400 flex items-center space-x-1.5 px-1"><i class="fa-solid fa-star"></i><span>Deine Favoriten (${favStations.length})</span></div>`;
+                
+                const favList = document.createElement('div');
+                favList.className = "space-y-2";
+                favStations.forEach(st => {
+                    const cardWrapper = document.createElement('div');
+                    cardWrapper.innerHTML = createCardHtml(st, true, false, metrics);
+                    favList.appendChild(cardWrapper.firstElementChild);
+                });
+                favSection.appendChild(favList);
+                listContainer.appendChild(favSection);
+            }
+
+            // Alle Standorte
+            const allHeader = document.createElement('div');
+            allHeader.className = "text-xs font-bold text-gray-500 uppercase tracking-wider px-1 pt-1";
+            allHeader.innerText = "Alle Standorte";
+            listContainer.appendChild(allHeader);
+
+            wbgStations.forEach((st, index) => {
+                const isFav = favorites.includes(st.id);
+                const isNearest = (index === 0);
+
+                if (!activeMarkers[st.id]) {
+                    const marker = L.marker([st.lat, st.lon]).addTo(markersLayer);
+                    marker.bindPopup(`<b>${st.title}</b><br>Kosten: ${metrics.cost} €<br>Fertig um: <b>${metrics.finishTimeStr}</b>`);
+                    activeMarkers[st.id] = marker;
+                }
+
+                const cardWrapper = document.createElement('div');
+                cardWrapper.innerHTML = createCardHtml(st, isFav, isNearest, metrics);
+                listContainer.appendChild(cardWrapper.firstElementChild);
+            });
+        }
+
+        function focusStation(lat, lon) {
+            map.setView([lat, lon], 18, { animate: true });
+        }
+
+        function jumpToCity(cityName, lat, lon, zoom) {
+            userLat = lat;
+            userLon = lon;
+            document.getElementById('searchInput').value = cityName;
+            document.getElementById('locationLabel').innerText = "Standort: " + cityName;
+            localStorage.setItem('wbg_lat', userLat);
+            localStorage.setItem('wbg_lon', userLon);
+            localStorage.setItem('wbg_plz', cityName);
+
+            map.setView([userLat, userLon], zoom, { animate: true });
+            processStations();
+            setTimeout(() => map.invalidateSize(), 150);
+        }
+
+        document.getElementById('searchBtn').onclick = async () => {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) return;
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ', Deutschland')}`);
+                const results = await res.json();
+                if (results.length > 0) {
+                    jumpToCity(query, parseFloat(results[0].lat), parseFloat(results[0].lon), 14);
+                } else {
+                    alert("Ort oder PLZ nicht gefunden.");
+                }
+            } catch (e) {}
+        };
+
+        document.getElementById('searchInput').onkeypress = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('searchBtn').click();
+            }
+        };
+
+        document.getElementById('gpsBtn').onclick = () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(pos => {
+                    userLat = pos.coords.latitude;
+                    userLon = pos.coords.longitude;
+                    localStorage.setItem('wbg_lat', userLat);
+                    localStorage.setItem('wbg_lon', userLon);
+                    localStorage.setItem('wbg_plz', 'GPS');
+
+                    map.setView([userLat, userLon], 15, { animate: true });
+                    document.getElementById('locationLabel').innerText = "GPS-Standort aktiv";
+                    processStations();
+                    setTimeout(() => map.invalidateSize(), 150);
+                }, () => alert("GPS konnte nicht ermittelt werden."));
+            }
+        };
+
+        document.getElementById('refreshBtn').onclick = () => {
+            jumpToCity('Winkel 13, Lünen', 51.5974, 7.4561, 16);
+            document.getElementById('locationLabel').innerText = "Basis: Winkel 13, Lünen";
+        };
+
+        window.onload = initMap;
+    </script>
+</body>
+</html>
