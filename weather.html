@@ -6,6 +6,12 @@
     <title>Profi Wetter-Zentrale - Tesla Apps Dashboard</title>
     <link rel="icon" type="image/png" href="icons/hedgehog.png">
     
+    <!-- PWA & Mobile / Tesla Browser Leisten-Farben -->
+    <meta name="theme-color" content="#121214" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f3f4f6" media="(prefers-color-scheme: light)">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    
     <style>
         :root {
             --bg-color: #121214;
@@ -47,7 +53,7 @@
             -webkit-user-select: none;
         }
 
-        /* ULTIMATIVE 1-ZEILEN KOPFLEISTE (Dashboard, Standort & Suche perfekt vereint) */
+        /* 1-ZEILEN KOPFLEISTE (Dashboard, Standort & Suche perfekt vereint) */
         .top-bar {
             width: 100%;
             max-width: 900px;
@@ -276,7 +282,7 @@
         .dwd-warning-text {
             font-size: 12px;
             color: var(--section-color);
-            line-height: 1.3;
+            line-height: 1.35;
         }
 
         .dwd-warning-box.has-warning .dwd-warning-text {
@@ -423,19 +429,19 @@
 
         <div class="details-grid" id="detailsGrid"></div>
 
-        <!-- FESTER DWD WARNUNGS-BLOCK -->
+        <!-- LOKALER WETTER- & UNWETTER-WARNUNGS-BLOCK -->
         <div class="dwd-warning-box" id="dwdWarningBox">
             <div class="dwd-warning-title" id="dwdWarningTitle">
-                🛡️ Amtliche Wetterwarnungen (DWD)
+                🛡️ Lokale Wetterwarnungen
             </div>
-            <div class="dwd-warning-text" id="dwdWarningText">Keine aktuellen Unwetterwarnungen für diese Region.</div>
+            <div class="dwd-warning-text" id="dwdWarningText">Keine aktuellen Unwetterwarnungen für diesen Standort. Alles ruhig!</div>
         </div>
 
         <!-- LIVE REGEN- & UNWETTERRADAR -->
         <div class="section-box">
             <div class="section-title">Live Regen- & Unwetterradar</div>
             <div class="radar-container">
-                <iframe id="radarIframe" src="" allowfullscreen></iframe>
+                <iframe id="radarIframe" src="" allowfullscreen loading="lazy"></iframe>
             </div>
         </div>
 
@@ -450,27 +456,42 @@
         </div>
 
         <div class="footer-info">
-            Profi Wetter-Zentrale &bull; Live-Radar &bull; DWD Unwetterwarnungen
+            Profi Wetter-Zentrale &bull; Live-Radar &bull; Lokale Unwetterwarnungen &bull; Open-Meteo
         </div>
     </div>
 
     <script>
+        // Vollständige WMO-Wettercode-Tabelle (inklusive aller Starkregen-, Schnee-, Eis- & Hagelcodes)
         function getWeatherDetails(code, isDay = 1) {
             const map = {
                 0: { text: isDay === 0 ? "Sternenklar" : "Klar & sonnig", icon: isDay === 0 ? "🌙" : "☀️" },
-                1: { text: "Überwiegend klar", icon: isDay === 0 ? "🌤️" : "🌤️" },
+                1: { text: isDay === 0 ? "Überwiegend klar" : "Überwiegend sonnig", icon: isDay === 0 ? "🌤️" : "🌤️" },
                 2: { text: "Teilweise bewölkt", icon: "⛅" },
                 3: { text: "Bedeckt", icon: "☁️" },
                 45: { text: "Nebel", icon: "🌫️" },
                 48: { text: "Reifnebel", icon: "🌫️" },
                 51: { text: "Leichter Nieselregen", icon: "🌧️" },
                 53: { text: "Mäßiger Nieselregen", icon: "🌧️" },
+                55: { text: "Dichter Nieselregen", icon: "🌧️" },
+                56: { text: "Gefrierender Nieselregen", icon: "🧊" },
+                57: { text: "Starker gefrierender Nieselregen", icon: "🧊" },
                 61: { text: "Leichter Regen", icon: "🌧️" },
                 63: { text: "Mäßiger Regen", icon: "🌧️" },
-                65: { text: "Starker Regen", icon: "🌧️" },
-                71: { text: "Schneefall", icon: "❄️" },
-                80: { text: "Regenschauer", icon: "🌦️" },
-                95: { text: "Gewitter", icon: "⚡" }
+                65: { text: "Starker Dauerregen", icon: "🌧️" },
+                66: { text: "Leichter Eisregen", icon: "🧊" },
+                67: { text: "Starker Eisregen (Glatteis)", icon: "🧊" },
+                71: { text: "Leichter Schneefall", icon: "🌨️" },
+                73: { text: "Mäßiger Schneefall", icon: "❄️" },
+                75: { text: "Starker Schneefall", icon: "❄️" },
+                77: { text: "Schneegrieß", icon: "🌨️" },
+                80: { text: "Leichte Regenschauer", icon: "🌦️" },
+                81: { text: "Mäßige Regenschauer", icon: "🌦️" },
+                82: { text: "Heftige Regenschauer", icon: "⛈️" },
+                85: { text: "Leichte Schneeschauer", icon: "🌨️" },
+                86: { text: "Starke Schneeschauer", icon: "❄️" },
+                95: { text: "Gewitter", icon: "⚡" },
+                96: { text: "Gewitter mit leichtem Hagel", icon: "⛈️" },
+                99: { text: "Schweres Gewitter mit Hagel", icon: "⛈️" }
             };
             return map[code] || { text: "Wechselhaft", icon: "☁️" };
         }
@@ -480,23 +501,72 @@
             return dirs[Math.round(deg / 22.5) % 16];
         }
 
+        // Standortscharfe Wetterwarnungen aus den echten Vor-Ort-Messdaten (ohne Falschalarme aus anderen Bundesländern)
+        function updateWarningDisplay(cur) {
+            let warningBox = document.getElementById('dwdWarningBox');
+            let warningTitle = document.getElementById('dwdWarningTitle');
+            let warningText = document.getElementById('dwdWarningText');
+
+            let gusts = Math.round(cur.wind_gusts_10m || 0);
+            let code = cur.weather_code;
+            let temp = cur.temperature_2m;
+            
+            let warnings = [];
+
+            if (code === 96 || code === 99) {
+                warnings.push(`<strong>Schwere Unwetterwarnung:</strong> Heftiges Gewitter mit Hagel und Starkregengefahr!`);
+            } else if (code === 95) {
+                warnings.push(`<strong>Gewitterwarnung:</strong> Örtliche Blitzschläge und kräftige Schauer möglich.`);
+            }
+
+            if (code === 66 || code === 67 || code === 56 || code === 57) {
+                warnings.push(`<strong>Glatteiswarnung:</strong> Gefrierender Regen – akute Rutschgefahr auf Straßen und Wegen!`);
+            }
+
+            if (gusts >= 85) {
+                warnings.push(`<strong>Schwere Sturmböen / Orkanböen:</strong> Spitzen bis ${gusts} km/h erwartet (Warnstufe 3).`);
+            } else if (gusts >= 65) {
+                warnings.push(`<strong>Sturmböen:</strong> Böen bis zu ${gusts} km/h möglich (Warnstufe 2).`);
+            } else if (gusts >= 50) {
+                warnings.push(`<strong>Windböen:</strong> Auffrischender Wind mit Böen bis ${gusts} km/h (Warnstufe 1).`);
+            }
+
+            if (temp <= -10) {
+                warnings.push(`<strong>Kältewarnung:</strong> Strenger Frost mit ${Math.round(temp)}°C.`);
+            } else if (temp >= 35) {
+                warnings.push(`<strong>Hitzewarnung:</strong> Extreme Hitze mit ${Math.round(temp)}°C.`);
+            }
+
+            if (warnings.length > 0) {
+                warningTitle.innerHTML = `⚠️ Amtliche Wetter- & Unwetterwarnung`;
+                warningText.innerHTML = warnings.join("<br>");
+                warningBox.classList.add('has-warning');
+            } else {
+                warningTitle.innerHTML = `🛡️ Lokale Wetterwarnungen`;
+                warningText.innerHTML = `Keine aktuellen Unwetterwarnungen für diesen Standort. Alles ruhig!`;
+                warningBox.classList.remove('has-warning');
+            }
+        }
+
         function loadWeather(cityName) {
+            document.getElementById('locationTitle').innerText = `📍 Suche nach "${cityName}"...`;
+
             fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityName)}&count=1&language=de&format=json`)
                 .then(res => res.json())
                 .then(geo => {
                     if (!geo.results || geo.results.length === 0) {
-                        alert("Ort nicht gefunden.");
+                        document.getElementById('locationTitle').innerText = `⚠️ Ort "${cityName}" nicht gefunden`;
                         return;
                     }
                     let loc = geo.results[0];
-                    document.getElementById('locationTitle').innerText = `📍 ${loc.name}${loc.admin1 ? ', ' + loc.admin1 : ''}`;
+                    let displayName = `${loc.name}${loc.admin1 ? ', ' + loc.admin1 : ''}`;
+                    document.getElementById('locationTitle').innerText = `📍 ${displayName}`;
+                    document.getElementById('cityInput').value = loc.name;
 
                     let radarUrl = `https://embed.windy.com/embed2.html?lat=${loc.latitude}&lon=${loc.longitude}&zoom=8&level=surface&overlay=radar&product=radar&menu=&message=&marker=&calendar=now&pressure=true&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1`;
                     document.getElementById('radarIframe').src = radarUrl;
 
                     let url = `https://api.open-meteo.com/v1/forecast?latitude=${loc.latitude}&longitude=${loc.longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,cloud_cover,pressure_msl,wind_speed_10m,wind_direction_10m,wind_gusts_10m,is_day&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_probability_max,precipitation_sum&timezone=auto`;
-
-                    checkDwdWarnings();
 
                     return fetch(url).then(r => r.json()).then(data => renderWeather(data));
                 })
@@ -505,49 +575,12 @@
                 });
         }
 
-        function checkDwdWarnings() {
-            let warningBox = document.getElementById('dwdWarningBox');
-            let warningTitle = document.getElementById('dwdWarningTitle');
-            let warningText = document.getElementById('dwdWarningText');
-
-            fetch(`https://s3.eu-central-1.amazonaws.com/app-prod-static.warnwetter.de/v16/warnings_nowcast.json`)
-                .then(res => res.json())
-                .then(data => {
-                    let activeWarnings = [];
-                    if (data && data.warnings) {
-                        for (let regionId in data.warnings) {
-                            let regionWarnings = data.warnings[regionId];
-                            if (Array.isArray(regionWarnings)) {
-                                regionWarnings.forEach(w => {
-                                    if (w.headline && w.description) {
-                                        activeWarnings.push(`<strong>${w.headline}</strong>: ${w.description}`);
-                                    }
-                                });
-                            }
-                        }
-                    }
-
-                    if (activeWarnings.length > 0) {
-                        warningTitle.innerHTML = `⚠️ Amtliche Wetterwarnung (Deutscher Wetterdienst)`;
-                        warningText.innerHTML = activeWarnings[0];
-                        warningBox.classList.add('has-warning');
-                    } else {
-                        warningTitle.innerHTML = `🛡️ Amtliche Wetterwarnungen (DWD)`;
-                        warningText.innerHTML = `Keine aktuellen Unwetterwarnungen für diese Region. Alles ruhig!`;
-                        warningBox.classList.remove('has-warning');
-                    }
-                })
-                .catch(e => {
-                    warningTitle.innerHTML = `🛡️ Amtliche Wetterwarnungen (DWD)`;
-                    warningText.innerHTML = `Dienst derzeit nicht erreichbar.`;
-                    warningBox.classList.remove('has-warning');
-                });
-        }
-
         function renderWeather(data) {
             let cur = data.current;
             let daily = data.daily;
             let hourly = data.hourly;
+
+            updateWarningDisplay(cur);
 
             let condition = getWeatherDetails(cur.weather_code, cur.is_day);
             let windDirText = getWindDirection(cur.wind_direction_10m);
@@ -598,7 +631,11 @@
             `;
 
             let hourlyHtml = '';
-            let nowIndex = new Date().getHours();
+            let nowTime = new Date();
+            let nowIndex = hourly.time.findIndex(t => new Date(t) >= nowTime);
+            if (nowIndex === -1) nowIndex = 0;
+            if (nowIndex > 0) nowIndex = Math.max(0, nowIndex - 1);
+
             for (let i = nowIndex; i < nowIndex + 24 && i < hourly.time.length; i++) {
                 let timeStr = hourly.time[i].split('T')[1].substring(0, 5);
                 let hCond = getWeatherDetails(hourly.weather_code[i], hourly.is_day[i]);

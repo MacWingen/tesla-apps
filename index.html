@@ -7,6 +7,12 @@
     <!-- Favicon für Browser-Tabs und Lesezeichen -->
     <link rel="icon" type="image/png" href="icons/hedgehog.png">
     
+    <!-- PWA & Mobile / Tesla Browser Leisten-Farben -->
+    <meta name="theme-color" content="#121214" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f3f4f6" media="(prefers-color-scheme: light)">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    
     <style>
         :root {
             --bg-color: #121214;
@@ -1138,8 +1144,8 @@
         <!-- Wetter Button -->
         <button class="top-weather-btn" onclick="toggleWeatherModal(true)" title="Wetter & 7-Tage-Vorhersage">
             <div class="top-weather-icon-wrapper" id="topBarWeatherIconContainer">
-                <svg id="topBarWeatherIcon" viewBox="0 0 32 32">
-                    <circle cx="16" cy="16" r="7" fill="url(#sunGradTop)"/>
+                <svg viewBox="0 0 32 32">
+                    <circle cx="16" cy="16" r="7" fill="#fbbf24"/>
                 </svg>
             </div>
             <span class="top-weather-temp" id="topBarTemp">--°</span>
@@ -1171,8 +1177,6 @@
         </button>
 
         <div class="bar-divider"></div>
-
-        <!-- HINWEIS: Die Vor- und Zurück-Pfeile wurden hier wunschgemäß komplett entfernt! -->
 
         <div class="tabs-container" id="tabs-container"></div>
     </div>
@@ -1531,6 +1535,18 @@
         let currentStationImage = '';
         let metadataInterval = null;
 
+        // Fehlerbehandlung für Audio-Streams
+        globalAudio.onerror = function() {
+            if (currentPlayingId) {
+                console.warn("Audio Stream Fehler bei:", currentStationName);
+                currentPlayingId = '';
+                currentPlayingUrl = '';
+                document.title = "Tesla Apps Dashboard";
+                stopMetadataPolling();
+                updatePlayingState();
+            }
+        };
+
         const tabsContainer = document.getElementById('tabs-container');
         let tabButtonsMap = {};
         
@@ -1556,12 +1572,16 @@
         let holdStartTimer = null;
         let isLongPress = false;
         let pointerDownTime = 0;
+        let pointerStartX = 0;
+        let pointerStartY = 0;
 
         function handlePointerDown(element, uniqueId, url, event) {
             if (event.pointerType === 'mouse' && event.button !== 0) return;
             
             isLongPress = false;
             pointerDownTime = Date.now();
+            pointerStartX = event.clientX;
+            pointerStartY = event.clientY;
             
             holdStartTimer = setTimeout(() => {
                 element.classList.add('is-holding');
@@ -1588,6 +1608,14 @@
                 removeBorderSvg(element);
                 toggleFavoriteDirect(url);
             }, 750);
+        }
+
+        function handlePointerMove(element, event) {
+            if (!holdStartTimer && !pressTimer) return;
+            // Wenn der Finger beim Scrollen mehr als 10 Pixel bewegt wird -> Long-Press abbrechen
+            if (Math.hypot(event.clientX - pointerStartX, event.clientY - pointerStartY) > 10) {
+                handlePointerCancel(element);
+            }
         }
 
         function handlePointerUp(element, uniqueId, url, isRadio, name, image, event) {
@@ -1831,8 +1859,66 @@
             }
         }
 
+        // Cache für Eilmeldungen (verhindert Überschreiten des Rate-Limits)
+        let cachedNewsItems = null;
+        let lastNewsFetchTime = 0;
+
+        function renderNewsItems(items) {
+            const container = document.getElementById('newsModalBody');
+            if (!container) return;
+
+            if (items.length > 0 && items[0].pubDate) {
+                let latestPubTime = new Date(items[0].pubDate).getTime();
+                let lastReadTimeStr = localStorage.getItem('tesla_dashboard_last_read_news');
+                let lastReadTime = lastReadTimeStr ? new Date(lastReadTimeStr).getTime() : 0;
+                
+                const newsBtn = document.getElementById('newsBtn');
+                if (newsBtn) {
+                    if (latestPubTime > lastReadTime) {
+                        newsBtn.classList.add('has-new-news');
+                    } else {
+                        newsBtn.classList.remove('has-new-news');
+                    }
+                }
+            }
+
+            let html = '';
+            items.forEach(item => {
+                let title = item.title || "Kein Titel";
+                let desc = item.description || item.contentSnippet || "";
+                let cleanDesc = desc.replace(/<[^>]*>?/gm, '').trim();
+                let timeStr = "";
+                
+                if (item.pubDate) {
+                    let d = new Date(item.pubDate);
+                    timeStr = d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + ' Uhr';
+                }
+
+                html += `
+                    <div class="news-item">
+                        <div class="news-meta">
+                            <span style="color: #e11d48; font-weight: 700;">EILMELDUNG</span>
+                            <span>${timeStr}</span>
+                        </div>
+                        <div class="news-headline">${title}</div>
+                        ${cleanDesc ? `<div class="news-snippet">${cleanDesc}</div>` : ''}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
         function fetchWeltNews() {
             const container = document.getElementById('newsModalBody');
+            const now = Date.now();
+
+            // 5-Minuten-Cache nutzen
+            if (cachedNewsItems && (now - lastNewsFetchTime < 5 * 60 * 1000)) {
+                renderNewsItems(cachedNewsItems);
+                return;
+            }
+
             container.innerHTML = `<div style="text-align: center; color: var(--section-color); padding: 20px;">Lade Eilmeldungen...</div>`;
 
             const rssUrl = encodeURIComponent('https://www.welt.de/?service=Rss');
@@ -1850,46 +1936,9 @@
                             items = data.items.slice(0, 5);
                         }
 
-                        if (items.length > 0 && items[0].pubDate) {
-                            let latestPubTime = new Date(items[0].pubDate).getTime();
-                            let lastReadTimeStr = localStorage.getItem('tesla_dashboard_last_read_news');
-                            let lastReadTime = lastReadTimeStr ? new Date(lastReadTimeStr).getTime() : 0;
-                            
-                            const newsBtn = document.getElementById('newsBtn');
-                            if (newsBtn) {
-                                if (latestPubTime > lastReadTime) {
-                                    newsBtn.classList.add('has-new-news');
-                                } else {
-                                    newsBtn.classList.remove('has-new-news');
-                                }
-                            }
-                        }
-
-                        let html = '';
-                        items.forEach(item => {
-                            let title = item.title || "Kein Titel";
-                            let desc = item.description || item.contentSnippet || "";
-                            let cleanDesc = desc.replace(/<[^>]*>?/gm, '').trim();
-                            let timeStr = "";
-                            
-                            if (item.pubDate) {
-                                let d = new Date(item.pubDate);
-                                timeStr = d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + ' Uhr';
-                            }
-
-                            html += `
-                                <div class="news-item">
-                                    <div class="news-meta">
-                                        <span style="color: #e11d48; font-weight: 700;">EILMELDUNG</span>
-                                        <span>${timeStr}</span>
-                                    </div>
-                                    <div class="news-headline">${title}</div>
-                                    ${cleanDesc ? `<div class="news-snippet">${cleanDesc}</div>` : ''}
-                                </div>
-                            `;
-                        });
-
-                        container.innerHTML = html;
+                        cachedNewsItems = items;
+                        lastNewsFetchTime = Date.now();
+                        renderNewsItems(items);
                     } else {
                         container.innerHTML = `<div style="text-align: center; color: var(--section-color); padding: 20px;">Keine aktuellen Eilmeldungen.</div>`;
                     }
@@ -1900,6 +1949,11 @@
         }
 
         function checkBackgroundNews() {
+            const now = Date.now();
+            if (cachedNewsItems && (now - lastNewsFetchTime < 5 * 60 * 1000)) {
+                return;
+            }
+
             const rssUrl = encodeURIComponent('https://www.welt.de/?service=Rss');
             fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`)
                 .then(res => res.json())
@@ -1911,6 +1965,9 @@
                             return title.includes('eilmeldung') || title.includes('breaking') || cats.includes('eilmeldung') || cats.includes('breaking');
                         });
                         if (items.length === 0) items = data.items.slice(0, 5);
+
+                        cachedNewsItems = items;
+                        lastNewsFetchTime = Date.now();
 
                         if (items.length > 0 && items[0].pubDate) {
                             let latestPubTime = new Date(items[0].pubDate).getTime();
@@ -2039,10 +2096,16 @@
             return days[date.getDay()];
         }
 
+        // Zuverlässige Icon-Aktualisierung ohne fragile Regex
         function updateTopBarWeather(code, temp, isDay = 1) {
-            let svgMarkup = getWeatherIconSvg(code, false, isDay);
-            document.getElementById('topBarWeatherIcon').outerHTML = `<svg id="topBarWeatherIcon" viewBox="0 0 32 32">${svgMarkup.match(/<svg[^>]*>([\s\S]*)<\/svg>[^]*$|/)[1] || ''}</svg>`;
-            document.getElementById('topBarTemp').innerText = `${Math.round(temp)}°`;
+            const iconContainer = document.getElementById('topBarWeatherIconContainer');
+            if (iconContainer) {
+                iconContainer.innerHTML = getWeatherIconSvg(code, false, isDay);
+            }
+            const tempEl = document.getElementById('topBarTemp');
+            if (tempEl) {
+                tempEl.innerText = `${Math.round(temp)}°`;
+            }
         }
 
         function fetchWeatherForCity(cityName, retry = true) {
@@ -2257,6 +2320,7 @@
                         favHTML += `
                             <div class="${isPlayingClass}" data-url="${app.url}" data-instance-id="${app.id}" 
                                  onpointerdown="handlePointerDown(this, '${app.id}', '${app.url}', event)" 
+                                 onpointermove="handlePointerMove(this, event)"
                                  onpointerup="handlePointerUp(this, '${app.id}', '${app.url}', ${app.isRadio}, '${app.name}', '${app.image}', event)"
                                  onpointercancel="handlePointerCancel(this)"
                                  onpointerleave="handlePointerCancel(this)">
@@ -2303,6 +2367,7 @@
                         sectionHTML += `
                             <div class="${isPlayingClass}" data-url="${app.url}" data-instance-id="${app.id}" 
                                  onpointerdown="handlePointerDown(this, '${app.id}', '${app.url}', event)" 
+                                 onpointermove="handlePointerMove(this, event)"
                                  onpointerup="handlePointerUp(this, '${app.id}', '${app.url}', ${app.isRadio}, '${app.name}', '${app.image}', event)"
                                  onpointercancel="handlePointerCancel(this)"
                                  onpointerleave="handlePointerCancel(this)">
@@ -2351,6 +2416,7 @@
                             sectionHTML += `
                                 <div class="${isPlayingClass}" data-url="${app.url}" data-instance-id="${app.id}" 
                                      onpointerdown="handlePointerDown(this, '${app.id}', '${app.url}', event)" 
+                                     onpointermove="handlePointerMove(this, event)"
                                      onpointerup="handlePointerUp(this, '${app.id}', '${app.url}', ${app.isRadio}, '${app.name}', '${app.image}', event)"
                                      onpointercancel="handlePointerCancel(this)"
                                      onpointerleave="handlePointerCancel(this)">
@@ -2410,6 +2476,7 @@
                             favSectionHTML += `
                                 <div class="${isPlayingClass}" data-url="${app.url}" data-instance-id="${app.id}" 
                                      onpointerdown="handlePointerDown(this, '${app.id}', '${app.url}', event)" 
+                                     onpointermove="handlePointerMove(this, event)"
                                      onpointerup="handlePointerUp(this, '${app.id}', '${app.url}', ${app.isRadio}, '${app.name}', '${app.image}', event)"
                                      onpointercancel="handlePointerCancel(this)"
                                      onpointerleave="handlePointerCancel(this)">
@@ -2460,6 +2527,7 @@
                                 sectionHTML += `
                                     <div class="${isPlayingClass}" data-url="${app.url}" data-instance-id="${app.id}" 
                                          onpointerdown="handlePointerDown(this, '${app.id}', '${app.url}', event)" 
+                                         onpointermove="handlePointerMove(this, event)"
                                          onpointerup="handlePointerUp(this, '${app.id}', '${app.url}', ${app.isRadio}, '${app.name}', '${app.image}', event)"
                                          onpointercancel="handlePointerCancel(this)"
                                          onpointerleave="handlePointerCancel(this)">
@@ -2509,6 +2577,7 @@
                             sectionHTML += `
                                 <div class="${isPlayingClass}" data-url="${app.url}" data-instance-id="${app.id}" 
                                      onpointerdown="handlePointerDown(this, '${app.id}', '${app.url}', event)" 
+                                     onpointermove="handlePointerMove(this, event)"
                                      onpointerup="handlePointerUp(this, '${app.id}', '${app.url}', ${app.isRadio}, '${app.name}', '${app.image}', event)"
                                      onpointercancel="handlePointerCancel(this)"
                                      onpointerleave="handlePointerCancel(this)">

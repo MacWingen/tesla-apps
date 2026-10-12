@@ -2,9 +2,15 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tesla AC-Laderechner</title>
     <link rel="icon" type="image/png" href="icons/hedgehog.png">
+    
+    <!-- PWA & Mobile / Tesla Browser Leisten-Farben -->
+    <meta name="theme-color" content="#121214" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f3f4f6" media="(prefers-color-scheme: light)">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     
     <style>
         :root {
@@ -156,6 +162,7 @@
             margin: 0; 
         }
         input[type=number] {
+            -moz-appearance: field;
             -moz-appearance: textfield;
         }
 
@@ -171,20 +178,16 @@
             color: var(--text-color);
         }
         
-        .lfp-optimum-dot {
-            height: 8px;
-            width: 8px;
-            background-color: var(--success-color);
-            border-radius: 50%;
+        .optimum-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 6px;
             display: inline-block;
             margin-left: 8px;
-            vertical-align: middle;
-            box-shadow: 0 0 6px var(--success-color);
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-        .show-lfp .lfp-optimum-dot {
-            opacity: 1;
+            background-color: rgba(59, 130, 246, 0.15);
+            color: var(--accent-color);
+            border: 1px solid rgba(59, 130, 246, 0.3);
         }
 
         .sweet-spot-box {
@@ -285,48 +288,6 @@
             text-align: center;
             opacity: 0.7;
         }
-    
-        /* Responsive Optimierungen – Tesla-Funktionen und bestehendes Design bleiben erhalten */
-        *, *::before, *::after { box-sizing: border-box; }
-        html { width: 100%; max-width: 100%; }
-        body { width: 100%; max-width: 100%; overflow-x: hidden; }
-        .top-bar, .calc-container { width: 100%; max-width: 600px; min-width: 0; }
-        .top-bar > *, .card, .input-group, .input-row > *, .result-card { min-width: 0; }
-        select, input, .sweet-spot-box, .alert-box { max-width: 100%; }
-        .page-title, .result-label, .result-sub, .sweet-spot-box, .alert-box { overflow-wrap: anywhere; }
-        @media (max-width: 640px) {
-            body {
-                padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(28px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
-                min-height: 100vh; min-height: 100dvh;
-            }
-            .top-bar { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: center; margin-bottom: 16px; padding-bottom: 12px; }
-            .top-bar > div { display: none; }
-            .back-btn { padding: 8px 10px; font-size: 13px; white-space: nowrap; gap: 5px; }
-            .page-title { font-size: clamp(14px, 3.8vw, 17px); line-height: 1.25; text-align: right; overflow-wrap: anywhere; }
-            .calc-container { gap: 14px; }
-            .card { padding: clamp(12px, 3.8vw, 18px); border-radius: 14px; gap: 16px; }
-            .input-group label { gap: 8px; line-height: 1.35; }
-            .range-val-container { flex: 0 0 auto; gap: 6px; white-space: nowrap; }
-            .input-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-            .input-row > .input-group, .input-row > div { width: auto; min-width: 0; flex: initial !important; }
-            select, input:not([type="range"]) { width: 100%; min-width: 0; min-height: 44px; font-size: 16px; }
-            input[type="range"] { width: 100%; min-width: 0; }
-            .sweet-spot-box { font-size: 13px; line-height: 1.45; padding: 12px; }
-            .result-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-            .result-card { padding: 11px 9px; }
-            .result-label { font-size: 10px; line-height: 1.35; letter-spacing: .2px; }
-            .result-value { font-size: clamp(15px, 4.3vw, 20px); overflow-wrap: anywhere; }
-            .result-sub { font-size: 10px; line-height: 1.35; }
-            .alert-box { align-items: flex-start; padding: 11px 12px; line-height: 1.4; }
-        }
-        @media (max-width: 390px) {
-            .top-bar { grid-template-columns: minmax(0, 1fr); gap: 10px; justify-items: start; }
-            .page-title { text-align: left; font-size: 17px; }
-            .input-row, .result-grid { grid-template-columns: minmax(0, 1fr); }
-            .card { padding: 14px 12px; }
-        }
-        @media (min-width: 900px) { body { padding: 24px 24px 60px; } }
-
     </style>
 </head>
 <body>
@@ -343,15 +304,19 @@
     <div class="calc-container">
         <div class="card" id="mainCard">
             <div class="input-group">
-                <label for="batteryProfile">Tesla Akku-Profil <span id="lfpDot" class="lfp-optimum-dot" title="NMC Optimum aktiv"></span></label>
+                <label for="batteryProfile">
+                    <span>Tesla Akku-Profil</span>
+                    <span id="battTypeBadge" class="optimum-badge">LFP Akku</span>
+                </label>
                 <select id="batteryProfile" onchange="onProfileChange()">
                     <option value="60" data-min="16" data-max="84" data-info="LFP-Optimum (SoH-schonend): 16% bis 84%. Darunter fällt die Zellspannung extrem steil ab, darüber schießt die Kurve steil nach oben. (Hinweis: Für das BMS gelegentlich auf 100% vollladen!)" data-type="lfp">Model 3 / Y RWD (LFP ~60 kWh)</option>
-                    <option value="79" data-min="26" data-max="77" data-info="NMC/NCA-Optimum (SoH-schonend): 26% bis 77%. Vermeidet die extremen Spannungsspitzen an den Rändern für minimale chemische Degradation." data-type="nmc">Model 3 / Y Long Range / Performance (NMC ~79 kWh)</option>
+                    <option value="79" data-min="20" data-max="80" data-info="NMC/NCA-Optimum (SoH-schonend): 20% bis 80%. Vermeidet die extremen Spannungsspitzen an den Rändern für minimale chemische Degradation." data-type="nmc">Model 3 / Y Long Range / Performance (NMC ~79 kWh)</option>
+                    <option value="100" data-min="20" data-max="80" data-info="Model S / X (NMC ~100 kWh): 20% bis 80% empfohlen für den täglichen Pendelverkehr zur Schonung der Zellen." data-type="nmc">Model S / X Long Range & Plaid (NMC ~100 kWh)</option>
                     <option value="55" data-min="15" data-max="85" data-info="Älteres LFP-Profil: Ca. 15% bis 85% als flacher, stressfreier Arbeitsbereich im Spannungsverlauf." data-type="lfp">Model 3 SR+ älteren Baujahrs (LFP ~55 kWh)</option>
                 </select>
             </div>
 
-            <!-- Akku-Info / Sweet Spot Box wieder integriert -->
+            <!-- Akku-Info / Sweet Spot Box -->
             <div class="sweet-spot-box" id="sweetSpotBox">
                 <span class="icon">💡</span>
                 <span id="sweetSpotText">Lade Info...</span>
@@ -381,21 +346,29 @@
 
             <div class="input-row">
                 <div class="input-group" style="flex: 1;">
-                    <label for="kwhPriceCents">Strompreis (Cent / kWh)</label>
-                    <input type="number" id="kwhPriceCents" value="38" step="0.5" min="0" placeholder="z.B. 38" oninput="calculate()">
+                    <label for="chargePowerSelect">Ladeleistung (AC)</label>
+                    <select id="chargePowerSelect" onchange="calculate()">
+                        <option value="11.0" selected>11 kW (Standard Wallbox / Säule)</option>
+                        <option value="22.0">22 kW (Doppellader / Model S alt)</option>
+                        <option value="3.7">3,7 kW (1-phasig 16A blau / Camping)</option>
+                        <option value="2.3">2,3 kW (Schuko Notladekabel 10A)</option>
+                    </select>
                 </div>
                 <div class="input-group" style="flex: 1;">
-                    <label for="blockLimit">Max. Standzeit (Min)</label>
-                    <input type="number" id="blockLimit" value="240" step="10" min="0" placeholder="z.B. 240 Min" oninput="calculate()">
+                    <label for="kwhPriceCents">Strompreis (Cent / kWh)</label>
+                    <input type="number" id="kwhPriceCents" value="38" step="0.5" min="0" placeholder="z.B. 38" oninput="calculate()">
                 </div>
             </div>
 
             <div class="input-row">
                 <div class="input-group" style="flex: 1;">
+                    <label for="blockLimit">Max. Standzeit (Min)</label>
+                    <input type="number" id="blockLimit" value="240" step="10" min="0" placeholder="z.B. 240 Min" oninput="calculate()">
+                </div>
+                <div class="input-group" style="flex: 1;">
                     <label for="blockFeeCents">Blockiergebühr (Cent / Min)</label>
                     <input type="number" id="blockFeeCents" value="10" step="1" min="0" placeholder="z.B. 10" oninput="calculate()">
                 </div>
-                <div style="flex: 1;"></div>
             </div>
         </div>
 
@@ -407,7 +380,7 @@
                     <span class="result-sub" id="resKwhNetto">Netto: -- kWh</span>
                 </div>
                 <div class="result-card">
-                    <span class="result-label">Reale Ladezeit (11 kW AC)</span>
+                    <span class="result-label">Reale Ladezeit (inkl. Verluste)</span>
                     <span class="result-value accent" id="resTime">-- Std.</span>
                     <span class="result-sub" id="resEndTime">Fertig um: --:-- Uhr</span>
                 </div>
@@ -421,7 +394,7 @@
                 </div>
                 <div class="result-card">
                     <span class="result-label">Ladeleistung</span>
-                    <span class="result-value" style="font-size: 16px;">11 kW AC</span>
+                    <span class="result-value" style="font-size: 16px;" id="resPowerDisplay">11 kW AC</span>
                     <span class="result-sub" id="weatherInfoSub">Wetter: Lokal (15°C)</span>
                 </div>
             </div>
@@ -461,7 +434,6 @@
     </svg>
 
     <script>
-        const CHARGE_POWER_AC = 11.0;
         let currentLossFactor = 1.07;
 
         function fetchWeatherLossFactor() {
@@ -511,19 +483,19 @@
             if (!select || select.selectedIndex === -1) return;
             let selectedOption = select.options[select.selectedIndex];
             document.getElementById('sweetSpotText').innerText = selectedOption.getAttribute('data-info');
-        }
-        
-        function updateLfpIndikator() {
-            let select = document.getElementById('batteryProfile');
-            if (!select || select.selectedIndex === -1) return;
-            let selectedOption = select.options[select.selectedIndex];
-            let battType = selectedOption.getAttribute('data-type');
             
-            let mainCard = document.getElementById('mainCard');
+            let battType = selectedOption.getAttribute('data-type');
+            let badge = document.getElementById('battTypeBadge');
             if (battType === 'nmc') {
-                mainCard.classList.add('show-lfp');
+                badge.innerText = 'NMC Akku';
+                badge.style.color = '#38bdf8';
+                badge.style.backgroundColor = 'rgba(56, 189, 248, 0.15)';
+                badge.style.borderColor = 'rgba(56, 189, 248, 0.3)';
             } else {
-                mainCard.classList.remove('show-lfp');
+                badge.innerText = 'LFP Akku';
+                badge.style.color = '#34d399';
+                badge.style.backgroundColor = 'rgba(52, 211, 153, 0.15)';
+                badge.style.borderColor = 'rgba(52, 211, 153, 0.3)';
             }
         }
 
@@ -539,7 +511,6 @@
 
             updateValues();
             updateSweetSpotInfo();
-            updateLfpIndikator();
         }
 
         function getBattIconHtml(soc) {
@@ -550,7 +521,7 @@
             else if (soc <= 75) { iconId = 'batt-75'; iconClass = 'batt-75'; }
             else { iconId = 'batt-100'; iconClass = 'batt-100'; }
             
-            return `<svg class="batt-icon ${iconClass}"><use xlink:href="#${iconId}"></use></svg>`;
+            return `<svg class="batt-icon ${iconClass}"><use href="#${iconId}" xlink:href="#${iconId}"></use></svg>`;
         }
 
         function updateValues() {
@@ -578,9 +549,12 @@
             let netCapacity = parseFloat(document.getElementById('batteryProfile').value) || 60;
             let start = parseInt(document.getElementById('startSoc').value) || 0;
             let target = parseInt(document.getElementById('targetSoc').value) || 100;
+            let chargePower = parseFloat(document.getElementById('chargePowerSelect').value) || 11.0;
             let pricePerKwhCents = parseFloat(document.getElementById('kwhPriceCents').value) || 0;
             let maxMinutes = parseInt(document.getElementById('blockLimit').value) || 0;
             let blockFeeCentsPerMin = parseFloat(document.getElementById('blockFeeCents').value) || 0;
+
+            document.getElementById('resPowerDisplay').innerText = `${chargePower.toFixed(1).replace('.0', '')} kW AC`;
 
             let socDiff = target - start;
             if (socDiff < 0) socDiff = 0;
@@ -588,7 +562,8 @@
             let netKwh = (netCapacity * socDiff) / 100;
             let kwhWithLosses = netKwh * currentLossFactor;
 
-            let hoursTotal = kwhWithLosses / CHARGE_POWER_AC;
+            // KORRIGIERTE FORMEL: Die Ladesäule muss die Bruttoenergie (inkl. Ladeverluste) liefern!
+            let hoursTotal = kwhWithLosses / chargePower;
             let totalMinutes = Math.round(hoursTotal * 60);
             let hrs = Math.floor(totalMinutes / 60);
             let mins = totalMinutes % 60;
@@ -597,6 +572,8 @@
             let finishTime = new Date(now.getTime() + totalMinutes * 60000);
             let finishHours = String(finishTime.getHours()).padStart(2, '0');
             let finishMinutes = String(finishTime.getMinutes()).padStart(2, '0');
+
+            let dayDiff = finishTime.getDate() !== now.getDate() ? " (+1 Tag)" : "";
 
             let energyCost = (kwhWithLosses * pricePerKwhCents) / 100;
             let blockFeeTotal = 0;
@@ -622,7 +599,7 @@
             } else {
                 alertBox.className = 'alert-box safe';
                 alertBox.querySelector('span').innerText = 'ℹ️';
-                alertText.innerText = `Kein Standzeit-Limit hinterlegt. Ladezeit basiert auf idealen 11 kW AC.`;
+                alertText.innerText = `Kein Standzeit-Limit hinterlegt. Berechnung basiert auf ${chargePower} kW AC.`;
             }
 
             let totalCost = energyCost + blockFeeTotal;
@@ -630,7 +607,7 @@
             document.getElementById('resKwh').innerText = kwhWithLosses.toFixed(1) + ' kWh';
             document.getElementById('resKwhNetto').innerText = `Netto im Akku: ${netKwh.toFixed(1)} kWh`;
             document.getElementById('resTime').innerText = hrs > 0 ? `${hrs} Std. ${mins} Min.` : `${mins} Min.`;
-            document.getElementById('resEndTime').innerText = `Fertig um: ${finishHours}:${finishMinutes} Uhr`;
+            document.getElementById('resEndTime').innerText = `Fertig um: ${finishHours}:${finishMinutes} Uhr${dayDiff}`;
             document.getElementById('resCost').innerText = totalCost.toFixed(2) + ' €';
             
             if (blockFeeTotal > 0) {

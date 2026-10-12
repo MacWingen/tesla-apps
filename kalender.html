@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Kalender, Feiertage & Brückentage</title>
     <link rel="icon" type="image/png" href="icons/hedgehog.png">
+    
+    <!-- PWA & Mobile / Tesla Browser Leisten-Farben -->
+    <meta name="theme-color" content="#0b0b0e" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+
     <style>
         :root {
             --bg-color: #0b0b0e;
@@ -243,7 +250,7 @@
         }
 
         .tooltip-text {
-            font-size: 6.5px;
+            font-size: 7.5px;
             text-align: center;
             line-height: 1;
             width: 90%;
@@ -251,7 +258,7 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             margin-top: 2px;
-            opacity: 0.85;
+            opacity: 0.9;
         }
 
         .holiday-tooltip { color: var(--accent-red); }
@@ -366,11 +373,19 @@
             font-weight: 500;
             color: var(--text-color);
             background: rgba(255,255,255,0.01);
+            box-sizing: border-box;
         }
 
         .mini-day.other {
             color: var(--subtext-color);
             opacity: 0.2;
+        }
+
+        .mini-day.today {
+            background-color: rgba(10, 132, 255, 0.25);
+            color: var(--accent-blue);
+            font-weight: 700;
+            border: 1px solid var(--accent-blue);
         }
 
         .mini-day.holiday {
@@ -466,10 +481,37 @@
         let showVacations = false;
         let showBridgeDays = false;
         let showYearView = false;
+        let vacationsCache = {};
 
         const monthNames = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
 
         document.getElementById('stateSelect').value = currentState;
+
+        // Hilfsfunktion: Sicheres Formatieren YYYY-MM-DD ohne UTC-Zeitzonenverschiebung
+        function toDateKey(date) {
+            let y = date.getFullYear();
+            let m = String(date.getMonth() + 1).padStart(2, '0');
+            let d = String(date.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        function addDays(date, days) {
+            let res = new Date(date);
+            res.setDate(res.getDate() + days);
+            return res;
+        }
+
+        // Dynamische Ostersonntag-Berechnung (Gauß / Meeus Formel)
+        function getEasterSunday(year) {
+            let a = year % 19, b = Math.floor(year / 100), c = year % 100,
+                d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25),
+                g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30,
+                i = Math.floor(c / 4), k = c % 4, L = (32 + 2 * e + 2 * i - h - k) % 7,
+                m = Math.floor((a + 11 * h + 22 * L) / 451),
+                month = Math.floor((h + L - 7 * m + 114) / 31),
+                day = ((h + L - 7 * m + 114) % 31) + 1;
+            return new Date(year, month - 1, day);
+        }
 
         function getHolidays(year, state) {
             let holidays = {};
@@ -485,95 +527,188 @@
             if (state === 'TH') holidays[`${year}-09-20`] = "Weltkindertag";
             if (state === 'BB' || state === 'MV' || state === 'SN' || state === 'ST' || state === 'TH') holidays[`${year}-10-31`] = "Reformationsfest";
             if (state === 'BW' || state === 'BY' || state === 'NW' || state === 'RP' || state === 'SL') holidays[`${year}-11-01`] = "Allerheiligen";
+            
             if (state === 'SN') {
-                let nov30 = new Date(Date.UTC(year, 10, 30));
-                let dayOfWeek = nov30.getUTCDay();
+                let nov30 = new Date(year, 10, 30);
+                let dayOfWeek = nov30.getDay();
                 let daysToSubtract = (dayOfWeek + 4) % 7 + 1;
                 let bussTag = new Date(nov30);
-                bussTag.setUTCDate(nov30.getUTCDate() - daysToSubtract);
-                holidays[bussTag.toISOString().split('T')[0]] = "Buß- und Bettag";
+                bussTag.setDate(nov30.getDate() - daysToSubtract);
+                holidays[toDateKey(bussTag)] = "Buß- und Bettag";
             }
 
-            let a = year % 19, b = Math.floor(year / 100), c = year % 100,
-                d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25),
-                g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30,
-                i = Math.floor(c / 4), k = c % 4, L = (32 + 2 * e + 2 * i - h - k) % 7,
-                m = Math.floor((a + 11 * h + 22 * L) / 451),
-                month = Math.floor((h + L - 7 * m + 114) / 31),
-                day = ((h + L - 7 * m + 114) % 31) + 1;
+            let easterSunday = getEasterSunday(year);
 
-            let easterSunday = new Date(Date.UTC(year, month - 1, day));
-            let addDays = (date, days) => {
-                let res = new Date(date);
-                res.setUTCDate(res.getUTCDate() + days);
-                return res.toISOString().split('T')[0];
-            };
-
-            holidays[addDays(easterSunday, -2)] = "Karfreitag";
-            holidays[addDays(easterSunday, 1)] = "Ostermontag";
-            holidays[addDays(easterSunday, 39)] = "Christi Himmelfahrt";
-            holidays[addDays(easterSunday, 50)] = "Pfingstmontag";
+            holidays[toDateKey(addDays(easterSunday, -2))] = "Karfreitag";
+            holidays[toDateKey(addDays(easterSunday, 1))] = "Ostermontag";
+            holidays[toDateKey(addDays(easterSunday, 39))] = "Christi Himmelfahrt";
+            holidays[toDateKey(addDays(easterSunday, 50))] = "Pfingstmontag";
 
             if (state === 'BW' || state === 'BY' || state === 'NW' || state === 'RP' || state === 'SL') {
-                holidays[addDays(easterSunday, 60)] = "Fronleichnam";
+                holidays[toDateKey(addDays(easterSunday, 60))] = "Fronleichnam";
             }
 
             return holidays;
         }
 
-        function getVacations(year, state) {
+        // Offizielle Schulferien über die kostenfreie, werbefreie OpenHolidays API (DE-BW, DE-BY, DE-NW etc.)
+        function fetchVacations(year, state) {
+            let cacheKey = `tesla_vacations_${year}_${state}`;
+            let saved = localStorage.getItem(cacheKey);
+            if (saved) {
+                try {
+                    vacationsCache[`${year}_${state}`] = JSON.parse(saved);
+                    return;
+                } catch(e) {}
+            }
+
+            let url = `https://openholidaysapi.org/SchoolHolidays?countryIsoCode=DE&subdivisionCode=DE-${state}&languageIsoCode=DE&validFrom=${year}-01-01&validTo=${year}-12-31`;
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    if (Array.isArray(data) && data.length > 0) {
+                        let vacMap = {};
+                        data.forEach(item => {
+                            let nameObj = (item.name || []).find(n => n.language === 'DE') || (item.name || [])[0];
+                            let name = nameObj ? nameObj.text : "Schulferien";
+                            let sParts = item.startDate.split('-');
+                            let eParts = item.endDate.split('-');
+                            let curr = new Date(parseInt(sParts[0]), parseInt(sParts[1]) - 1, parseInt(sParts[2]));
+                            let end = new Date(parseInt(eParts[0]), parseInt(eParts[1]) - 1, parseInt(eParts[2]));
+                            while (curr <= end) {
+                                vacMap[toDateKey(curr)] = name;
+                                curr.setDate(curr.getDate() + 1);
+                            }
+                        });
+                        vacationsCache[`${year}_${state}`] = vacMap;
+                        try {
+                            localStorage.setItem(cacheKey, JSON.stringify(vacMap));
+                        } catch(e) {}
+                        
+                        if (showVacations) {
+                            renderCalendar();
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.warn("OpenHolidays API nicht erreichbar, nutze Fallback-Daten:", err);
+                });
+        }
+
+        // Intelligente bundeslandspezifische Fallback-Ferien (falls offline oder vor dem API-Laden)
+        function getFallbackVacations(year, state) {
             let vacations = {};
-            let addRange = (startStr, endStr, name) => {
-                let curr = new Date(startStr);
-                let end = new Date(endStr);
-                while (curr <= end) {
-                    vacations[curr.toISOString().split('T')[0]] = name;
+            let addRange = (start, end, name) => {
+                let curr = new Date(start);
+                let endD = new Date(end);
+                while (curr <= endD) {
+                    vacations[toDateKey(curr)] = name;
                     curr.setDate(curr.getDate() + 1);
                 }
             };
 
-            addRange(`${year}-03-30`, `${year}-04-11`, "Osterferien");
-            addRange(`${year}-07-01`, `${year}-08-12`, "Sommerferien");
-            addRange(`${year}-10-12`, `${year}-10-24`, "Herbstferien");
-            addRange(`${year}-12-23`, `${year}-12-31`, "Weihnachtsferien");
+            let easterSunday = getEasterSunday(year);
+
+            // Winterferien (z. B. Sachsen, Thüringen, Berlin, Bayern)
+            if (['SN', 'TH', 'BE', 'BB', 'MV', 'ST', 'BY'].includes(state)) {
+                addRange(new Date(year, 1, 9), new Date(year, 1, 14), state === 'BY' ? "Frühjahrsferien" : "Winterferien");
+            }
+
+            // Osterferien dynamisch um Ostern
+            let osterStart = addDays(easterSunday, -6);
+            let osterEnd = addDays(easterSunday, 11);
+            addRange(osterStart, osterEnd, "Osterferien");
+
+            // Pfingstferien (typisch BW, BY, teils MV, ST)
+            if (state === 'BW' || state === 'BY') {
+                let pfingstStart = addDays(easterSunday, 51);
+                let pfingstEnd = addDays(easterSunday, 62);
+                addRange(pfingstStart, pfingstEnd, "Pfingstferien");
+            } else if (['MV', 'ST', 'BE', 'BB', 'HB', 'HH', 'NI'].includes(state)) {
+                let pfingstStart = addDays(easterSunday, 51);
+                let pfingstEnd = addDays(easterSunday, 53);
+                addRange(pfingstStart, pfingstEnd, "Pfingstferien");
+            }
+
+            // Sommerferien (gestaffelt nach Bundesland-Gruppen)
+            if (['NW'].includes(state)) {
+                addRange(new Date(year, 6, 13), new Date(year, 7, 25), "Sommerferien");
+            } else if (['BY', 'BW'].includes(state)) {
+                addRange(new Date(year, 6, 30), new Date(year, 8, 12), "Sommerferien");
+            } else if (['HB', 'HH', 'NI', 'SH'].includes(state)) {
+                addRange(new Date(year, 6, 2), new Date(year, 7, 12), "Sommerferien");
+            } else if (['BE', 'BB', 'MV', 'SN', 'ST', 'TH'].includes(state)) {
+                addRange(new Date(year, 6, 9), new Date(year, 7, 21), "Sommerferien");
+            } else {
+                addRange(new Date(year, 6, 15), new Date(year, 7, 27), "Sommerferien");
+            }
+
+            // Herbstferien
+            if (['BY', 'BW'].includes(state)) {
+                addRange(new Date(year, 9, 26), new Date(year, 9, 31), "Herbstferien");
+            } else {
+                addRange(new Date(year, 9, 12), new Date(year, 9, 24), "Herbstferien");
+            }
+
+            // Weihnachtsferien
+            addRange(new Date(year, 11, 23), new Date(year, 11, 31), "Weihnachtsferien");
+            addRange(new Date(year, 0, 1), new Date(year, 0, 6), "Weihnachtsferien");
 
             return vacations;
+        }
+
+        function getVacations(year, state) {
+            let key = `${year}_${state}`;
+            if (vacationsCache[key] && Object.keys(vacationsCache[key]).length > 0) {
+                return vacationsCache[key];
+            }
+            return getFallbackVacations(year, state);
         }
 
         function getBridgeDays(year, state) {
             let holidays = getHolidays(year, state);
             let bridgeDays = {};
 
+            function addBridge(date, name) {
+                let key = toDateKey(date);
+                let day = date.getDay();
+                // Niemals an Wochenenden (Sa/So) und niemals, wenn der Tag bereits ein gesetzlicher Feiertag ist
+                if (date.getFullYear() === year && day !== 0 && day !== 6 && !holidays[key]) {
+                    bridgeDays[key] = name;
+                }
+            }
+
             Object.keys(holidays).forEach(hDateStr => {
                 let parts = hDateStr.split('-');
-                let hDate = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
-                let dayOfWeek = hDate.getUTCDay();
+                let hDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                let dayOfWeek = hDate.getDay();
 
-                if (dayOfWeek === 4) {
-                    let b = new Date(hDate); b.setUTCDate(b.getUTCDate() + 1);
-                    bridgeDays[b.toISOString().split('T')[0]] = "Brückentag";
-                } else if (dayOfWeek === 2) {
-                    let b = new Date(hDate); b.setUTCDate(b.getUTCDate() - 1);
-                    bridgeDays[b.toISOString().split('T')[0]] = "Brückentag";
-                } else if (dayOfWeek === 3) {
-                    let b1 = new Date(hDate); b1.setUTCDate(b1.getUTCDate() - 1);
-                    let b2 = new Date(hDate); b2.setUTCDate(b2.getUTCDate() + 1);
-                    bridgeDays[b1.toISOString().split('T')[0]] = "Brückentag";
-                    bridgeDays[b2.toISOString().split('T')[0]] = "Brückentag";
-                } else if (dayOfWeek === 5) {
+                if (dayOfWeek === 4) { // Donnerstag (z. B. Himmelfahrt, Fronleichnam, Neujahr) -> Freitag ist echter Brückentag
+                    addBridge(addDays(hDate, 1), "Top-Brückentag (1 Tag = 4 frei)");
+                } else if (dayOfWeek === 2) { // Dienstag -> Montag ist echter Brückentag
+                    addBridge(addDays(hDate, -1), "Top-Brückentag (1 Tag = 4 frei)");
+                } else if (dayOfWeek === 3) { // Mittwoch -> Mo+Di oder Do+Fr (2 Tage = 5 Tage frei)
+                    addBridge(addDays(hDate, 1), "Brückentag (2 Tage = 5 frei)");
+                    addBridge(addDays(hDate, 2), "Brückentag (2 Tage = 5 frei)");
+                    addBridge(addDays(hDate, -1), "Brückentag (2 Tage = 5 frei)");
+                    addBridge(addDays(hDate, -2), "Brückentag (2 Tage = 5 frei)");
+                } else if (dayOfWeek === 5) { // Freitag (z. B. Karfreitag, 1. Mai) -> Mo-Do vor dem Feiertag
                     for (let i = 1; i <= 4; i++) {
-                        let b = new Date(hDate);
-                        b.setUTCDate(b.getUTCDate() - i);
-                        bridgeDays[b.toISOString().split('T')[0]] = "Urlaubs-Paket";
+                        addBridge(addDays(hDate, -i), "Brückenwoche (4 Tage = 9 frei)");
                     }
-                } else if (dayOfWeek === 1) {
+                } else if (dayOfWeek === 1) { // Montag (z. B. Ostermontag, Pfingstmontag) -> Di-Fr nach dem Feiertag
                     for (let i = 1; i <= 4; i++) {
-                        let b = new Date(hDate);
-                        b.setUTCDate(b.getUTCDate() + i);
-                        bridgeDays[b.toISOString().split('T')[0]] = "Urlaubs-Paket";
+                        addBridge(addDays(hDate, i), "Brückenwoche (4 Tage = 9 frei)");
                     }
                 }
             });
+
+            // Speziell: "Zwischen den Jahren" (vom 24. Dez bis 31. Dez alle Werktage)
+            for (let d = 27; d <= 31; d++) {
+                addBridge(new Date(year, 11, d), "Zwischen den Jahren");
+            }
+            addBridge(new Date(year, 11, 24), "Heiligabend");
+
             return bridgeDays;
         }
 
@@ -602,6 +737,31 @@
             return ranges;
         }
 
+        // Konsolidiert zusammenhängende Ferientage unter Berücksichtigung des echten Namens
+        function consolidateNamedRanges(items) {
+            if (!items || items.length === 0) return [];
+            items.sort((a, b) => a.date.localeCompare(b.date));
+            let ranges = [];
+            let current = { start: items[0].date, end: items[0].date, name: items[0].name };
+
+            for (let i = 1; i < items.length; i++) {
+                let pParts = current.end.split('-');
+                let cParts = items[i].date.split('-');
+                let prevDate = new Date(parseInt(pParts[0]), parseInt(pParts[1]) - 1, parseInt(pParts[2]));
+                let currDate = new Date(parseInt(cParts[0]), parseInt(cParts[1]) - 1, parseInt(cParts[2]));
+                let diffDays = Math.round((currDate - prevDate) / (1000 * 60 * 60 * 24));
+
+                if (diffDays === 1 && items[i].name === current.name) {
+                    current.end = items[i].date;
+                } else {
+                    ranges.push(current);
+                    current = { start: items[i].date, end: items[i].date, name: items[i].name };
+                }
+            }
+            ranges.push(current);
+            return ranges;
+        }
+
         function formatDateReadable(dateStr) {
             let parts = dateStr.split('-');
             return `${parseInt(parts[2])}. ${monthNames[parseInt(parts[1]) - 1]}`;
@@ -624,18 +784,20 @@
             let vacations = getVacations(year, currentState);
             let bridgeDays = getBridgeDays(year, currentState);
 
+            let todayObj = new Date();
+            let todayStr = toDateKey(todayObj);
+
             if (showYearView) {
-                // Generiere alle 12 Mini-Monate für den echten Jahreskalender
+                // Generiere alle 12 Mini-Monate für den Jahreskalender
                 let yearGridHTML = '';
 
                 for (let m = 0; m < 12; m++) {
                     let firstDayIndex = new Date(year, m, 1).getDay();
                     firstDayIndex = (firstDayIndex === 0) ? 6 : firstDayIndex - 1;
                     let totalDays = new Date(year, m + 1, 0).getDate();
-                    let prevTotalDays = new Date(year, m, 0).getDate();
 
                     let miniDaysHTML = '';
-                    // Vorherige Tage
+                    // Vorherige leere Tage
                     for (let i = firstDayIndex; i > 0; i--) {
                         miniDaysHTML += `<div class="mini-day other"><span></span></div>`;
                     }
@@ -645,12 +807,14 @@
                         let dStr = String(d).padStart(2, '0');
                         let dateKey = `${year}-${mStr}-${dStr}`;
 
+                        let isToday = (dateKey === todayStr);
                         let h = holidays[dateKey];
                         let v = showVacations ? vacations[dateKey] : null;
                         let b = showBridgeDays ? bridgeDays[dateKey] : null;
                         let isSun = (new Date(year, m, d).getDay() === 0);
 
                         let cName = "mini-day";
+                        if (isToday) cName += " today";
                         if (h) cName += " holiday";
                         else if (b) cName += " bridge-day";
                         else if (v) cName += " school-vacation";
@@ -682,8 +846,6 @@
                 let prevTotalDays = new Date(year, month, 0).getDate();
 
                 let gridHTML = '';
-                let todayObj = new Date();
-                let todayStr = `${todayObj.getFullYear()}-${String(todayObj.getMonth() + 1).padStart(2, '0')}-${String(todayObj.getDate()).padStart(2, '0')}`;
 
                 for (let i = firstDayIndex; i > 0; i--) {
                     let dayNum = prevTotalDays - i + 1;
@@ -726,7 +888,7 @@
                     let tooltipHTML = '';
                     if (holidayName) tooltipHTML = `<span class="tooltip-text holiday-tooltip">${holidayName}</span>`;
                     else if (isBridge) tooltipHTML = `<span class="tooltip-text bridge-tooltip">Urlaub</span>`;
-                    else if (vacationName) tooltipHTML = `<span class="tooltip-text vacation-tooltip">Ferien</span>`;
+                    else if (vacationName) tooltipHTML = `<span class="tooltip-text vacation-tooltip">${vacationName.replace('ferien', '')}</span>`;
 
                     gridHTML += `
                         <div class="${classList}">
@@ -755,28 +917,26 @@
                 });
 
                 if (showBridgeDays && monthBridgeDays.length > 0) {
-                    let bDates = monthBridgeDays.map(b => b.date);
-                    let bRanges = consolidateRanges(bDates);
+                    let bRanges = consolidateNamedRanges(monthBridgeDays);
                     bRanges.forEach(r => {
                         let text = r.start === r.end ? formatDateReadable(r.start) : `${formatDateReadable(r.start)} – ${formatDateReadable(r.end)}`;
                         monthInfoHTML += `
                             <div class="info-item bridge-bar">
                                 <span class="info-date">✈️ ${text}</span>
-                                <span class="info-name">Top-Brückentag</span>
+                                <span class="info-name">${r.name}</span>
                             </div>
                         `;
                     });
                 }
 
                 if (showVacations && monthVacationsDays.length > 0) {
-                    let vDates = monthVacationsDays.map(v => v.date);
-                    let vRanges = consolidateRanges(vDates);
+                    let vRanges = consolidateNamedRanges(monthVacationsDays);
                     vRanges.forEach(r => {
                         let text = r.start === r.end ? formatDateReadable(r.start) : `${formatDateReadable(r.start)} – ${formatDateReadable(r.end)}`;
                         monthInfoHTML += `
                             <div class="info-item vacation-bar">
                                 <span class="info-date">🎓 ${text}</span>
-                                <span class="info-name">Schulferien</span>
+                                <span class="info-name">${r.name}</span>
                             </div>
                         `;
                     });
@@ -789,12 +949,16 @@
         function changeState() {
             currentState = document.getElementById('stateSelect').value;
             localStorage.setItem('tesla_dashboard_state', currentState);
+            fetchVacations(currentDate.getFullYear(), currentState);
             renderCalendar();
         }
 
         function toggleVacationMode() {
             showVacations = !showVacations;
             document.getElementById('toggleVacation').classList.toggle('active', showVacations);
+            if (showVacations) {
+                fetchVacations(currentDate.getFullYear(), currentState);
+            }
             renderCalendar();
         }
 
@@ -810,15 +974,24 @@
             renderCalendar();
         }
 
+        // Korrigierte Monatsnavigation: currentDate.setDate(1) verhindert Überspringen von Monaten am 29./30./31.
         function changeMonth(direction) {
+            let oldYear = currentDate.getFullYear();
             if (showYearView) {
                 currentDate.setFullYear(currentDate.getFullYear() + direction);
             } else {
+                currentDate.setDate(1);
                 currentDate.setMonth(currentDate.getMonth() + direction);
+            }
+            let newYear = currentDate.getFullYear();
+            if (newYear !== oldYear) {
+                fetchVacations(newYear, currentState);
             }
             renderCalendar();
         }
 
+        // Initiale Vorab-Abfrage der Ferientermine
+        fetchVacations(currentDate.getFullYear(), currentState);
         renderCalendar();
     </script>
 </body>
