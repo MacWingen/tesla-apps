@@ -9,115 +9,119 @@
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #090d16; }
+        .custom-scrollbar::-webkit-scrollbar { width: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
-        input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 5px; border-radius: 6px; background: #1e2029; outline: none; margin: 2px 0; }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #ffffff; cursor: pointer; border: 2px solid #10b981; box-shadow: 0 1px 3px rgba(0,0,0,0.4); }
+        input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 4px; background: #1f2937; outline: none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #10b981; cursor: pointer; box-shadow: 0 0 8px rgba(16, 185, 129, 0.5); }
     </style>
 </head>
-<body class="bg-gray-950 text-gray-100 h-screen flex flex-col items-center justify-center overflow-hidden text-xs">
+<body class="bg-black text-gray-100 h-screen flex flex-col items-center justify-center overflow-hidden text-xs font-sans">
 
-    <!-- Hauptcontainer -->
-    <div class="w-full h-full max-w-2xl bg-gray-900 border-x border-gray-800 flex flex-col shadow-2xl overflow-hidden">
+    <!-- App Container -->
+    <div class="w-full h-full max-w-xl bg-gray-950 border-x border-gray-900 flex flex-col shadow-2xl overflow-hidden">
         
-        <!-- Header (Kompakt) -->
-        <div class="px-3 py-2 border-b border-gray-800 flex items-center justify-between bg-gray-900/90 backdrop-blur shrink-0">
-            <div class="flex items-center space-x-2">
-                <div class="bg-emerald-500/10 border border-emerald-500/30 p-1.5 rounded-lg text-emerald-400">
-                    <i class="fa-solid fa-bolt"></i>
+        <!-- Header -->
+        <div class="px-4 py-3 border-b border-gray-900 flex items-center justify-between bg-gray-950/80 backdrop-blur shrink-0">
+            <div class="flex items-center space-x-2.5">
+                <div class="bg-emerald-500/10 border border-emerald-500/20 p-2 rounded-xl text-emerald-400">
+                    <i class="fa-solid fa-bolt text-sm"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold tracking-tight">WBG Chargemap</h1>
-                    <span class="text-[10px] text-emerald-400" id="weatherInfoBadge">Lünen: --°C (Verlust: --%)</span>
+                    <h1 class="font-bold text-sm tracking-tight text-gray-100">WBG Chargemap</h1>
+                    <span class="text-[10px] text-emerald-400 font-medium" id="weatherInfoBadge">Lünen: --°C</span>
                 </div>
             </div>
             <div class="text-right">
-                <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-1.5 py-0.5 rounded-full inline-block mb-0.5">0,38 €/kWh</span>
-                <span class="text-[9px] text-gray-500 block" id="locationLabel">Basis: Winkel 13, Lünen</span>
+                <span class="text-[11px] font-bold text-emerald-400 block">0,38 €/kWh</span>
+                <span class="text-[9px] text-gray-500 block truncate max-w-[140px]" id="locationLabel">Winkel 13, Lünen</span>
             </div>
         </div>
 
-        <!-- RECHNER (Längliche, schlanke Top-Leiste inkl. Ladezeit & Preis) -->
-        <div class="p-2 bg-gray-950 border-b border-gray-800 space-y-1.5 shrink-0">
-            <!-- Erste Zeile: Akku, Schnellwahl & Längliche Fertig-Anzeige + Preis -->
-            <div class="flex items-center justify-between space-x-2">
-                <!-- Schnellwahl (40, 60, 75, 100) & Input -->
-                <div class="flex items-center space-x-1 shrink-0">
-                    <div class="grid grid-cols-4 gap-0.5">
-                        <button onclick="setBatterySize(40)" class="bg-gray-900 hover:bg-gray-800 border border-gray-800 text-gray-300 px-1 py-1 rounded text-[10px]">40</button>
-                        <button onclick="setBatterySize(60)" class="bg-gray-900 hover:bg-gray-800 border border-gray-800 text-gray-300 px-1 py-1 rounded text-[10px]">60</button>
-                        <button onclick="setBatterySize(75)" class="bg-gray-900 hover:bg-gray-800 border border-gray-800 text-gray-300 px-1 py-1 rounded text-[10px]">75</button>
-                        <button onclick="setBatterySize(100)" class="bg-gray-900 hover:bg-gray-800 border border-gray-800 text-gray-300 px-1 py-1 rounded text-[10px]">100</button>
-                    </div>
-                    <div class="flex items-center space-x-0.5 bg-gray-900 border border-gray-800 rounded px-1 py-0.5 shrink-0">
-                        <input type="number" id="batterySizeInput" value="60" min="10" max="200" step="1" oninput="calculateAll()" class="w-8 bg-transparent text-right font-bold text-emerald-400 outline-none">
-                        <span class="text-gray-400 text-[9px]">kWh</span>
-                    </div>
+        <!-- Dashboard / Rechner (Clean & Modern) -->
+        <div class="p-3 bg-gray-900/50 border-b border-gray-900 space-y-2.5 shrink-0">
+            
+            <!-- Hero Result Box (Fertig, Ladezeit & Kosten) -->
+            <div class="bg-gradient-to-r from-blue-950/40 to-emerald-950/40 border border-blue-500/20 rounded-2xl p-2.5 flex items-center justify-between shadow-inner">
+                <div>
+                    <span class="text-[10px] uppercase tracking-wider text-blue-400 font-semibold block">Fertig um</span>
+                    <strong id="topFinishTime" class="text-base font-black text-white tracking-tight">--:--</strong>
+                    <span class="text-[10px] text-gray-400 block" id="topDuration">Ladezeit: --</span>
                 </div>
-
-                <!-- Längliche Fertig-Anzeige mit Ladezeit + Preis -->
-                <div class="flex-1 bg-blue-500/10 border border-blue-500/30 rounded-lg px-2 py-1 flex items-center justify-between text-[11px]">
-                    <span class="text-blue-300 font-medium">Fertig: <strong id="topFinishTime" class="text-blue-400 font-bold">--:--</strong></span>
-                    <span class="text-emerald-400 font-black"><strong id="topCostVal">--,--</strong> €</span>
+                <div class="text-right border-l border-gray-800/80 pl-4">
+                    <span class="text-[10px] uppercase tracking-wider text-emerald-400 font-semibold block">Gesamtkosten</span>
+                    <strong id="topCostVal" class="text-lg font-black text-emerald-400 tracking-tight">--,---</strong> <span class="text-xs text-emerald-400 font-bold">€</span>
                 </div>
             </div>
 
-            <!-- Slider SoC -->
-            <div class="space-y-0.5 pt-1 border-t border-gray-900">
-                <div class="flex justify-between text-[10px] text-gray-400">
-                    <span>Von: <strong id="startVal" class="text-gray-200">20%</strong></span>
-                    <span>Ziel: <strong id="targetVal" class="text-emerald-400">80%</strong></span>
+            <!-- Akku & Schnellwahl -->
+            <div class="flex items-center justify-between pt-0.5">
+                <div class="flex items-center space-x-1.5 bg-gray-950 border border-gray-800/80 rounded-xl px-2.5 py-1">
+                    <span class="text-gray-400 text-[11px]">Akku:</span>
+                    <input type="number" id="batterySizeInput" value="60" min="10" max="200" step="1" oninput="calculateAll()" class="w-9 bg-transparent text-right font-bold text-emerald-400 outline-none text-xs">
+                    <span class="text-gray-500 text-[10px]">kWh</span>
                 </div>
-                <div class="flex space-x-2">
+                <div class="flex space-x-1">
+                    <button onclick="setBatterySize(40)" class="bg-gray-900 hover:bg-gray-800 border border-gray-800 text-gray-300 px-2 py-1 rounded-lg text-[10px] font-semibold transition">40</button>
+                    <button onclick="setBatterySize(60)" class="bg-gray-900 hover:bg-gray-800 border border-gray-800 text-gray-300 px-2 py-1 rounded-lg text-[10px] font-semibold transition">60</button>
+                    <button onclick="setBatterySize(75)" class="bg-gray-900 hover:bg-gray-800 border border-gray-800 text-gray-300 px-2 py-1 rounded-lg text-[10px] font-semibold transition">75</button>
+                    <button onclick="setBatterySize(100)" class="bg-gray-900 hover:bg-gray-800 border border-gray-800 text-gray-300 px-2 py-1 rounded-lg text-[10px] font-semibold transition">100</button>
+                </div>
+            </div>
+
+            <!-- Slider SoC (Von / Bis) -->
+            <div class="bg-gray-950/60 border border-gray-800/50 rounded-xl p-2 space-y-1.5">
+                <div class="flex justify-between text-[11px]">
+                    <span class="text-gray-400">Start SoC: <strong id="startVal" class="text-gray-200">20%</strong></span>
+                    <span class="text-gray-400">Ziel SoC: <strong id="targetVal" class="text-emerald-400">80%</strong></span>
+                </div>
+                <div class="flex space-x-3 px-1">
                     <input type="range" id="startSoc" min="0" max="95" value="20" oninput="calculateAll()" class="w-1/2">
                     <input type="range" id="targetSoc" min="5" max="100" value="80" oninput="calculateAll()" class="w-1/2">
                 </div>
             </div>
         </div>
 
-        <!-- STANDORT, FILTER & ACTIONS (Eine Zeile) -->
-        <div class="p-2 border-b border-gray-800 space-y-1.5 bg-gray-900/30 shrink-0">
-            <div class="relative">
+        <!-- Standort & Stadt-Filter -->
+        <div class="p-3 border-b border-gray-900 space-y-2 bg-gray-950 shrink-0">
+            <div class="relative flex items-center">
                 <input type="text" id="searchInput" placeholder="Startpunkt (PLZ/Adresse)..." value="Winkel 13, 44536 Lünen"
-                    class="w-full bg-gray-950 border border-gray-800 rounded-lg px-3 py-1 pl-7 text-xs focus:outline-none focus:border-emerald-500 transition">
-                <i class="fa-solid fa-map-pin absolute left-2.5 top-1.5 text-gray-500 text-[11px]"></i>
-                <button id="searchBtn" class="absolute right-1 top-1 bg-emerald-600 hover:bg-emerald-500 text-white px-2 py-0.5 rounded text-xs transition">
+                    class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 pl-8 text-xs focus:outline-none focus:border-emerald-500 transition">
+                <i class="fa-solid fa-map-pin absolute left-3 text-gray-500 text-[11px]"></i>
+                <button id="searchBtn" class="absolute right-1.5 bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded-lg text-xs transition font-semibold">
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </div>
             
-            <!-- Filter, GPS & Reset -->
+            <!-- Filter & Aktionen -->
             <div class="flex items-center justify-between overflow-x-auto pb-0.5 text-[10px] custom-scrollbar space-x-1">
                 <div class="flex items-center space-x-1 shrink-0">
-                    <button onclick="setCityFilter('Alle')" id="filter-Alle" class="bg-emerald-600 text-white px-2 py-0.5 rounded font-bold shrink-0">Alle</button>
-                    <button onclick="setCityFilter('Lünen')" id="filter-Lünen" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 py-0.5 rounded shrink-0">Lünen</button>
-                    <button onclick="setCityFilter('Kamen')" id="filter-Kamen" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 py-0.5 rounded shrink-0">Kamen</button>
-                    <button onclick="setCityFilter('Werne')" id="filter-Werne" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 py-0.5 rounded shrink-0">Werne</button>
-                    <button onclick="setCityFilter('Bergkamen')" id="filter-Bergkamen" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 py-0.5 rounded shrink-0">Bergkamen</button>
-                    <button onclick="setCityFilter('Selm')" id="filter-Selm" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 py-0.5 rounded shrink-0">Selm</button>
+                    <button onclick="setCityFilter('Alle')" id="filter-Alle" class="bg-emerald-600 text-white px-2.5 py-1 rounded-lg font-bold shrink-0 transition">Alle</button>
+                    <button onclick="setCityFilter('Lünen')" id="filter-Lünen" class="bg-gray-900 hover:bg-gray-800 text-gray-300 px-2.5 py-1 rounded-lg shrink-0 transition">Lünen</button>
+                    <button onclick="setCityFilter('Kamen')" id="filter-Kamen" class="bg-gray-900 hover:bg-gray-800 text-gray-300 px-2.5 py-1 rounded-lg shrink-0 transition">Kamen</button>
+                    <button onclick="setCityFilter('Werne')" id="filter-Werne" class="bg-gray-900 hover:bg-gray-800 text-gray-300 px-2.5 py-1 rounded-lg shrink-0 transition">Werne</button>
+                    <button onclick="setCityFilter('Bergkamen')" id="filter-Bergkamen" class="bg-gray-900 hover:bg-gray-800 text-gray-300 px-2.5 py-1 rounded-lg shrink-0 transition">Bergkamen</button>
+                    <button onclick="setCityFilter('Selm')" id="filter-Selm" class="bg-gray-900 hover:bg-gray-800 text-gray-300 px-2.5 py-1 rounded-lg shrink-0 transition">Selm</button>
                 </div>
                 <div class="flex items-center space-x-1 shrink-0 pl-1 border-l border-gray-800">
-                    <button id="gpsBtn" class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 px-2 py-0.5 rounded flex items-center space-x-1 transition">
+                    <button id="gpsBtn" class="bg-gray-900 hover:bg-gray-800 text-emerald-400 px-2.5 py-1 rounded-lg flex items-center space-x-1 transition font-medium" title="GPS nutzen">
                         <i class="fa-solid fa-location-crosshairs"></i>
-                        <span>GPS</span>
                     </button>
-                    <button id="refreshBtn" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 py-0.5 rounded flex items-center space-x-1 transition">
+                    <button id="refreshBtn" class="bg-gray-900 hover:bg-gray-800 text-gray-400 px-2.5 py-1 rounded-lg flex items-center space-x-1 transition" title="Reset">
                         <i class="fa-solid fa-rotate"></i>
-                        <span>Reset</span>
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- Zähler -->
-        <div class="px-3 py-1 bg-gray-950 border-b border-gray-800 text-[10px] text-gray-400 shrink-0 flex justify-between items-center">
+        <div class="px-4 py-1.5 bg-gray-950 border-b border-gray-900 text-[10px] text-gray-500 shrink-0 flex justify-between items-center font-medium">
             <span id="stationCount">Lade Standorte...</span>
-            <span class="text-gray-500">Sortiert nach Entfernung</span>
+            <span>Sortiert nach Entfernung</span>
         </div>
 
         <!-- Stationsliste -->
-        <div id="stationList" class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1.5">
+        <div id="stationList" class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
             <!-- Dynamisch -->
         </div>
 
@@ -218,16 +222,15 @@
             let finishMinutes = String(finishTime.getMinutes()).padStart(2, '0');
             let timeString = `${finishHours}:${finishMinutes}`;
 
-            let durationStr = hrs > 0 ? `${hrs} Std. ${mins} Min.` : `${mins} Min.`;
+            let durationStr = hrs > 0 ? `${hrs}h ${mins}m` : `${mins}m`;
             let cost = (grossKwh * 0.38).toFixed(2);
 
-            // Aktualisiere obere Leiste inkl. Ladezeit
-            document.getElementById('topFinishTime').innerText = `${timeString} Uhr (Ladezeit: ${durationStr})`;
+            // Dashboard Hero Box aktualisieren
+            document.getElementById('topFinishTime').innerText = `${timeString} Uhr`;
+            document.getElementById('topDuration').innerText = `Ladezeit: ${durationStr}`;
             document.getElementById('topCostVal').innerText = cost;
 
-            return {
-                cost: cost
-            };
+            return { cost: cost, duration: durationStr };
         }
 
         function calculateAll() {
@@ -268,36 +271,36 @@
 
         function createCardHtml(st, isFav, isNearest, metrics) {
             const distText = st.distance < 1 ? (st.distance * 1000).toFixed(0) + ' m' : st.distance.toFixed(1) + ' km';
-            const starClass = isFav ? "fa-solid text-amber-400" : "fa-regular text-gray-500 hover:text-amber-300";
+            const starClass = isFav ? "fa-solid text-amber-400" : "fa-regular text-gray-600 hover:text-amber-300";
             const mapsQueryUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(st.address)}`;
 
             return `
-                <div class="bg-gray-950 border ${isNearest ? 'border-emerald-500/85' : 'border-gray-800/80'} rounded-lg p-2 space-y-1">
+                <div class="bg-gray-900/80 border ${isNearest ? 'border-emerald-500/60 shadow-lg shadow-emerald-950/20' : 'border-gray-800/80'} rounded-xl p-2.5 space-y-2 transition">
                     <div class="flex items-start justify-between">
                         <div>
                             <div class="flex items-center space-x-1.5">
-                                ${isNearest ? '<span class="bg-emerald-500 text-gray-950 text-[9px] font-extrabold px-1 rounded">NÄCHSTE</span>' : ''}
-                                <h3 class="font-semibold text-xs ${st.custom ? 'text-emerald-400 font-bold' : 'text-gray-200'}">${st.title}</h3>
+                                ${isNearest ? '<span class="bg-emerald-500 text-gray-950 text-[9px] font-black px-1.5 py-0.5 rounded tracking-wide">NÄCHSTE</span>' : ''}
+                                <h3 class="font-bold text-xs ${st.custom ? 'text-emerald-400 font-extrabold' : 'text-gray-100'}">${st.title}</h3>
                             </div>
-                            <p class="text-[11px] text-gray-400 truncate max-w-[210px]">${st.address}</p>
+                            <p class="text-[11px] text-gray-400 truncate max-w-[210px] mt-0.5">${st.address}</p>
                         </div>
                         <div class="text-right shrink-0">
-                            <span class="text-sm font-black text-emerald-400">${metrics.cost} €</span>
-                            <span class="text-[9px] text-gray-400 block">0,38 € / kWh</span>
+                            <span class="text-sm font-black text-emerald-400 tracking-tight">${metrics.cost} €</span>
+                            <span class="text-[9px] text-gray-500 block font-medium">0,38 € / kWh</span>
                         </div>
                     </div>
-                    <div class="flex items-center justify-between text-[11px] text-gray-400 pt-1 border-t border-gray-900">
-                        <div class="flex items-center space-x-2">
-                            <span><i class="fa-solid fa-location-dot text-emerald-500 mr-0.5"></i>${distText}</span>
-                            <span class="text-gray-300 font-semibold"><i class="fa-solid fa-bolt text-amber-400 mr-0.5"></i>${st.power}</span>
-                        </div>
+                    <div class="flex items-center justify-between text-[11px] text-gray-400 pt-2 border-t border-gray-800/60">
                         <div class="flex items-center space-x-2.5">
-                            <button onclick="toggleFavorite('${st.id}', event)" class="p-0.5"><i class="${starClass} fa-star"></i></button>
-                            <button onclick="shareStation('${st.title}', '${st.address}')" class="text-emerald-400 hover:text-emerald-300">
-                                <i class="fa-solid fa-share-nodes"></i> Teilen
+                            <span class="text-gray-300 font-medium"><i class="fa-solid fa-location-dot text-emerald-500 mr-1"></i>${distText}</span>
+                            <span class="text-gray-300 font-semibold"><i class="fa-solid fa-bolt text-amber-400 mr-1"></i>${st.power}</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <button onclick="toggleFavorite('${st.id}', event)" class="p-1 text-sm"><i class="${starClass} fa-star"></i></button>
+                            <button onclick="shareStation('${st.title}', '${st.address}')" class="text-emerald-400 hover:text-emerald-300 font-medium flex items-center space-x-1">
+                                <i class="fa-solid fa-share-nodes"></i><span>Teilen</span>
                             </button>
-                            <a href="${mapsQueryUrl}" target="_blank" class="text-blue-400 hover:text-blue-300">
-                                <i class="fa-solid fa-diamond-turn-right"></i> Navigieren
+                            <a href="${mapsQueryUrl}" target="_blank" class="text-blue-400 hover:text-blue-300 font-medium flex items-center space-x-1">
+                                <i class="fa-solid fa-diamond-turn-right"></i><span>Navigieren</span>
                             </a>
                         </div>
                     </div>
@@ -325,14 +328,15 @@
 
             document.getElementById('stationCount').innerText = `${filteredStations.length} von ${wbgStations.length} Standorten`;
 
+            // Favoriten Sektion oben
             const favStations = wbgStations.filter(st => favorites.includes(st.id));
             if (favStations.length > 0) {
                 const favSection = document.createElement('div');
-                favSection.className = "bg-amber-500/10 border border-amber-500/30 rounded-lg p-1.5 space-y-1 mb-1.5";
-                favSection.innerHTML = `<div class="text-[10px] font-bold text-amber-400 flex items-center space-x-1 px-0.5"><i class="fa-solid fa-star"></i><span>Favoriten (${favStations.length})</span></div>`;
+                favSection.className = "bg-amber-500/10 border border-amber-500/30 rounded-xl p-2 space-y-1.5 mb-2";
+                favSection.innerHTML = `<div class="text-[10px] font-bold text-amber-400 flex items-center space-x-1 px-1"><i class="fa-solid fa-star"></i><span>Favoriten (${favStations.length})</span></div>`;
                 
                 const favList = document.createElement('div');
-                favList.className = "space-y-1";
+                favList.className = "space-y-1.5";
                 favStations.forEach(st => {
                     const cardWrapper = document.createElement('div');
                     cardWrapper.innerHTML = createCardHtml(st, true, false, metrics);
@@ -343,7 +347,7 @@
             }
 
             const headerTitle = document.createElement('div');
-            headerTitle.className = "text-[10px] font-bold text-gray-500 uppercase tracking-wider px-0.5";
+            headerTitle.className = "text-[10px] font-bold text-gray-500 uppercase tracking-wider px-1 pt-1";
             headerTitle.innerText = currentFilter === 'Alle' ? "Alle Standorte" : `Standorte in ${currentFilter}`;
             listContainer.appendChild(headerTitle);
 
@@ -362,9 +366,9 @@
             ['Alle', 'Lünen', 'Kamen', 'Werne', 'Bergkamen', 'Selm'].forEach(city => {
                 const btn = document.getElementById(`filter-${city}`);
                 if (city === cityName) {
-                    btn.className = "bg-emerald-600 text-white px-2 py-0.5 rounded font-bold shrink-0";
+                    btn.className = "bg-emerald-600 text-white px-2.5 py-1 rounded-lg font-bold shrink-0 transition";
                 } else {
-                    btn.className = "bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 py-0.5 rounded shrink-0";
+                    btn.className = "bg-gray-900 hover:bg-gray-800 text-gray-300 px-2.5 py-1 rounded-lg shrink-0 transition";
                 }
             });
             processStations();
@@ -374,7 +378,7 @@
             userLat = lat;
             userLon = lon;
             document.getElementById('searchInput').value = query;
-            document.getElementById('locationLabel').innerText = "Basis: " + query;
+            document.getElementById('locationLabel').innerText = query;
             localStorage.setItem('wbg_lat', userLat);
             localStorage.setItem('wbg_lon', userLon);
             localStorage.setItem('wbg_plz', query);
@@ -412,7 +416,7 @@
                     localStorage.setItem('wbg_lon', userLon);
                     localStorage.setItem('wbg_plz', 'GPS');
 
-                    document.getElementById('locationLabel').innerText = "Basis: GPS aktiv";
+                    document.getElementById('locationLabel').innerText = "GPS aktiv";
                     processStations();
                 }, () => alert("GPS konnte nicht ermittelt werden."));
             }
