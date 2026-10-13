@@ -82,18 +82,8 @@
             </div>
         </div>
 
-        <!-- Standort & Stadt-Filter -->
-        <div class="p-3 border-b border-gray-900 space-y-2 bg-gray-950 shrink-0">
-            <div class="relative flex items-center">
-                <input type="text" id="searchInput" placeholder="Startpunkt (PLZ/Adresse)..." value="Im Winkel 13, 44536 Lünen"
-                    class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 pl-8 text-xs focus:outline-none focus:border-emerald-500 transition">
-                <i class="fa-solid fa-map-pin absolute left-3 text-gray-500 text-[11px]"></i>
-                <button id="searchBtn" class="absolute right-1.5 bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded-lg text-xs transition font-semibold">
-                    <i class="fa-solid fa-arrow-right"></i>
-                </button>
-            </div>
-            
-            <!-- Filter & Aktionen -->
+        <!-- Stadt-Filter & Aktionen -->
+        <div class="p-3 border-b border-gray-900 bg-gray-950 shrink-0">
             <div class="flex items-center justify-between overflow-x-auto pb-0.5 text-[10px] custom-scrollbar space-x-1">
                 <div class="flex items-center space-x-1 shrink-0">
                     <button onclick="setCityFilter('Alle')" id="filter-Alle" class="bg-emerald-600 text-white px-2.5 py-1 rounded-lg font-bold shrink-0 transition">Alle</button>
@@ -177,7 +167,7 @@
             if (savedLat && savedLon) {
                 userLat = savedLat;
                 userLon = savedLon;
-                if (savedPlz) document.getElementById('searchInput').value = savedPlz;
+                if (savedPlz) document.getElementById('locationLabel').innerText = savedPlz;
             }
             fetchWeather();
             processStations();
@@ -391,39 +381,6 @@
             processStations();
         }
 
-        function setBaseLocation(query, lat, lon) {
-            userLat = lat;
-            userLon = lon;
-            document.getElementById('searchInput').value = query;
-            document.getElementById('locationLabel').innerText = query;
-            localStorage.setItem('wbg_lat', userLat);
-            localStorage.setItem('wbg_lon', userLon);
-            localStorage.setItem('wbg_plz', query);
-
-            processStations();
-        }
-
-        document.getElementById('searchBtn').onclick = async () => {
-            const query = document.getElementById('searchInput').value.trim();
-            if (!query) return;
-            try {
-                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ', Deutschland')}`);
-                const results = await res.json();
-                if (results.length > 0) {
-                    setBaseLocation(query, parseFloat(results[0].lat), parseFloat(results[0].lon));
-                } else {
-                    alert("Ort oder PLZ nicht gefunden.");
-                }
-            } catch (e) {}
-        };
-
-        document.getElementById('searchInput').onkeypress = (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                document.getElementById('searchBtn').click();
-            }
-        };
-
         document.getElementById('gpsBtn').onclick = () => {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(pos => {
@@ -440,7 +397,12 @@
         };
 
         document.getElementById('refreshBtn').onclick = () => {
-            setBaseLocation('Im Winkel 13, Lünen', 51.5976, 7.4557);
+            userLat = 51.5976;
+            userLon = 7.4557;
+            localStorage.removeItem('wbg_lat');
+            localStorage.removeItem('wbg_lon');
+            localStorage.removeItem('wbg_plz');
+            document.getElementById('locationLabel').innerText = "Im Winkel 13, Lünen";
             setCityFilter('Alle');
         };
 
