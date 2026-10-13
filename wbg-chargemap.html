@@ -138,7 +138,7 @@
         let weatherLoaded = false;
 
         const rawWbgData = [
-            { id: 'winkel13', title: 'Im Winkel 13 (Deine Säule)', address: 'Im Winkel 13, 44536 Lünen-Brambauer', lat: 51.5976, lon: 7.4557, count: '2x', kw: '11 kW', price: 0.38, custom: true, city: 'Lünen', url: 'https://www.google.com/maps/place/Im+Winkel+13,+44536+L%C3%BCnen-Brambauer/@51.5976428,7.4531406,17z/data=!3m1!4b1!4m6!3m5!1s0x47b91ac17c1e5fc7:0x714ccaa852f19b3f!8m2!3d51.5976395!4d7.4557209!16s%2Fg%2F11c4j8dmky?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
+            { id: 'winkel13', title: 'Im Winkel 13', address: 'Im Winkel 13, 44536 Lünen-Brambauer', lat: 51.5976, lon: 7.4557, count: '2x', kw: '11 kW', price: 0.38, custom: true, city: 'Lünen', url: 'https://www.google.com/maps/place/Im+Winkel+13,+44536+L%C3%BCnen-Brambauer/@51.5976428,7.4531406,17z/data=!3m1!4b1!4m6!3m5!1s0x47b91ac17c1e5fc7:0x714ccaa852f19b3f!8m2!3d51.5976395!4d7.4557209!16s%2Fg%2F11c4j8dmky?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
             { id: 'asternweg2', title: 'Asternweg 2', address: 'Asternweg 2, 44532 Lünen-Niederaden', lat: 51.5946, lon: 7.5563, count: '1x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Asternweg+2,+44532+L%C3%BCnen-Niederaden/@51.5946482,7.5537976,17z/data=!3m1!4b1!4m10!1m2!2m1!1sAsternweg+2!3m6!1s0x47b911cf60638425:0xe88f0f17d81d69e2!8m2!3d51.5946449!4d7.5563779!15sCgtBc3Rlcm53ZWcgMpIBCnN1YnByZW1pc2XgAQA!16s%2Fg%2F11bw4f077x?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
             { id: 'vogelsberg', title: 'Am Vogelsberg 106', address: 'Am Vogelsberg 106, 44534 Lünen', lat: 51.6296, lon: 7.5357, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Am+Vogelsberg+106,+44534+L%C3%BCnen/@51.6296932,7.5331728,17z/data=!3m1!4b1!4m6!3m5!1s0x47b90fc7a921594b:0x48e1434a93ecb1eb!8m2!3d51.6296899!4d7.5357531!16s%2Fg%2F11b8yk918p?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
             { id: 'bebelstr', title: 'Bebelstraße 188', address: 'Bebelstraße 188, 44532 Lünen', lat: 51.5894, lon: 7.5371, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Bebelstra%C3%9Fe+188,+44532+L%C3%BCnen/@51.589446,7.5345666,17z/data=!3m1!4b1!4m6!3m5!1s0x47b910358814aa49:0x6d3e19072bbf7b43!8m2!3d51.5894427!4d7.5371469!16s%2Fg%2F11c5ky_y8m?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
@@ -276,15 +276,15 @@
             processStations();
         }
 
-        function shareStation(title, address, mapsUrl) {
-            const shareText = `Ladesäule: ${title}\nAdresse: ${address}\nTarif: 0,38 €/kWh`;
-            const fullShareString = `${shareText}\nNavigieren: ${mapsUrl}`;
+        function shareStation(title, address, kw, count, mapsUrl) {
+            const shareText = `⚡ WBG Ladesäule: ${title}\n📍 Adresse: ${address}\n🔌 Leistung: ${kw} AC (${count} Ladepunkte)\n💰 Tarif: 0,38 € / kWh`;
+            const fullShareString = `${shareText}\n🗺️ Navigieren: ${mapsUrl}`;
 
             if (navigator.share) {
                 navigator.share({ title: title, text: shareText, url: mapsUrl }).catch(() => {});
             } else {
                 navigator.clipboard.writeText(fullShareString);
-                alert("Daten in Zwischenablage kopiert!");
+                alert("Ladedetails in die Zwischenablage kopiert!");
             }
         }
 
@@ -314,7 +314,7 @@
                         </div>
                         <div class="flex items-center space-x-3">
                             <button onclick="toggleFavorite('${st.id}', event)" class="p-1 text-sm"><i class="${starClass} fa-star"></i></button>
-                            <button onclick="shareStation('${st.title}', '${st.address}', '${st.url}')" class="text-emerald-400 hover:text-emerald-300 font-medium flex items-center space-x-1">
+                            <button onclick="shareStation('${st.title}', '${st.address}', '${st.kw}', '${st.count}', '${st.url}')" class="text-emerald-400 hover:text-emerald-300 font-medium flex items-center space-x-1">
                                 <i class="fa-solid fa-share-nodes"></i><span>Teilen</span>
                             </button>
                             <a href="${st.url}" target="_blank" class="text-blue-400 hover:text-blue-300 font-medium flex items-center space-x-1">
@@ -435,7 +435,7 @@
 
                     document.getElementById('locationLabel').innerText = "GPS aktiv";
                     processStations();
-                }, () => alert("GPS konnte nicht ermittelt werden."));
+                }, () => {});
             }
         };
 
