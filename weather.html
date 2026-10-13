@@ -7,33 +7,37 @@
     <link rel="icon" type="image/png" href="icons/hedgehog.png">
     
     <!-- PWA & Mobile / Tesla Browser Leisten-Farben -->
-    <meta name="theme-color" content="#121214" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#f3f4f6" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#161616" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#F1F1F1" media="(prefers-color-scheme: light)">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     
     <style>
         :root {
-            --bg-color: #121214;
-            --text-color: #f1f1f1;
-            --title-color: #d1d5db;
-            --tile-bg: #1b1b1e;
-            --tile-border: rgba(255, 255, 255, 0.08);
-            --name-color: #9e9ea6;
-            --section-color: #9ca3af;
-            --hover-bg: #2a2a2e;
+            /* TESLA LIGHT MODE (Original-Farbwerte) */
+            --bg-color: #F1F1F1;
+            --text-color: #111111;
+            --title-color: #111111;
+            --tile-bg: #FFFFFF;
+            --tile-border: rgba(0, 0, 0, 0.08);
+            --name-color: #888888;
+            --section-color: #888888;
+            --hover-bg: rgba(0, 0, 0, 0.05);
+            --accent-green: #3CC13F;
         }
 
-        @media (prefers-color-scheme: light) {
+        @media (prefers-color-scheme: dark) {
             :root {
-                --bg-color: #f3f4f6;
-                --text-color: #1f2937;
-                --title-color: #374151;
-                --tile-bg: #ffffff;
-                --tile-border: rgba(0, 0, 0, 0.08);
-                --name-color: #4b5563;
-                --section-color: #4b5563;
-                --hover-bg: #e5e7eb;
+                /* TESLA DARK MODE (Original-Farbwerte) */
+                --bg-color: #161616;
+                --text-color: #FFFFFF;
+                --title-color: #FFFFFF;
+                --tile-bg: #2A2A2A;
+                --tile-border: rgba(255, 255, 255, 0.08);
+                --name-color: #AAAAAA;
+                --section-color: #AAAAAA;
+                --hover-bg: rgba(255, 255, 255, 0.07);
+                --accent-green: #3CC13F;
             }
         }
 
@@ -154,9 +158,9 @@
             text-align: center;
             padding: 24px 20px;
             border-radius: 18px;
-            background: linear-gradient(135deg, rgba(30, 27, 75, 0.7) 0%, rgba(15, 23, 42, 0.95) 100%);
-            border: 1px solid rgba(129, 140, 248, 0.3);
-            box-shadow: 0 10px 28px rgba(0,0,0,0.4);
+            background: var(--tile-bg);
+            border: 1px solid var(--tile-border);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
             position: relative;
             overflow: hidden;
         }
@@ -169,7 +173,7 @@
             right: -20px;
             width: 140px;
             height: 140px;
-            background: radial-gradient(circle, rgba(250, 204, 21, 0.15) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(60, 193, 63, 0.1) 0%, transparent 70%);
             border-radius: 50%;
             animation: pulseGlow 6s ease-in-out infinite;
             pointer-events: none;
@@ -181,6 +185,7 @@
             letter-spacing: -2px;
             line-height: 1;
             margin: 4px 0;
+            color: var(--text-color);
         }
 
         .hero-desc {
@@ -262,7 +267,7 @@
         }
 
         .dwd-warning-box.has-warning {
-            background: linear-gradient(135deg, rgba(225, 29, 72, 0.25) 0%, rgba(15, 23, 42, 0.95) 100%);
+            background: linear-gradient(135deg, rgba(225, 29, 72, 0.25) 0%, var(--tile-bg) 100%);
             border-color: #e11d48;
         }
 
@@ -327,10 +332,10 @@
             flex-shrink: 0;
             width: 54px;
             text-align: center;
-            background: rgba(255,255,255,0.02);
+            background: var(--hover-bg);
             padding: 8px 4px;
             border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.04);
+            border: 1px solid var(--tile-border);
         }
 
         .hourly-time {
@@ -346,7 +351,7 @@
 
         .hourly-rain {
             font-size: 10px;
-            color: #38bdf8;
+            color: var(--accent-green);
             font-weight: 500;
         }
 
@@ -362,7 +367,7 @@
             grid-template-columns: 90px 28px 1fr 80px 70px;
             align-items: center;
             padding: 6px 2px;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
+            border-bottom: 1px solid var(--tile-border);
             font-size: 12px;
         }
 
@@ -386,7 +391,7 @@
 
         .daily-rain {
             font-size: 11px;
-            color: #38bdf8;
+            color: var(--accent-green);
             text-align: right;
             font-weight: 500;
         }
@@ -461,7 +466,6 @@
     </div>
 
     <script>
-        // Vollständige WMO-Wettercode-Tabelle (inklusive aller Starkregen-, Schnee-, Eis- & Hagelcodes)
         function getWeatherDetails(code, isDay = 1) {
             const map = {
                 0: { text: isDay === 0 ? "Sternenklar" : "Klar & sonnig", icon: isDay === 0 ? "🌙" : "☀️" },
@@ -501,7 +505,6 @@
             return dirs[Math.round(deg / 22.5) % 16];
         }
 
-        // Standortscharfe Wetterwarnungen aus den echten Vor-Ort-Messdaten (ohne Falschalarme aus anderen Bundesländern)
         function updateWarningDisplay(cur) {
             let warningBox = document.getElementById('dwdWarningBox');
             let warningTitle = document.getElementById('dwdWarningTitle');

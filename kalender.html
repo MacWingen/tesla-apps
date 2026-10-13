@@ -7,45 +7,47 @@
     <link rel="icon" type="image/png" href="icons/hedgehog.png">
     
     <!-- PWA & Mobile / Tesla Browser Leisten-Farben -->
-    <meta name="theme-color" content="#090a0f" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#f1f5f9" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#161616" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#F1F1F1" media="(prefers-color-scheme: light)">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
 
     <style>
         :root {
-            --bg-color: #090a0f;
-            --card-bg: rgba(18, 19, 26, 0.78);
-            --card-inner: rgba(26, 27, 36, 0.7);
-            --text-color: #f8fafc;
-            --title-color: #f1f5f9;
-            --tile-bg: rgba(18, 19, 26, 0.78);
-            --tile-border: rgba(255, 255, 255, 0.08);
-            --subtext-color: #94a3b8;
-            --hover-bg: rgba(255, 255, 255, 0.06);
-            --accent-blue: #3b82f6;
+            /* TESLA LIGHT MODE (Original-Farbwerte) */
+            --bg-color: #F1F1F1;
+            --card-bg: #FFFFFF;
+            --card-inner: #FFFFFF;
+            --text-color: #111111;
+            --title-color: #111111;
+            --tile-bg: #FFFFFF;
+            --tile-border: rgba(0, 0, 0, 0.08);
+            --subtext-color: #888888;
+            --hover-bg: rgba(0, 0, 0, 0.05);
+            --accent-blue: #3CC13F;
             --accent-red: #ef4444;
-            --accent-green: #10b981;
-            --accent-orange: #f59e0b;
-            --slider-track: #1e2029;
+            --accent-green: #3CC13F;
+            --accent-orange: #3CC13F;
+            --slider-track: #E2E2E2;
         }
 
-        @media (prefers-color-scheme: light) {
+        @media (prefers-color-scheme: dark) {
             :root {
-                --bg-color: #f1f5f9;
-                --card-bg: rgba(255, 255, 255, 0.85);
-                --card-inner: rgba(248, 250, 252, 0.8);
-                --text-color: #0f172a;
-                --title-color: #1e293b;
-                --tile-bg: rgba(255, 255, 255, 0.85);
-                --tile-border: rgba(0, 0, 0, 0.08);
-                --subtext-color: #64748b;
-                --hover-bg: rgba(0, 0, 0, 0.04);
-                --accent-blue: #3b82f6;
+                /* TESLA DARK MODE (Original-Farbwerte) */
+                --bg-color: #161616;
+                --card-bg: #2A2A2A;
+                --card-inner: #2A2A2A;
+                --text-color: #FFFFFF;
+                --title-color: #FFFFFF;
+                --tile-bg: #2A2A2A;
+                --tile-border: rgba(255, 255, 255, 0.08);
+                --subtext-color: #AAAAAA;
+                --hover-bg: rgba(255, 255, 255, 0.07);
+                --accent-blue: #3CC13F;
                 --accent-red: #ef4444;
-                --accent-green: #10b981;
-                --accent-orange: #f59e0b;
-                --slider-track: #e2e8f0;
+                --accent-green: #3CC13F;
+                --accent-orange: #3CC13F;
+                --slider-track: #1C1C1C;
             }
         }
 
@@ -58,9 +60,7 @@
 
         body {
             background-color: var(--bg-color);
-            background-image:
-                radial-gradient(ellipse at 85% 10%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 15% 90%, rgba(16, 185, 129, 0.07) 0%, transparent 50%);
+            background-image: none;
             background-attachment: fixed;
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             color: var(--text-color);
@@ -70,6 +70,7 @@
             flex-direction: column;
             align-items: center;
             min-height: 100dvh;
+            width: 100%;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
             transition: background-color 0.3s ease;
@@ -85,6 +86,7 @@
             padding-bottom: 10px;
             border-bottom: 1px solid var(--tile-border);
             gap: 12px;
+            box-sizing: border-box;
         }
 
         .back-btn {
@@ -100,16 +102,13 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             transition: all 0.2s ease;
             flex-shrink: 0;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
         }
 
         .back-btn:hover {
             background-color: var(--hover-bg);
-            border-color: rgba(255, 255, 255, 0.18);
+            border-color: var(--subtext-color);
             transform: translateX(-2px);
         }
 
@@ -123,15 +122,11 @@
             border-radius: 11px;
             outline: none;
             cursor: pointer;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             transition: all 0.2s ease;
         }
 
         .state-select:focus {
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25), inset 0 2px 4px rgba(0,0,0,0.2);
+            border-color: #3CC13F;
         }
 
         .options-row {
@@ -140,11 +135,12 @@
             display: flex;
             gap: 8px;
             margin-bottom: 14px;
+            box-sizing: border-box;
         }
 
         .option-chip {
-            background: linear-gradient(180deg, rgba(35, 35, 45, 0.75) 0%, rgba(22, 22, 28, 0.9) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.09);
+            background: var(--card-inner);
+            border: 1px solid var(--tile-border);
             color: var(--subtext-color);
             font-size: 11px;
             font-weight: 600;
@@ -157,15 +153,13 @@
             gap: 6px;
             flex: 1;
             justify-content: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            text-align: center;
         }
 
         .option-chip:hover {
             color: var(--text-color);
             background: var(--hover-bg);
-            border-color: rgba(255, 255, 255, 0.2);
+            border-color: var(--subtext-color);
             transform: translateY(-1px);
         }
 
@@ -174,24 +168,21 @@
         }
 
         .option-chip.active {
-            background: linear-gradient(180deg, rgba(59, 130, 246, 0.25) 0%, rgba(37, 99, 235, 0.35) 100%);
-            border-color: var(--accent-blue);
-            color: #93c5fd;
+            background: rgba(60, 193, 63, 0.2);
+            border-color: #3CC13F;
+            color: #3CC13F;
             font-weight: 700;
-            box-shadow: 0 0 12px rgba(59, 130, 246, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
 
         .calendar-card {
             width: 100%;
             max-width: 680px;
             background-color: var(--card-bg);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
             border: 1px solid var(--tile-border);
             border-radius: 18px;
             padding: 20px 22px;
             box-sizing: border-box;
-            box-shadow: 0 12px 36px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
             gap: 4px;
@@ -207,8 +198,8 @@
         }
 
         .nav-btn {
-            background: linear-gradient(180deg, rgba(35, 37, 48, 0.8) 0%, rgba(20, 21, 28, 0.95) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.09);
+            background: var(--card-inner);
+            border: 1px solid var(--tile-border);
             color: var(--text-color);
             width: 34px;
             height: 34px;
@@ -218,13 +209,13 @@
             align-items: center;
             justify-content: center;
             font-size: 18px;
-            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            transition: all 0.15s ease;
+            flex-shrink: 0;
         }
 
         .nav-btn:hover {
             background: var(--hover-bg);
-            border-color: rgba(255, 255, 255, 0.2);
+            border-color: var(--subtext-color);
             transform: translateY(-1px);
         }
 
@@ -232,7 +223,6 @@
             transform: scale(0.94);
         }
 
-        /* Normaler Monatsmodus */
         .weekdays-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -261,17 +251,18 @@
             font-size: 13.5px;
             font-weight: 500;
             background-color: var(--card-inner);
-            border: 1px solid rgba(255,255,255,0.04);
+            border: 1px solid var(--tile-border);
             color: var(--text-color);
             position: relative;
             cursor: default;
             transition: transform 0.15s ease, border-color 0.15s ease;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            min-width: 0;
+            overflow: hidden;
         }
 
         .day-cell:hover {
             transform: translateY(-1px);
-            border-color: rgba(255, 255, 255, 0.12);
+            border-color: var(--subtext-color);
         }
 
         .day-cell.other-month {
@@ -283,46 +274,42 @@
         }
 
         .day-cell.today {
-            background: linear-gradient(180deg, rgba(59, 130, 246, 0.25) 0%, rgba(37, 99, 235, 0.35) 100%);
-            color: #93c5fd;
+            background: rgba(60, 193, 63, 0.2);
+            color: #3CC13F;
             font-weight: 700;
-            border: 1.5px solid var(--accent-blue);
-            box-shadow: 0 0 14px rgba(59, 130, 246, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            border: 1.5px solid #3CC13F;
         }
 
         .day-cell.holiday {
-            background: linear-gradient(180deg, rgba(239, 68, 68, 0.22) 0%, rgba(185, 28, 28, 0.3) 100%);
-            color: #fca5a5;
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
             font-weight: 700;
             border-color: rgba(239, 68, 68, 0.4);
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
         }
 
         .day-cell.school-vacation {
-            background: linear-gradient(180deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.28) 100%);
-            color: #6ee7b7;
+            background: rgba(60, 193, 63, 0.15);
+            color: #3CC13F;
             font-weight: 600;
-            border-color: rgba(16, 185, 129, 0.35);
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
+            border-color: rgba(60, 193, 63, 0.35);
         }
 
         .day-cell.bridge-day {
-            border: 1.5px dashed var(--accent-orange);
-            background: linear-gradient(180deg, rgba(245, 158, 11, 0.2) 0%, rgba(180, 83, 9, 0.28) 100%);
-            color: #fcd34d;
+            border: 1.5px dashed #3CC13F;
+            background: rgba(60, 193, 63, 0.1);
+            color: #3CC13F;
             font-weight: 700;
-            box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
         }
 
         .day-cell.sunday {
-            color: #fca5a5;
+            color: #ef4444;
         }
 
         .tooltip-text {
-            font-size: 7.5px;
+            font-size: 7px;
             text-align: center;
             line-height: 1;
-            width: 90%;
+            width: 95%;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -330,9 +317,9 @@
             opacity: 0.9;
         }
 
-        .holiday-tooltip { color: #fca5a5; }
-        .bridge-tooltip { color: #fcd34d; }
-        .vacation-tooltip { color: #6ee7b7; }
+        .holiday-tooltip { color: #ef4444; }
+        .bridge-tooltip { color: #3CC13F; }
+        .vacation-tooltip { color: #3CC13F; }
 
         .info-section {
             margin-top: 20px;
@@ -363,13 +350,13 @@
             border-radius: 12px;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             transition: transform 0.15s ease, border-color 0.15s ease;
+            gap: 8px;
         }
 
         .info-item:hover {
             transform: translateY(-1px);
-            border-color: rgba(255, 255, 255, 0.15);
+            border-color: var(--subtext-color);
         }
 
         .info-item::before {
@@ -382,9 +369,9 @@
             border-radius: 3px 0 0 3px;
         }
 
-        .info-item.holiday-bar::before { background: linear-gradient(180deg, #ef4444, #b91c1c); }
-        .info-item.bridge-bar::before { background: linear-gradient(180deg, #f59e0b, #b45309); }
-        .info-item.vacation-bar::before { background: linear-gradient(180deg, #10b981, #059669); }
+        .info-item.holiday-bar::before { background: #ef4444; }
+        .info-item.bridge-bar::before { background: #3CC13F; }
+        .info-item.vacation-bar::before { background: #3CC13F; }
 
         .info-date {
             font-weight: 600;
@@ -392,50 +379,56 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            white-space: nowrap;
         }
 
         .info-name {
             font-weight: 500;
             color: var(--subtext-color);
             font-size: 12px;
+            text-align: right;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
-        /* Echter Jahreskalender-Modus (Grid aus 12 Mini-Monaten) */
+        /* Responsive Jahreskalender Grid (angepasst für Tesla-Screen & Smartphones) */
         .year-grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            width: 100%;
         }
 
         .mini-month {
             background: var(--card-inner);
             border: 1px solid var(--tile-border);
-            border-radius: 14px;
-            padding: 12px;
+            border-radius: 12px;
+            padding: 8px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            gap: 4px;
+            min-width: 0;
         }
 
         .mini-month-title {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             color: var(--subtext-color);
             text-align: center;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .mini-weekdays {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             text-align: center;
-            font-size: 8.5px;
+            font-size: 8px;
             font-weight: 700;
             color: var(--subtext-color);
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .mini-days {
@@ -449,13 +442,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 5px;
-            font-size: 9.5px;
+            border-radius: 4px;
+            font-size: 8.5px;
             font-weight: 500;
             color: var(--text-color);
-            background: rgba(255,255,255,0.02);
+            background: var(--hover-bg);
             box-sizing: border-box;
             border: 1px solid transparent;
+            min-width: 0;
         }
 
         .mini-day.other {
@@ -464,39 +458,36 @@
         }
 
         .mini-day.today {
-            background: linear-gradient(180deg, rgba(59, 130, 246, 0.3) 0%, rgba(37, 99, 235, 0.4) 100%);
-            color: #93c5fd;
+            background: rgba(60, 193, 63, 0.3);
+            color: #3CC13F;
             font-weight: 700;
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 8px rgba(59, 130, 246, 0.35);
+            border-color: #3CC13F;
         }
 
         .mini-day.holiday {
-            background: linear-gradient(180deg, rgba(239, 68, 68, 0.28) 0%, rgba(185, 28, 28, 0.35) 100%);
-            color: #fca5a5;
+            background: rgba(239, 68, 68, 0.3);
+            color: #ef4444;
             font-weight: 700;
-            border-color: rgba(239, 68, 68, 0.35);
+            border-color: rgba(239, 68, 68, 0.4);
         }
 
         .mini-day.school-vacation {
-            background: linear-gradient(180deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.32) 100%);
-            color: #6ee7b7;
+            background: rgba(60, 193, 63, 0.2);
+            color: #3CC13F;
             font-weight: 600;
-            border-color: rgba(16, 185, 129, 0.3);
         }
 
         .mini-day.bridge-day {
-            border: 1px dashed var(--accent-orange);
-            background: linear-gradient(180deg, rgba(245, 158, 11, 0.22) 0%, rgba(180, 83, 9, 0.3) 100%);
-            color: #fcd34d;
+            border: 1px dashed #3CC13F;
+            background: rgba(60, 193, 63, 0.15);
+            color: #3CC13F;
             font-weight: 700;
         }
 
         .mini-day.sunday {
-            color: #fca5a5;
+            color: #ef4444;
         }
 
-        /* Page Title (mittig wie AC-Rechner) */
         .page-title {
             font-size: 16px;
             font-weight: 700;
@@ -515,23 +506,21 @@
             width: 28px;
             height: 28px;
             border-radius: 8px;
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(16, 185, 129, 0.2) 100%);
-            border: 1px solid rgba(59, 130, 246, 0.3);
+            background: rgba(60, 193, 63, 0.15);
+            border: 1px solid rgba(60, 193, 63, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 12px rgba(59, 130, 246, 0.2);
             flex-shrink: 0;
         }
 
         .top-spacer { width: 160px; flex-shrink: 0; }
 
-        /* Legende */
         .legend-bar {
             width: 100%;
             max-width: 680px;
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.06) 0%, rgba(26, 27, 36, 0.35) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.07);
+            background: var(--card-inner);
+            border: 1px solid var(--tile-border);
             border-radius: 12px;
             padding: 8px 14px;
             display: flex;
@@ -539,9 +528,7 @@
             gap: 14px;
             flex-wrap: wrap;
             margin-bottom: 10px;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.15);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            box-sizing: border-box;
         }
 
         .legend-dot {
@@ -561,19 +548,6 @@
             flex-shrink: 0;
         }
 
-        /* KW-Badge */
-        .kw-badge {
-            font-size: 10px;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 6px;
-            background: rgba(59, 130, 246, 0.14);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            color: #60a5fa;
-            letter-spacing: 0.2px;
-        }
-
-        /* Today-Pill */
         .today-pill {
             display: inline-flex;
             align-items: center;
@@ -581,75 +555,67 @@
             font-size: 11px;
             font-weight: 600;
             color: var(--subtext-color);
-            background: rgba(255, 255, 255, 0.04);
+            background: var(--hover-bg);
             padding: 3px 9px;
             border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--tile-border);
+            white-space: nowrap;
         }
 
-        /* Live Beacon */
         .live-beacon {
             width: 7px;
             height: 7px;
             border-radius: 50%;
-            background-color: #10b981;
-            box-shadow: 0 0 8px #10b981;
+            background-color: #3CC13F;
+            box-shadow: 0 0 8px #3CC13F;
             display: inline-block;
             position: relative;
             flex-shrink: 0;
         }
 
-        .live-beacon::after {
-            content: "";
-            position: absolute;
-            top: -3px; left: -3px; right: -3px; bottom: -3px;
-            border-radius: 50%;
-            border: 1.5px solid rgba(16, 185, 129, 0.6);
-            animation: beaconPulse 2s cubic-bezier(0.2, 0, 0.2, 1) infinite;
-        }
-
-        @keyframes beaconPulse {
-            0%  { transform: scale(0.8); opacity: 1; }
-            100%{ transform: scale(2.4); opacity: 0; }
-        }
-
-        /* Kalender-Titel Gradient-Text */
         .calendar-title {
             font-size: 17px;
             font-weight: 800;
-            background: linear-gradient(180deg, #ffffff 30%, #94a3b8 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--text-color);
             letter-spacing: -0.5px;
             margin: 0;
             line-height: 1.2;
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        /* Responsive */
+        @media (max-width: 768px) {
+            .year-grid-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         @media (max-width: 720px) {
-            body { padding: 8px 10px 24px 10px; }
+            body { padding: 8px 8px 24px 8px; }
             .top-bar { margin-bottom: 10px; padding-bottom: 8px; gap: 8px; }
-            .page-title { font-size: 14px; gap: 6px; }
-            .title-icon-wrap { width: 24px; height: 24px; }
-            .top-spacer { width: 10px; }
-            .back-btn { padding: 6px 10px; font-size: 12px; }
-            .options-row { gap: 5px; }
-            .option-chip { font-size: 10px; padding: 6px 8px; border-radius: 8px; }
-            .calendar-card { padding: 14px; border-radius: 14px; }
+            .page-title { font-size: 13px; gap: 5px; }
+            .title-icon-wrap { width: 22px; height: 22px; }
+            .top-spacer { width: 5px; }
+            .back-btn { padding: 5px 8px; font-size: 11px; }
+            .state-select { font-size: 11px; padding: 6px 8px; }
+            .options-row { gap: 4px; }
+            .option-chip { font-size: 9.5px; padding: 6px 4px; border-radius: 8px; }
+            .calendar-card { padding: 12px; border-radius: 14px; }
             .calendar-header { margin-bottom: 12px; padding-bottom: 8px; }
-            .calendar-title { font-size: 14px; }
+            .calendar-title { font-size: 13px; }
             .nav-btn { width: 28px; height: 28px; font-size: 15px; border-radius: 8px; }
-            .day-cell { border-radius: 7px; font-size: 12px; }
-            .info-item { padding: 8px 11px; font-size: 12px; }
-            .legend-bar { gap: 8px; padding: 7px 10px; }
-            .legend-dot { font-size: 9.5px; }
-            .kw-badge { font-size: 9px; padding: 1.5px 6px; }
+            .day-cell { border-radius: 7px; font-size: 11px; }
+            .info-item { padding: 8px 10px; font-size: 11px; }
+            .legend-bar { gap: 6px; padding: 6px 8px; }
+            .legend-dot { font-size: 9px; }
         }
 
-        @media (max-width: 440px) {
+        @media (max-width: 480px) {
+            .year-grid-container {
+                grid-template-columns: 1fr;
+            }
             .top-spacer { display: none; }
-            .page-title { font-size: 13px; }
         }
     </style>
 </head>
@@ -663,7 +629,7 @@
         </a>
         <h1 class="page-title">
             <div class="title-icon-wrap">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3CC13F" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
             </div>
             Feiertage &amp; Brückentage
         </h1>
@@ -702,22 +668,22 @@
         </button>
     </div>
 
-    <!-- Legende (wie sweet-spot-box im AC-Rechner) -->
+    <!-- Legende -->
     <div class="legend-bar" id="legendBar">
         <div class="legend-dot">
             <span class="live-beacon"></span>
             Heute
         </div>
         <div class="legend-dot">
-            <span class="legend-swatch" style="background:linear-gradient(135deg,rgba(239,68,68,0.7),rgba(185,28,28,0.8));"></span>
+            <span class="legend-swatch" style="background:#ef4444;"></span>
             Feiertag
         </div>
         <div class="legend-dot">
-            <span class="legend-swatch" style="background:linear-gradient(135deg,rgba(245,158,11,0.7),rgba(180,83,9,0.8));border:1px dashed #f59e0b;"></span>
+            <span class="legend-swatch" style="background:rgba(60,193,63,0.3);border:1px dashed #3CC13F;"></span>
             Brückentag
         </div>
         <div class="legend-dot">
-            <span class="legend-swatch" style="background:linear-gradient(135deg,rgba(16,185,129,0.7),rgba(5,150,105,0.8));"></span>
+            <span class="legend-swatch" style="background:#3CC13F;"></span>
             Schulferien
         </div>
         <div class="legend-dot" style="margin-left:auto;">
@@ -762,7 +728,6 @@
 
         document.getElementById('stateSelect').value = currentState;
 
-        // Hilfsfunktion: Sicheres Formatieren YYYY-MM-DD ohne UTC-Zeitzonenverschiebung
         function toDateKey(date) {
             let y = date.getFullYear();
             let m = String(date.getMonth() + 1).padStart(2, '0');
@@ -776,7 +741,6 @@
             return res;
         }
 
-        // Dynamische Ostersonntag-Berechnung (Gauß / Meeus Formel)
         function getEasterSunday(year) {
             let a = year % 19, b = Math.floor(year / 100), c = year % 100,
                 d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25),
@@ -826,7 +790,6 @@
             return holidays;
         }
 
-        // Offizielle Schulferien über die kostenfreie, werbefreie OpenHolidays API (DE-BW, DE-BY, DE-NW etc.)
         function fetchVacations(year, state) {
             let cacheKey = `tesla_vacations_${year}_${state}`;
             let saved = localStorage.getItem(cacheKey);
@@ -870,7 +833,6 @@
                 });
         }
 
-        // Intelligente bundeslandspezifische Fallback-Ferien (falls offline oder vor dem API-Laden)
         function getFallbackVacations(year, state) {
             let vacations = {};
             let addRange = (start, end, name) => {
@@ -884,17 +846,14 @@
 
             let easterSunday = getEasterSunday(year);
 
-            // Winterferien (z. B. Sachsen, Thüringen, Berlin, Bayern)
             if (['SN', 'TH', 'BE', 'BB', 'MV', 'ST', 'BY'].includes(state)) {
                 addRange(new Date(year, 1, 9), new Date(year, 1, 14), state === 'BY' ? "Frühjahrsferien" : "Winterferien");
             }
 
-            // Osterferien dynamisch um Ostern
             let osterStart = addDays(easterSunday, -6);
             let osterEnd = addDays(easterSunday, 11);
             addRange(osterStart, osterEnd, "Osterferien");
 
-            // Pfingstferien (typisch BW, BY, teils MV, ST)
             if (state === 'BW' || state === 'BY') {
                 let pfingstStart = addDays(easterSunday, 51);
                 let pfingstEnd = addDays(easterSunday, 62);
@@ -905,7 +864,6 @@
                 addRange(pfingstStart, pfingstEnd, "Pfingstferien");
             }
 
-            // Sommerferien (gestaffelt nach Bundesland-Gruppen)
             if (['NW'].includes(state)) {
                 addRange(new Date(year, 6, 13), new Date(year, 7, 25), "Sommerferien");
             } else if (['BY', 'BW'].includes(state)) {
@@ -918,14 +876,12 @@
                 addRange(new Date(year, 6, 15), new Date(year, 7, 27), "Sommerferien");
             }
 
-            // Herbstferien
             if (['BY', 'BW'].includes(state)) {
                 addRange(new Date(year, 9, 26), new Date(year, 9, 31), "Herbstferien");
             } else {
                 addRange(new Date(year, 9, 12), new Date(year, 9, 24), "Herbstferien");
             }
 
-            // Weihnachtsferien
             addRange(new Date(year, 11, 23), new Date(year, 11, 31), "Weihnachtsferien");
             addRange(new Date(year, 0, 1), new Date(year, 0, 6), "Weihnachtsferien");
 
@@ -947,7 +903,6 @@
             function addBridge(date, name) {
                 let key = toDateKey(date);
                 let day = date.getDay();
-                // Niemals an Wochenenden (Sa/So) und niemals, wenn der Tag bereits ein gesetzlicher Feiertag ist
                 if (date.getFullYear() === year && day !== 0 && day !== 6 && !holidays[key]) {
                     bridgeDays[key] = name;
                 }
@@ -958,27 +913,26 @@
                 let hDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
                 let dayOfWeek = hDate.getDay();
 
-                if (dayOfWeek === 4) { // Donnerstag (z. B. Himmelfahrt, Fronleichnam, Neujahr) -> Freitag ist echter Brückentag
+                if (dayOfWeek === 4) {
                     addBridge(addDays(hDate, 1), "Top-Brückentag (1 Tag = 4 frei)");
-                } else if (dayOfWeek === 2) { // Dienstag -> Montag ist echter Brückentag
+                } else if (dayOfWeek === 2) {
                     addBridge(addDays(hDate, -1), "Top-Brückentag (1 Tag = 4 frei)");
-                } else if (dayOfWeek === 3) { // Mittwoch -> Mo+Di oder Do+Fr (2 Tage = 5 Tage frei)
+                } else if (dayOfWeek === 3) {
                     addBridge(addDays(hDate, 1), "Brückentag (2 Tage = 5 frei)");
                     addBridge(addDays(hDate, 2), "Brückentag (2 Tage = 5 frei)");
                     addBridge(addDays(hDate, -1), "Brückentag (2 Tage = 5 frei)");
                     addBridge(addDays(hDate, -2), "Brückentag (2 Tage = 5 frei)");
-                } else if (dayOfWeek === 5) { // Freitag (z. B. Karfreitag, 1. Mai) -> Mo-Do vor dem Feiertag
+                } else if (dayOfWeek === 5) {
                     for (let i = 1; i <= 4; i++) {
                         addBridge(addDays(hDate, -i), "Brückenwoche (4 Tage = 9 frei)");
                     }
-                } else if (dayOfWeek === 1) { // Montag (z. B. Ostermontag, Pfingstmontag) -> Di-Fr nach dem Feiertag
+                } else if (dayOfWeek === 1) {
                     for (let i = 1; i <= 4; i++) {
                         addBridge(addDays(hDate, i), "Brückenwoche (4 Tage = 9 frei)");
                     }
                 }
             });
 
-            // Speziell: "Zwischen den Jahren" (vom 24. Dez bis 31. Dez alle Werktage)
             for (let d = 27; d <= 31; d++) {
                 addBridge(new Date(year, 11, d), "Zwischen den Jahren");
             }
@@ -987,32 +941,6 @@
             return bridgeDays;
         }
 
-        function consolidateRanges(datesList) {
-            if (datesList.length === 0) return [];
-            let sorted = datesList.sort();
-            let ranges = [];
-            let start = sorted[0];
-            let prev = sorted[0];
-
-            for (let i = 1; i < sorted.length; i++) {
-                let currDate = new Date(sorted[i]);
-                let prevDate = new Date(prev);
-                let diffTime = Math.abs(currDate - prevDate);
-                let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-                if (diffDays === 1) {
-                    prev = sorted[i];
-                } else {
-                    ranges.push({ start: start, end: prev });
-                    start = sorted[i];
-                    prev = sorted[i];
-                }
-            }
-            ranges.push({ start: start, end: prev });
-            return ranges;
-        }
-
-        // Konsolidiert zusammenhängende Ferientage unter Berücksichtigung des echten Namens
         function consolidateNamedRanges(items) {
             if (!items || items.length === 0) return [];
             items.sort((a, b) => a.date.localeCompare(b.date));
@@ -1049,7 +977,6 @@
             let selectElem = document.getElementById('stateSelect');
             let stateName = selectElem.options[selectElem.selectedIndex].text;
 
-            // Kalenderwochen-Nummer berechnen
             function getWeekNumber(d) {
                 let date = new Date(d);
                 date.setHours(0,0,0,0);
@@ -1058,7 +985,6 @@
                 return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
             }
 
-            // Titel setzen
             let titleText = showYearView ? `Jahreskalender ${year}` : `${monthNames[month]} ${year}`;
             document.getElementById('calendarTitle').innerText = titleText;
 
@@ -1068,7 +994,6 @@
             document.getElementById('legendBar').style.display = showYearView ? 'none' : 'flex';
             document.getElementById('infoListTitle').innerText = `Monatsdetails · ${stateName}`;
 
-            // Today-Pill befüllen
             let todayObj = new Date();
             let todayPill = document.getElementById('todayPill');
             let dayNames = ['So','Mo','Di','Mi','Do','Fr','Sa'];
@@ -1082,7 +1007,6 @@
             let todayStr = toDateKey(todayObj);
 
             if (showYearView) {
-                // Generiere alle 12 Mini-Monate für den Jahreskalender
                 let yearGridHTML = '';
 
                 for (let m = 0; m < 12; m++) {
@@ -1091,11 +1015,9 @@
                     let totalDays = new Date(year, m + 1, 0).getDate();
 
                     let miniDaysHTML = '';
-                    // Vorherige leere Tage
                     for (let i = firstDayIndex; i > 0; i--) {
                         miniDaysHTML += `<div class="mini-day other"><span></span></div>`;
                     }
-                    // Monatstage
                     for (let d = 1; d <= totalDays; d++) {
                         let mStr = String(m + 1).padStart(2, '0');
                         let dStr = String(d).padStart(2, '0');
@@ -1132,7 +1054,6 @@
                 document.getElementById('yearGridContainer').innerHTML = yearGridHTML;
 
             } else {
-                // Normaler Monatsmodus
                 let firstDayIndex = new Date(year, month, 1).getDay();
                 firstDayIndex = (firstDayIndex === 0) ? 6 : firstDayIndex - 1;
 
@@ -1268,7 +1189,6 @@
             renderCalendar();
         }
 
-        // Korrigierte Monatsnavigation: currentDate.setDate(1) verhindert Überspringen von Monaten am 29./30./31.
         function changeMonth(direction) {
             let oldYear = currentDate.getFullYear();
             if (showYearView) {
@@ -1284,7 +1204,6 @@
             renderCalendar();
         }
 
-        // Initiale Vorab-Abfrage der Ferientermine
         fetchVacations(currentDate.getFullYear(), currentState);
         renderCalendar();
     </script>

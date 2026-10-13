@@ -7,44 +7,46 @@
     <link rel="icon" type="image/png" href="icons/hedgehog.png">
     
     <!-- PWA & Mobile / Tesla Browser Leisten-Farben -->
-    <meta name="theme-color" content="#090a0f" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#f1f5f9" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#161616" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#F1F1F1" media="(prefers-color-scheme: light)">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     
     <style>
         :root {
-            --bg-color: #090a0f;
-            --card-bg: rgba(18, 19, 26, 0.78);
-            --card-inner: rgba(26, 27, 36, 0.7);
-            --text-color: #f8fafc;
-            --title-color: #f1f5f9;
-            --subtext-color: #94a3b8;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --hover-bg: rgba(255, 255, 255, 0.06);
+            /* TESLA LIGHT MODE (Original-Farbwerte) */
+            --bg-color: #F1F1F1;
+            --card-bg: #FFFFFF;
+            --card-inner: #FFFFFF;
+            --text-color: #111111;
+            --title-color: #111111;
+            --subtext-color: #888888;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --hover-bg: rgba(0, 0, 0, 0.05);
             
-            --accent-blue: #3b82f6;
-            --accent-cyan: #06b6d4;
-            --accent-green: #10b981;
-            --accent-orange: #f59e0b;
+            --accent-blue: #3CC13F;
+            --accent-cyan: #3CC13F;
+            --accent-green: #3CC13F;
+            --accent-orange: #3CC13F;
             --accent-red: #ef4444;
 
-            --batt-glow: rgba(16, 185, 129, 0.45);
-            --slider-track: #1e2029;
+            --batt-glow: rgba(60, 193, 63, 0.25);
+            --slider-track: #E2E2E2;
         }
 
-        @media (prefers-color-scheme: light) {
+        @media (prefers-color-scheme: dark) {
             :root {
-                --bg-color: #f1f5f9;
-                --card-bg: rgba(255, 255, 255, 0.85);
-                --card-inner: rgba(248, 250, 252, 0.8);
-                --text-color: #0f172a;
-                --title-color: #1e293b;
-                --subtext-color: #64748b;
-                --border-color: rgba(0, 0, 0, 0.08);
-                --hover-bg: rgba(0, 0, 0, 0.04);
-                --slider-track: #e2e8f0;
-                --batt-glow: rgba(16, 185, 129, 0.25);
+                /* TESLA DARK MODE (Original-Farbwerte) */
+                --bg-color: #161616;
+                --card-bg: #2A2A2A;
+                --card-inner: #2A2A2A;
+                --text-color: #FFFFFF;
+                --title-color: #FFFFFF;
+                --subtext-color: #AAAAAA;
+                --border-color: rgba(255, 255, 255, 0.08);
+                --hover-bg: rgba(255, 255, 255, 0.07);
+                --slider-track: #1C1C1C;
+                --batt-glow: rgba(60, 193, 63, 0.35);
             }
         }
 
@@ -57,9 +59,7 @@
 
         body {
             background-color: var(--bg-color);
-            background-image: 
-                radial-gradient(ellipse at 85% 10%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 15% 90%, rgba(16, 185, 129, 0.07) 0%, transparent 50%);
+            background-image: none;
             background-attachment: fixed;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             color: var(--text-color);
@@ -101,15 +101,12 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             flex-shrink: 0;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
         }
 
         .back-btn:hover {
             background-color: var(--hover-bg);
-            border-color: rgba(255, 255, 255, 0.18);
+            border-color: var(--subtext-color);
             transform: translateX(-2px);
         }
 
@@ -131,12 +128,11 @@
             width: 28px;
             height: 28px;
             border-radius: 8px;
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%);
-            border: 1px solid rgba(59, 130, 246, 0.3);
+            background: rgba(60, 193, 63, 0.15);
+            border: 1px solid rgba(60, 193, 63, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 12px rgba(59, 130, 246, 0.25);
         }
 
         .top-spacer {
@@ -144,25 +140,21 @@
             flex-shrink: 0;
         }
 
-        /* 2-Spalten Layout: Passt standardmäßig auf Breitbild & Tesla-Halbbildschirm */
         .layout-grid {
             width: 100%;
             max-width: 960px;
             display: grid;
-            grid-template-columns: 1.15fr 1fr;
+            grid-template-columns: 1fr 1.15fr;
             gap: 16px;
             align-items: start;
         }
 
-        /* Glassmorphism Karten Design */
         .card {
             background-color: var(--card-bg);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
             border: 1px solid var(--border-color);
             border-radius: 18px;
             padding: 18px 20px;
-            box-shadow: 0 12px 36px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
             gap: 13px;
@@ -214,21 +206,18 @@
             border: 1px solid transparent;
             letter-spacing: 0.3px;
             white-space: nowrap;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
 
         .badge-lfp {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.18) 0%, rgba(5, 150, 105, 0.25) 100%);
-            color: #34d399;
-            border-color: rgba(16, 185, 129, 0.4);
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
+            background: rgba(60, 193, 63, 0.15);
+            color: #3CC13F;
+            border-color: rgba(60, 193, 63, 0.4);
         }
 
         .badge-nmc {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.18) 0%, rgba(37, 99, 235, 0.25) 100%);
-            color: #60a5fa;
-            border-color: rgba(59, 130, 246, 0.4);
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.15);
+            background: rgba(60, 193, 63, 0.15);
+            color: #3CC13F;
+            border-color: rgba(60, 193, 63, 0.4);
         }
 
         select {
@@ -246,15 +235,12 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
         }
 
         select:focus {
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25), inset 0 2px 4px rgba(0,0,0,0.2);
+            border-color: #3CC13F;
         }
 
-        /* Sliders & HUD Badges */
         .slider-wrapper {
             display: flex;
             flex-direction: column;
@@ -271,16 +257,15 @@
         }
 
         .hud-start {
-            background: rgba(148, 163, 184, 0.15);
-            color: #cbd5e1;
-            border: 1px solid rgba(148, 163, 184, 0.25);
+            background: var(--hover-bg);
+            color: var(--subtext-color);
+            border: 1px solid var(--border-color);
         }
 
         .hud-target {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.2) 100%);
-            color: #34d399;
-            border: 1px solid rgba(16, 185, 129, 0.4);
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+            background: rgba(60, 193, 63, 0.15);
+            color: #3CC13F;
+            border: 1px solid rgba(60, 193, 63, 0.4);
         }
 
         input[type="range"] {
@@ -293,16 +278,14 @@
             outline: none;
             margin: 5px 0;
             cursor: pointer;
-            box-shadow: inset 0 1px 4px rgba(0,0,0,0.5);
-            transition: background 0.1s ease;
         }
 
         #startSoc {
-            background: linear-gradient(to right, #64748b 0%, #64748b var(--start-pct, 16%), var(--slider-track) var(--start-pct, 16%), var(--slider-track) 100%);
+            background: linear-gradient(to right, var(--subtext-color) 0%, var(--subtext-color) var(--start-pct, 16%), var(--slider-track) var(--start-pct, 16%), var(--slider-track) 100%);
         }
 
         #targetSoc {
-            background: linear-gradient(to right, #10b981 0%, #10b981 var(--target-pct, 84%), var(--slider-track) var(--target-pct, 84%), var(--slider-track) 100%);
+            background: linear-gradient(to right, #3CC13F 0%, #3CC13F var(--target-pct, 84%), var(--slider-track) var(--target-pct, 84%), var(--slider-track) 100%);
         }
 
         input[type="range"]::-webkit-slider-thumb {
@@ -313,25 +296,15 @@
             border-radius: 50%;
             background: #ffffff;
             cursor: pointer;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-            border: 2px solid var(--accent-blue);
-        }
-
-        #startSoc::-webkit-slider-thumb {
-            border-color: #94a3b8;
-            box-shadow: 0 0 10px rgba(148, 163, 184, 0.5), 0 3px 6px rgba(0,0,0,0.4);
-        }
-
-        #targetSoc::-webkit-slider-thumb {
-            border-color: #10b981;
-            box-shadow: 0 0 14px rgba(16, 185, 129, 0.65), 0 3px 6px rgba(0,0,0,0.4);
+            transition: transform 0.15s ease;
+            border: 2px solid #3CC13F;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
 
         input[type="range"]::-webkit-slider-thumb:hover, input[type="range"]:active::-webkit-slider-thumb {
             transform: scale(1.18);
         }
 
-        /* Preset Chips */
         .preset-chips {
             display: flex;
             gap: 5px;
@@ -340,8 +313,8 @@
         }
 
         .chip-btn {
-            background: linear-gradient(180deg, rgba(35, 35, 45, 0.75) 0%, rgba(22, 22, 28, 0.9) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.09);
+            background: var(--card-inner);
+            border: 1px solid var(--border-color);
             color: var(--subtext-color);
             font-size: 11px;
             font-weight: 600;
@@ -352,47 +325,40 @@
             display: inline-flex;
             align-items: center;
             gap: 3px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
 
         .chip-btn:hover {
             color: var(--text-color);
             background: var(--hover-bg);
-            border-color: rgba(255, 255, 255, 0.2);
+            border-color: var(--subtext-color);
             transform: translateY(-1px);
         }
 
-        .chip-btn:active {
-            transform: translateY(0) scale(0.96);
-        }
-
         .chip-btn.active {
-            background: linear-gradient(180deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.35) 100%);
-            color: #6ee7b7;
-            border-color: #10b981;
+            background: rgba(60, 193, 63, 0.2);
+            color: #3CC13F;
+            border-color: #3CC13F;
             font-weight: 700;
-            box-shadow: 0 0 12px rgba(16, 185, 129, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
 
         .chip-sub {
             font-size: 8.5px;
             opacity: 0.85;
             padding: 1px 3px;
-            background: rgba(255, 255, 255, 0.08);
+            background: var(--hover-bg);
             border-radius: 4px;
             line-height: 1;
         }
 
         .chip-btn.active .chip-sub {
-            background: rgba(16, 185, 129, 0.3);
+            background: rgba(60, 193, 63, 0.3);
             color: #ffffff;
         }
 
-        /* Tesla BMS Assist Box */
         .sweet-spot-box {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(30, 41, 59, 0.35) 100%);
-            border: 1px solid rgba(59, 130, 246, 0.25);
-            border-left: 3px solid #3b82f6;
+            background: var(--card-inner);
+            border: 1px solid var(--border-color);
+            border-left: 3px solid #3CC13F;
             border-radius: 11px;
             padding: 8px 11px;
             font-size: 11px;
@@ -401,18 +367,18 @@
             gap: 9px;
             align-items: center;
             line-height: 1.35;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.15);
         }
 
         .sweet-spot-icon-wrap {
             width: 24px;
             height: 24px;
             border-radius: 7px;
-            background: rgba(59, 130, 246, 0.15);
+            background: rgba(60, 193, 63, 0.15);
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            color: #3CC13F;
         }
 
         .sweet-spot-body {
@@ -425,19 +391,16 @@
             font-size: 9px;
             font-weight: 800;
             letter-spacing: 0.6px;
-            color: #60a5fa;
+            color: #3CC13F;
             text-transform: uppercase;
         }
 
-        /* ========================================================
-           MODERNE COCKPIT LADELEISTUNG-CONSOLE & STEPPERS
-           ======================================================== */
         .power-spec-badge {
             font-size: 10px;
             font-weight: 700;
-            color: #60a5fa;
-            background: rgba(59, 130, 246, 0.14);
-            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #3CC13F;
+            background: rgba(60, 193, 63, 0.15);
+            border: 1px solid rgba(60, 193, 63, 0.3);
             padding: 2px 7px;
             border-radius: 6px;
             letter-spacing: 0.2px;
@@ -451,8 +414,8 @@
         }
 
         .power-btn {
-            background: linear-gradient(180deg, rgba(35, 37, 48, 0.8) 0%, rgba(20, 21, 28, 0.95) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.09);
+            background: var(--card-inner);
+            border: 1px solid var(--border-color);
             border-radius: 10px;
             padding: 8px 4px;
             cursor: pointer;
@@ -460,26 +423,20 @@
             flex-direction: column;
             align-items: center;
             gap: 2px;
-            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            transition: all 0.15s ease;
             color: var(--subtext-color);
         }
 
         .power-btn:hover {
             background: var(--hover-bg);
-            border-color: rgba(255, 255, 255, 0.2);
+            border-color: var(--subtext-color);
             transform: translateY(-1px);
         }
 
-        .power-btn:active {
-            transform: translateY(0) scale(0.96);
-        }
-
         .power-btn.active {
-            background: linear-gradient(180deg, rgba(59, 130, 246, 0.28) 0%, rgba(37, 99, 235, 0.38) 100%);
-            border-color: var(--accent-blue);
-            color: #ffffff;
-            box-shadow: 0 0 14px rgba(59, 130, 246, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            background: rgba(60, 193, 63, 0.2);
+            border-color: #3CC13F;
+            color: var(--text-color);
         }
 
         .power-btn-val {
@@ -490,8 +447,7 @@
         }
 
         .power-btn.active .power-btn-val {
-            color: #93c5fd;
-            text-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
+            color: #3CC13F;
         }
 
         .power-btn-sub {
@@ -502,20 +458,14 @@
             letter-spacing: 0.3px;
         }
 
-        .power-btn.active .power-btn-sub {
-            opacity: 0.95;
-            color: #bfdbfe;
-        }
-
-        /* Feinjustierung Bar */
         .power-fine-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 4px 8px;
-            background: rgba(255, 255, 255, 0.02);
+            background: var(--card-inner);
             border-radius: 9px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
             margin-top: 1px;
         }
 
@@ -536,7 +486,7 @@
         }
 
         .step-btn-mini {
-            background: rgba(255, 255, 255, 0.06);
+            background: var(--hover-bg);
             border: none;
             color: var(--text-color);
             width: 22px;
@@ -552,7 +502,7 @@
         }
 
         .step-btn-mini:hover {
-            background: rgba(59, 130, 246, 0.35);
+            background: rgba(60, 193, 63, 0.3);
             color: #ffffff;
         }
 
@@ -575,7 +525,6 @@
             padding-right: 2px;
         }
 
-        /* Cockpit Stepper für Preis & Standzeit */
         .cockpit-stepper {
             background: var(--card-inner);
             border: 1px solid var(--border-color);
@@ -584,18 +533,15 @@
             align-items: center;
             justify-content: space-between;
             padding: 3px 6px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.25);
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
         .cockpit-stepper:focus-within {
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25), inset 0 2px 4px rgba(0,0,0,0.2);
+            border-color: #3CC13F;
         }
 
         .step-btn {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: var(--hover-bg);
+            border: 1px solid var(--border-color);
             color: var(--text-color);
             width: 26px;
             height: 26px;
@@ -611,14 +557,9 @@
         }
 
         .step-btn:hover {
-            background: rgba(59, 130, 246, 0.3);
-            border-color: rgba(59, 130, 246, 0.5);
+            background: rgba(60, 193, 63, 0.3);
+            border-color: #3CC13F;
             color: #ffffff;
-            transform: scale(1.06);
-        }
-
-        .step-btn:active {
-            transform: scale(0.94);
         }
 
         .stepper-center {
@@ -656,9 +597,8 @@
             margin: 0; 
         }
 
-        /* VISUELLE TESLA BATTERIE GAUGE MIT ENERGIE-FLOW */
         .battery-gauge-card {
-            background: linear-gradient(145deg, var(--card-inner) 0%, rgba(15, 23, 42, 0.6) 100%);
+            background: var(--card-inner);
             border: 1px solid var(--border-color);
             border-radius: 16px;
             padding: 13px 14px;
@@ -666,7 +606,6 @@
             flex-direction: column;
             gap: 9px;
             position: relative;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255, 255, 255, 0.06);
         }
 
         .gauge-header {
@@ -689,7 +628,7 @@
         .gauge-charged-text {
             font-size: 13px;
             font-weight: 700;
-            color: var(--accent-green);
+            color: #3CC13F;
             display: flex;
             align-items: center;
             gap: 4px;
@@ -701,30 +640,28 @@
         }
 
         @keyframes pulseBolt {
-            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px #10b981); }
-            50% { transform: scale(1.2); filter: drop-shadow(0 0 8px #10b981); }
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px #3CC13F); }
+            50% { transform: scale(1.2); filter: drop-shadow(0 0 8px #3CC13F); }
         }
 
         .battery-frame-container {
             width: 100%;
-            padding-right: 7px; /* Platz für Batterie-Pluspol */
+            padding-right: 7px;
             box-sizing: border-box;
         }
 
         .battery-outer-frame {
             width: 100%;
             height: 40px;
-            background: rgba(0, 0, 0, 0.55);
+            background: rgba(0, 0, 0, 0.2);
             border: 2px solid var(--border-color);
             border-radius: 12px;
             padding: 3px;
             position: relative;
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.6);
             display: flex;
             align-items: center;
         }
 
-        /* Batterie Pluspol rechts */
         .battery-outer-frame::after {
             content: "";
             position: absolute;
@@ -733,11 +670,8 @@
             transform: translateY(-50%);
             width: 4px;
             height: 16px;
-            background: linear-gradient(180deg, #64748b 0%, #334155 100%);
-            border: 1px solid var(--border-color);
-            border-left: none;
+            background: var(--subtext-color);
             border-radius: 0 3px 3px 0;
-            box-shadow: 0 0 6px rgba(0,0,0,0.4);
         }
 
         .battery-cell-ticks {
@@ -760,7 +694,7 @@
             border-radius: 7px;
             position: relative;
             overflow: hidden;
-            background: rgba(255, 255, 255, 0.03);
+            background: var(--hover-bg);
         }
 
         .battery-base-bar {
@@ -768,9 +702,9 @@
             top: 0;
             bottom: 0;
             left: 0;
-            background: linear-gradient(180deg, #475569 0%, #334155 100%);
+            background: var(--subtext-color);
             border-radius: 7px 0 0 7px;
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: width 0.3s ease;
             z-index: 1;
         }
 
@@ -778,15 +712,14 @@
             position: absolute;
             top: 0;
             bottom: 0;
-            background: linear-gradient(90deg, #059669 0%, #10b981 35%, #34d399 75%, #6ee7b7 100%);
+            background: #3CC13F;
             box-shadow: 0 0 16px var(--batt-glow);
             border-radius: 0 7px 7px 0;
-            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: left 0.3s ease, width 0.3s ease;
             z-index: 2;
             overflow: hidden;
         }
 
-        /* Fließender Energie-Lichtstrahl */
         .charge-shimmer-wave {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -797,7 +730,7 @@
                 transparent 100%
             );
             background-size: 200% 100%;
-            animation: shimmerWave 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            animation: shimmerWave 2.2s linear infinite;
             pointer-events: none;
         }
 
@@ -815,10 +748,9 @@
             padding: 0 3px;
         }
 
-        /* HERO FINISH TIME COCKPIT INSTRUMENT */
         .finish-hero {
-            background: radial-gradient(ellipse at 50% 0%, rgba(99, 102, 241, 0.25) 0%, rgba(15, 23, 42, 0.85) 75%);
-            border: 1px solid rgba(129, 140, 248, 0.35);
+            background: var(--card-inner);
+            border: 1px solid var(--border-color);
             border-radius: 14px;
             padding: 12px 14px;
             display: flex;
@@ -826,7 +758,6 @@
             align-items: center;
             text-align: center;
             gap: 2px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(165, 180, 252, 0.2);
             position: relative;
         }
 
@@ -840,24 +771,10 @@
             width: 7px;
             height: 7px;
             border-radius: 50%;
-            background-color: #10b981;
-            box-shadow: 0 0 8px #10b981;
+            background-color: #3CC13F;
+            box-shadow: 0 0 8px #3CC13F;
             display: inline-block;
             position: relative;
-        }
-
-        .live-beacon::after {
-            content: "";
-            position: absolute;
-            top: -3px; left: -3px; right: -3px; bottom: -3px;
-            border-radius: 50%;
-            border: 1.5px solid rgba(16, 185, 129, 0.6);
-            animation: beaconPulse 2s cubic-bezier(0.2, 0, 0.2, 1) infinite;
-        }
-
-        @keyframes beaconPulse {
-            0% { transform: scale(0.8); opacity: 1; }
-            100% { transform: scale(2.4); opacity: 0; }
         }
 
         .finish-label {
@@ -865,7 +782,7 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.8px;
-            color: #a5b4fc;
+            color: var(--subtext-color);
         }
 
         .finish-time-row {
@@ -880,23 +797,20 @@
             font-size: 28px;
             font-weight: 800;
             letter-spacing: -0.8px;
-            background: linear-gradient(180deg, #ffffff 30%, #cbd5e1 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--text-color);
             line-height: 1.15;
             white-space: nowrap;
         }
 
         .day-diff-badge {
-            background: rgba(6, 182, 212, 0.18);
-            border: 1px solid rgba(6, 182, 212, 0.45);
-            color: #22d3ee;
+            background: rgba(60, 193, 63, 0.15);
+            border: 1px solid rgba(60, 193, 63, 0.4);
+            color: #3CC13F;
             border-radius: 6px;
             padding: 2px 7px;
             font-size: 11px;
             font-weight: 700;
             white-space: nowrap;
-            box-shadow: 0 0 8px rgba(6, 182, 212, 0.25);
         }
 
         .finish-duration-badge {
@@ -906,13 +820,12 @@
             font-size: 12px;
             font-weight: 600;
             color: var(--subtext-color);
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--hover-bg);
             padding: 3px 9px;
             border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-color);
         }
 
-        /* 4 METRIKEN TILES MIT BELEUCHTETEN ICONS */
         .metrics-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -928,23 +841,8 @@
             align-items: center;
             gap: 9px;
             min-width: 0;
-            transition: transform 0.15s ease, border-color 0.15s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             position: relative;
             overflow: hidden;
-        }
-
-        .metric-tile::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
-        }
-
-        .metric-tile:hover {
-            transform: translateY(-2px);
-            border-color: rgba(255, 255, 255, 0.15);
         }
 
         .metric-icon-wrap {
@@ -955,34 +853,9 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-        }
-
-        .icon-cyan {
-            background: rgba(6, 182, 212, 0.15);
-            color: #22d3ee;
-            border: 1px solid rgba(6, 182, 212, 0.3);
-            box-shadow: 0 0 8px rgba(6, 182, 212, 0.15);
-        }
-
-        .icon-emerald {
-            background: rgba(16, 185, 129, 0.15);
-            color: #34d399;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            box-shadow: 0 0 8px rgba(16, 185, 129, 0.15);
-        }
-
-        .icon-blue {
-            background: rgba(59, 130, 246, 0.15);
-            color: #60a5fa;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            box-shadow: 0 0 8px rgba(59, 130, 246, 0.15);
-        }
-
-        .icon-amber {
-            background: rgba(245, 158, 11, 0.15);
-            color: #fbbf24;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            box-shadow: 0 0 8px rgba(245, 158, 11, 0.15);
+            background: rgba(60, 193, 63, 0.15);
+            color: #3CC13F;
+            border: 1px solid rgba(60, 193, 63, 0.3);
         }
 
         .metric-content {
@@ -1015,7 +888,7 @@
         }
 
         .val-emerald {
-            color: #34d399 !important;
+            color: #3CC13F !important;
         }
 
         .metric-sub {
@@ -1026,7 +899,6 @@
             text-overflow: ellipsis;
         }
 
-        /* ALERT BOX MIT PULSIERENDEM STATUS */
         .alert-box {
             padding: 9px 12px;
             border-radius: 11px;
@@ -1036,36 +908,29 @@
             align-items: center;
             gap: 9px;
             line-height: 1.35;
-            border: 1px solid transparent;
-            transition: all 0.2s ease;
+            border: 1px solid var(--border-color);
+            background: var(--card-inner);
+            color: var(--text-color);
         }
 
         .alert-box.safe {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(5, 150, 105, 0.05) 100%);
-            border-color: rgba(16, 185, 129, 0.25);
-            color: var(--accent-green);
+            border-color: rgba(60, 193, 63, 0.4);
+            color: #3CC13F;
         }
 
         .alert-box.safe .alert-icon-wrap {
-            background: rgba(16, 185, 129, 0.2);
-            color: #34d399;
+            background: rgba(60, 193, 63, 0.2);
+            color: #3CC13F;
         }
 
         .alert-box.warning {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(185, 28, 28, 0.06) 100%);
-            border-color: rgba(239, 68, 68, 0.35);
-            color: #f87171;
-            animation: alertPulse 2.5s ease-in-out infinite;
+            border-color: #ef4444;
+            color: #ef4444;
         }
 
         .alert-box.warning .alert-icon-wrap {
-            background: rgba(239, 68, 68, 0.25);
-            color: #f87171;
-        }
-
-        @keyframes alertPulse {
-            0%, 100% { border-color: rgba(239, 68, 68, 0.35); box-shadow: 0 0 0 rgba(239, 68, 68, 0); }
-            50% { border-color: rgba(239, 68, 68, 0.6); box-shadow: 0 0 12px rgba(239, 68, 68, 0.25); }
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
         }
 
         .alert-icon-wrap {
@@ -1086,288 +951,15 @@
             opacity: 0.7;
         }
 
-        /* ========================================================
-           TESLA HALB-BILDSCHIRM & SPLIT-SCREEN OPTIMIERUNG
-           ======================================================== */
         @media (max-width: 860px) {
-            body {
-                padding: 8px 10px 18px 10px;
-            }
-
-            .top-bar {
-                margin-bottom: 10px;
-                padding-bottom: 8px;
-                gap: 8px;
-            }
-
-            .page-title {
-                font-size: 15px;
-                gap: 6px;
-            }
-
-            .title-bolt-wrap {
-                width: 24px;
-                height: 24px;
-            }
-
-            .top-spacer {
-                width: 10px;
-            }
-
-            .back-btn {
-                padding: 6px 10px;
-                font-size: 12px;
-            }
-
-            .layout-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
-            }
-
-            .card {
-                padding: 12px 13px;
-                gap: 8px;
-                border-radius: 14px;
-            }
-
-            .card-header {
-                padding-bottom: 6px;
-                margin-bottom: 0;
-            }
-
-            .card-title {
-                font-size: 11.5px;
-            }
-
-            .badge-type {
-                font-size: 10px;
-                padding: 1.5px 6px;
-            }
-
-            .input-group {
-                gap: 3.5px;
-            }
-
-            .input-label-row {
-                font-size: 11.5px;
-            }
-
-            .hud-pill {
-                font-size: 12px;
-                padding: 1px 6px;
-            }
-
-            select {
-                padding: 7px 9px;
-                font-size: 12px;
-                border-radius: 9px;
-            }
-
-            .sweet-spot-box {
-                padding: 6px 9px;
-                font-size: 10.5px;
-                line-height: 1.35;
-                gap: 6px;
-                border-radius: 9px;
-            }
-
-            .sweet-spot-icon-wrap {
-                width: 20px;
-                height: 20px;
-            }
-
-            input[type="range"] {
-                height: 7px;
-                margin: 4px 0;
-            }
-
-            input[type="range"]::-webkit-slider-thumb {
-                width: 20px;
-                height: 20px;
-            }
-
-            .preset-chips {
-                gap: 4px;
-                margin-top: 1px;
-            }
-
-            .chip-btn {
-                padding: 4px 6px;
-                font-size: 9.5px;
-                border-radius: 6px;
-            }
-
-            /* Ladeleistung & Steppers im Halbbildschirm */
-            .power-grid {
-                gap: 4px;
-            }
-
-            .power-btn {
-                padding: 5px 3px;
-                border-radius: 8px;
-            }
-
-            .power-btn-val {
-                font-size: 11.5px;
-            }
-
-            .power-btn-sub {
-                font-size: 7.5px;
-            }
-
-            .power-fine-row {
-                padding: 2px 5px;
-            }
-
-            .power-fine-label {
-                font-size: 9.5px;
-            }
-
-            .step-btn-mini {
-                width: 18px;
-                height: 18px;
-                font-size: 12px;
-            }
-
-            .cockpit-stepper-mini input {
-                font-size: 11px;
-                width: 32px;
-            }
-
-            .cockpit-stepper {
-                padding: 2.5px 4px;
-                border-radius: 9px;
-            }
-
-            .step-btn {
-                width: 22px;
-                height: 22px;
-                font-size: 13px;
-                border-radius: 6px;
-            }
-
-            .stepper-center input {
-                font-size: 12px;
-                width: 34px;
-            }
-
-            .stepper-unit {
-                font-size: 9px;
-            }
-
-            .battery-gauge-card {
-                padding: 9px 11px;
-                gap: 6px;
-                border-radius: 12px;
-            }
-
-            .gauge-label {
-                font-size: 10.5px;
-            }
-
-            .gauge-charged-text {
-                font-size: 12px;
-            }
-
-            .battery-outer-frame {
-                height: 30px;
-                padding: 2.5px;
-                border-radius: 9px;
-            }
-
-            .battery-outer-frame::after {
-                right: -6px;
-                width: 3.5px;
-                height: 12px;
-            }
-
-            .battery-scale {
-                font-size: 8.5px;
-            }
-
-            .finish-hero {
-                padding: 8px 10px;
-                border-radius: 12px;
-                gap: 1px;
-            }
-
-            .finish-label {
-                font-size: 9.5px;
-            }
-
-            .finish-time-giant {
-                font-size: 23px;
-                margin: 0;
-            }
-
-            .day-diff-badge {
-                font-size: 10px;
-                padding: 1px 5px;
-            }
-
-            .finish-duration-badge {
-                font-size: 11px;
-                padding: 2px 7px;
-            }
-
-            .metrics-grid {
-                gap: 7px;
-            }
-
-            .metric-tile {
-                padding: 7px 8px;
-                gap: 7px;
-                border-radius: 9px;
-            }
-
-            .metric-icon-wrap {
-                width: 25px;
-                height: 25px;
-                border-radius: 6px;
-            }
-
-            .metric-name {
-                font-size: 9.5px;
-            }
-
-            .metric-val {
-                font-size: 15px;
-            }
-
-            .metric-sub {
-                font-size: 9.5px;
-            }
-
-            .alert-box {
-                padding: 7px 9px;
-                font-size: 10.5px;
-                line-height: 1.3;
-                gap: 6px;
-                border-radius: 9px;
-            }
-
-            footer {
-                margin-top: 14px;
-                font-size: 10px;
-            }
+            body { padding: 8px 10px 18px 10px; }
+            .layout-grid { grid-template-columns: 1fr; gap: 12px; }
+            .card { padding: 12px 13px; gap: 8px; }
+            .finish-time-giant { font-size: 23px; }
         }
 
-        /* ========================================================
-           SCHMALE MOBIL-ANSICHT (< 619px)
-           ======================================================== */
         @media (max-width: 619px) {
-            .top-spacer {
-                display: none;
-            }
-
-            .layout-grid {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-
-            .finish-time-giant {
-                font-size: 26px;
-            }
+            .top-spacer { display: none; }
         }
     </style>
 </head>
@@ -1381,17 +973,133 @@
         </a>
         <h1 class="page-title">
             <div class="title-bolt-wrap">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3CC13F" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
             </div>
             Tesla AC-Laderechner
         </h1>
         <div class="top-spacer"></div>
     </div>
 
-    <!-- 2-Spalten Breitbild & Tesla-Halbbildschirm Layout -->
+    <!-- 2-Spalten Breitbild & Tesla-Halbbildschirm Layout (Live-Prognose links, Einstellungen rechts) -->
     <div class="layout-grid">
 
-        <!-- LINKE SPALTE: EINSTELLUNGEN -->
+        <!-- LINKE SPALTE: LIVE DASHBOARD & BATTERIE-GAUGE -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20v-6M6 20V10M18 20V4"/></svg>
+                    Live Lade-Prognose
+                </span>
+                <span id="weatherInfoSub" style="font-size: 11px; color: var(--subtext-color); font-weight: 600;">Wetter: Lokal (15°C)</span>
+            </div>
+
+            <!-- VISUELLER TESLA AKKU-BALKEN MIT ENERGIE-FLOW -->
+            <div class="battery-gauge-card">
+                <div class="gauge-header">
+                    <span class="gauge-label">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="7" width="16" height="10" rx="2"/><line x1="22" y1="11" x2="22" y2="13"/></svg>
+                        Akkustand-Hub
+                    </span>
+                    <span class="gauge-charged-text" id="gaugeHubText">
+                        <span class="charge-pulse-icon">⚡</span> +68 % geladen
+                    </span>
+                </div>
+                
+                <div class="battery-frame-container">
+                    <div class="battery-outer-frame">
+                        <div class="battery-cell-ticks"></div>
+                        <div class="battery-track">
+                            <div class="battery-base-bar" id="batteryBaseBar" style="width: 16%;"></div>
+                            <div class="battery-charge-bar" id="batteryChargeBar" style="left: 16%; width: 68%;">
+                                <div class="charge-shimmer-wave"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="battery-scale">
+                    <span>0%</span>
+                    <span>20%</span>
+                    <span>40%</span>
+                    <span>60%</span>
+                    <span>80%</span>
+                    <span>100%</span>
+                </div>
+            </div>
+
+            <!-- FERTIG UM COCKPIT HERO MIT LIVE-BEACON -->
+            <div class="finish-hero">
+                <div class="hero-top-status">
+                    <span class="live-beacon"></span>
+                    <span class="finish-label">Voll geladen um ca.</span>
+                </div>
+                <div class="finish-time-row">
+                    <span class="finish-time-giant" id="resEndTime">--:-- Uhr</span>
+                    <span class="day-diff-badge" id="dayDiffBadge" style="display:none;">+1 Tag</span>
+                </div>
+                <div class="finish-duration-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span id="resTime">Dauer: -- Std. -- Min.</span>
+                </div>
+            </div>
+
+            <!-- 4 KERN-METRIKEN TILES MIT BELEUCHTETEN ICONS -->
+            <div class="metrics-grid">
+                <div class="metric-tile">
+                    <div class="metric-icon-wrap">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    </div>
+                    <div class="metric-content">
+                        <span class="metric-name">Brutto Energie</span>
+                        <span class="metric-val" id="resKwh">-- kWh</span>
+                        <span class="metric-sub" id="resKwhNetto">Netto: -- kWh</span>
+                    </div>
+                </div>
+
+                <div class="metric-tile">
+                    <div class="metric-icon-wrap">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                    </div>
+                    <div class="metric-content">
+                        <span class="metric-name">Gesamtkosten</span>
+                        <span class="metric-val val-emerald" id="resCost">-- €</span>
+                        <span class="metric-sub" id="resCostDetail">Inkl. Verluste</span>
+                    </div>
+                </div>
+
+                <div class="metric-tile">
+                    <div class="metric-icon-wrap">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    </div>
+                    <div class="metric-content">
+                        <span class="metric-name">Leistung</span>
+                        <span class="metric-val" id="resPowerDisplay">11 kW</span>
+                        <span class="metric-sub" id="resPowerPhase">AC 3-phasig</span>
+                    </div>
+                </div>
+
+                <div class="metric-tile">
+                    <div class="metric-icon-wrap">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+                    </div>
+                    <div class="metric-content">
+                        <span class="metric-name">Ladeverlust</span>
+                        <span class="metric-val" id="lossPercentDisplay">ca. 7 %</span>
+                        <span class="metric-sub" id="lossTempText">Temperaturbasiert</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STANDZEIT ALERT STATUS MIT ICON -->
+            <div id="alertBox" class="alert-box safe">
+                <div class="alert-icon-wrap">
+                    <svg id="alertSvg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <span id="alertText">Ladezeit liegt im sicheren Zeitfenster.</span>
+            </div>
+        </div>
+
+        <!-- RECHTE SPALTE: EINSTELLUNGEN -->
         <div class="card">
             <div class="card-header">
                 <span class="card-title">
@@ -1416,7 +1124,7 @@
             <!-- Tesla BMS Assist Box -->
             <div class="sweet-spot-box" id="sweetSpotBox">
                 <div class="sweet-spot-icon-wrap">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.3"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                 </div>
                 <div class="sweet-spot-body">
                     <span class="sweet-spot-title">BMS Empfehlung</span>
@@ -1546,126 +1254,6 @@
             </div>
         </div>
 
-        <!-- RECHTE SPALTE: LIVE DASHBOARD & BATTERIE-GAUGE -->
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20v-6M6 20V10M18 20V4"/></svg>
-                    Live Lade-Prognose
-                </span>
-                <span id="weatherInfoSub" style="font-size: 11px; color: var(--subtext-color); font-weight: 600;">Wetter: Lokal (15°C)</span>
-            </div>
-
-            <!-- VISUELLER TESLA AKKU-BALKEN MIT ENERGIE-FLOW -->
-            <div class="battery-gauge-card">
-                <div class="gauge-header">
-                    <span class="gauge-label">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="7" width="16" height="10" rx="2"/><line x1="22" y1="11" x2="22" y2="13"/></svg>
-                        Akkustand-Hub
-                    </span>
-                    <span class="gauge-charged-text" id="gaugeHubText">
-                        <span class="charge-pulse-icon">⚡</span> +68 % geladen
-                    </span>
-                </div>
-                
-                <div class="battery-frame-container">
-                    <div class="battery-outer-frame">
-                        <!-- Interne Batteriezellen-Gittermarkierungen -->
-                        <div class="battery-cell-ticks"></div>
-
-                        <div class="battery-track">
-                            <!-- Start-Akkustand (Grau) -->
-                            <div class="battery-base-bar" id="batteryBaseBar" style="width: 16%;"></div>
-                            <!-- Zu ladender Teil (Grün leuchtend mit fließender Lichtwelle) -->
-                            <div class="battery-charge-bar" id="batteryChargeBar" style="left: 16%; width: 68%;">
-                                <div class="charge-shimmer-wave"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="battery-scale">
-                    <span>0%</span>
-                    <span>20%</span>
-                    <span>40%</span>
-                    <span>60%</span>
-                    <span>80%</span>
-                    <span>100%</span>
-                </div>
-            </div>
-
-            <!-- FERTIG UM COCKPIT HERO MIT LIVE-BEACON -->
-            <div class="finish-hero">
-                <div class="hero-top-status">
-                    <span class="live-beacon"></span>
-                    <span class="finish-label">Voll geladen um ca.</span>
-                </div>
-                <div class="finish-time-row">
-                    <span class="finish-time-giant" id="resEndTime">--:-- Uhr</span>
-                    <span class="day-diff-badge" id="dayDiffBadge" style="display:none;">+1 Tag</span>
-                </div>
-                <div class="finish-duration-badge">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    <span id="resTime">Dauer: -- Std. -- Min.</span>
-                </div>
-            </div>
-
-            <!-- 4 KERN-METRIKEN TILES MIT BELEUCHTETEN ICONS -->
-            <div class="metrics-grid">
-                <div class="metric-tile">
-                    <div class="metric-icon-wrap icon-cyan">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                    </div>
-                    <div class="metric-content">
-                        <span class="metric-name">Brutto Energie</span>
-                        <span class="metric-val" id="resKwh">-- kWh</span>
-                        <span class="metric-sub" id="resKwhNetto">Netto: -- kWh</span>
-                    </div>
-                </div>
-
-                <div class="metric-tile">
-                    <div class="metric-icon-wrap icon-emerald">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                    </div>
-                    <div class="metric-content">
-                        <span class="metric-name">Gesamtkosten</span>
-                        <span class="metric-val val-emerald" id="resCost">-- €</span>
-                        <span class="metric-sub" id="resCostDetail">Inkl. Verluste</span>
-                    </div>
-                </div>
-
-                <div class="metric-tile">
-                    <div class="metric-icon-wrap icon-blue">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                    </div>
-                    <div class="metric-content">
-                        <span class="metric-name">Leistung</span>
-                        <span class="metric-val" id="resPowerDisplay">11 kW</span>
-                        <span class="metric-sub" id="resPowerPhase">AC 3-phasig</span>
-                    </div>
-                </div>
-
-                <div class="metric-tile">
-                    <div class="metric-icon-wrap icon-amber">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
-                    </div>
-                    <div class="metric-content">
-                        <span class="metric-name">Ladeverlust</span>
-                        <span class="metric-val" id="lossPercentDisplay">ca. 7 %</span>
-                        <span class="metric-sub" id="lossTempText">Temperaturbasiert</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- STANDZEIT ALERT STATUS MIT ICON -->
-            <div id="alertBox" class="alert-box safe">
-                <div class="alert-icon-wrap">
-                    <svg id="alertSvg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                </div>
-                <span id="alertText">Ladezeit liegt im sicheren Zeitfenster.</span>
-            </div>
-        </div>
-
     </div>
 
     <footer>
@@ -1775,18 +1363,15 @@
             document.getElementById('startVal').innerText = start + " %";
             document.getElementById('targetVal').innerText = target + " %";
 
-            // Dynamische Neon-Füllung der Slider-Spuren
             document.getElementById('startSoc').style.setProperty('--start-pct', start + '%');
             document.getElementById('targetSoc').style.setProperty('--target-pct', target + '%');
 
-            // Visuelle Batterie aktualisieren
             let hub = target - start;
             document.getElementById('batteryBaseBar').style.width = start + "%";
             document.getElementById('batteryChargeBar').style.left = start + "%";
             document.getElementById('batteryChargeBar').style.width = hub + "%";
             document.getElementById('gaugeHubText').innerHTML = `<span class="charge-pulse-icon">⚡</span> +${hub} % geladen`;
 
-            // Preset-Buttons Highlighting
             document.querySelectorAll('.chip-btn').forEach(btn => {
                 let pVal = parseInt(btn.innerText);
                 if (pVal === target) {
@@ -1799,7 +1384,6 @@
             calculate();
         }
 
-        /* Ladeleistung Cockpit-Funktionen */
         function setPower(val) {
             currentChargePower = val;
             document.getElementById('chargePowerInput').value = val.toFixed(1);
@@ -1851,7 +1435,6 @@
             }
         }
 
-        /* Stepper Funktionen für Preis, Standzeit & Gebühr */
         function stepPrice(delta) {
             let inp = document.getElementById('kwhPriceCents');
             let val = parseFloat(inp.value) || 0;
@@ -1899,7 +1482,6 @@
             let netKwh = (netCapacity * socDiff) / 100;
             let kwhWithLosses = netKwh * currentLossFactor;
 
-            // Ladesäule liefert Brutto-Energie (kwhWithLosses)
             let hoursTotal = kwhWithLosses / chargePower;
             let totalMinutes = Math.round(hoursTotal * 60);
             let hrs = Math.floor(totalMinutes / 60);
