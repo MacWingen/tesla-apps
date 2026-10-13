@@ -267,13 +267,13 @@
         }
 
         function shareStation(title, address, kw, count, mapsUrl) {
-            const shareText = `⚡ WBG Ladestation: ${title}\n📍 Adresse: ${address}\n🔌 Leistung: ${kw} AC (${count} Ladepunkte)\n💰 Tarif: 0,38 € / kWh`;
-            const fullShareString = `${shareText}\n🗺️ Navigieren: ${mapsUrl}`;
+            const shortMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(title + ', ' + address)}`;
+            const shareText = `⚡ WBG Ladestation: ${title}\n📍 ${address}\n🔌 Leistung: ${kw} AC (${count} Ladepunkte)\n💰 Tarif: 0,38 € / kWh\n🗺️ Navigieren: ${shortMapsUrl}`;
 
             if (navigator.share) {
-                navigator.share({ title: title, text: shareText, url: mapsUrl }).catch(() => {});
+                navigator.share({ title: title, text: shareText }).catch(() => {});
             } else {
-                navigator.clipboard.writeText(fullShareString);
+                navigator.clipboard.writeText(shareText);
                 alert("Ladedetails in die Zwischenablage kopiert!");
             }
         }
@@ -281,6 +281,10 @@
         function createCardHtml(st, isFav, isNearest, metrics) {
             const distText = st.distance < 1 ? (st.distance * 1000).toFixed(0) + ' m' : st.distance.toFixed(1) + ' km';
             const starClass = isFav ? "fa-solid text-amber-400" : "fa-regular text-gray-600 hover:text-amber-300";
+            
+            // Sauber getrennt: Titel zeigt nur die Straße (vor dem Komma), Adresse zeigt PLZ und Ort (nach dem Komma)
+            const streetOnly = st.title.includes(',') ? st.title.split(',')[0].trim() : st.title;
+            const cleanAddress = st.address.includes(',') ? st.address.split(',')[1].trim() : st.address;
 
             return `
                 <div class="bg-gray-900/80 border ${isNearest ? 'border-emerald-500/60 shadow-lg shadow-emerald-950/20' : 'border-gray-800/80'} rounded-xl p-2.5 space-y-2 transition">
@@ -288,9 +292,9 @@
                         <div>
                             <div class="flex items-center space-x-1.5">
                                 ${isNearest ? '<span class="bg-emerald-500 text-gray-950 text-[9px] font-black px-1.5 py-0.5 rounded tracking-wide">NÄCHSTE</span>' : ''}
-                                <h3 class="font-bold text-xs ${st.custom ? 'text-emerald-400 font-extrabold' : 'text-gray-100'}">${st.title}</h3>
+                                <h3 class="font-bold text-xs ${st.custom ? 'text-emerald-400 font-extrabold' : 'text-gray-100'}">${streetOnly}</h3>
                             </div>
-                            <p class="text-[11px] text-gray-400 truncate max-w-[210px] mt-0.5">${st.address}</p>
+                            <p class="text-[11px] text-gray-400 truncate max-w-[210px] mt-0.5">${cleanAddress}</p>
                         </div>
                         <div class="text-right shrink-0">
                             <span class="text-sm font-black text-emerald-400 tracking-tight">${metrics.cost} €</span>
@@ -304,7 +308,7 @@
                         </div>
                         <div class="flex items-center space-x-3">
                             <button onclick="toggleFavorite('${st.id}', event)" class="p-1 text-sm"><i class="${starClass} fa-star"></i></button>
-                            <button onclick="shareStation('${st.title}', '${st.address}', '${st.kw}', '${st.count}', '${st.url}')" class="text-emerald-400 hover:text-emerald-300 font-medium flex items-center space-x-1">
+                            <button onclick="shareStation('${st.title}', '${cleanAddress}', '${st.kw}', '${st.count}', '${st.url}')" class="text-emerald-400 hover:text-emerald-300 font-medium flex items-center space-x-1">
                                 <i class="fa-solid fa-share-nodes"></i><span>Teilen</span>
                             </button>
                             <a href="${st.url}" target="_blank" class="text-blue-400 hover:text-blue-300 font-medium flex items-center space-x-1">
