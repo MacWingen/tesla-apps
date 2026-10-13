@@ -34,7 +34,7 @@
             </div>
             <div class="text-right">
                 <span class="text-[11px] font-bold text-emerald-400 block">0,38 €/kWh</span>
-                <span class="text-[9px] text-gray-500 block truncate max-w-[140px]" id="locationLabel">Winkel 13, Lünen</span>
+                <span class="text-[9px] text-gray-500 block truncate max-w-[140px]" id="locationLabel">Im Winkel 13, Lünen</span>
             </div>
         </div>
 
@@ -85,7 +85,7 @@
         <!-- Standort & Stadt-Filter -->
         <div class="p-3 border-b border-gray-900 space-y-2 bg-gray-950 shrink-0">
             <div class="relative flex items-center">
-                <input type="text" id="searchInput" placeholder="Startpunkt (PLZ/Adresse)..." value="Winkel 13, 44536 Lünen"
+                <input type="text" id="searchInput" placeholder="Startpunkt (PLZ/Adresse)..." value="Im Winkel 13, 44536 Lünen"
                     class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 pl-8 text-xs focus:outline-none focus:border-emerald-500 transition">
                 <i class="fa-solid fa-map-pin absolute left-3 text-gray-500 text-[11px]"></i>
                 <button id="searchBtn" class="absolute right-1.5 bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded-lg text-xs transition font-semibold">
@@ -129,35 +129,43 @@
 
     <!-- JavaScript Logik -->
     <script>
-        let userLat = 51.5974;
-        let userLon = 7.4561; 
+        let userLat = 51.5976;
+        let userLon = 7.4557; 
         let currentFilter = 'Alle';
         let wbgStations = [];
         let favorites = JSON.parse(localStorage.getItem('wbg_favorites')) || [];
         let currentLossFactor = 1.07;
 
         const rawWbgData = [
-            { id: 'winkel13', title: 'Winkel 13 (Deine Säule)', address: 'Winkel 13, 44536 Lünen', lat: 51.5974, lon: 7.4561, power: '11 kW AC', price: 0.38, custom: true, city: 'Lünen' },
-            { id: 'asternweg2', title: 'Asternweg 2', address: 'Asternweg 2, 44536 Lünen', lat: 51.6234, lon: 7.5112, power: '11 kW AC', price: 0.38, city: 'Lünen' },
-            { id: 'vogelsberg', title: 'Am Vogelsberg 106', address: 'Am Vogelsberg 106, 44532 Lünen', lat: 51.6158, lon: 7.5365, power: '11 kW AC', price: 0.38, city: 'Lünen' },
-            { id: 'bebelstr', title: 'Bebelstraße 188', address: 'Bebelstraße 188, 44532 Lünen', lat: 51.5962, lon: 7.5215, power: '11 kW AC', price: 0.38, city: 'Lünen' },
-            { id: 'christianstr', title: 'Christian-Morgenstern-Str. 9', address: 'Christian-Morgenstern-Straße 9, Lünen', lat: 51.6112, lon: 7.5168, power: '11 kW AC', price: 0.38, city: 'Lünen' },
-            { id: 'kurtstr', title: 'Kurt-Schumacher-Straße 11', address: 'Kurt-Schumacher-Straße 11, Lünen', lat: 51.6041, lon: 7.5180, power: '11 kW AC', price: 0.38, city: 'Lünen' },
-            { id: 'luisenstr', title: 'Luisenhüttenstraße 24', address: 'Luisenhüttenstraße 24, 44532 Lünen', lat: 51.6192, lon: 7.5325, power: '11 kW AC', price: 0.38, city: 'Lünen' },
-            { id: 'moltkestr', title: 'Moltkestraße 75', address: 'Moltkestraße 75, 44532 Lünen', lat: 51.6105, lon: 7.5222, power: '11 kW AC', price: 0.38, city: 'Lünen' },
-            { id: 'nelkenweg', title: 'Nelkenweg 6', address: 'Nelkenweg 6, 44536 Lünen', lat: 51.6225, lon: 7.5132, power: '11 kW AC', price: 0.38, city: 'Lünen' },
-            { id: 'ottoklug', title: 'Otto-Klug-Weg 14', address: 'Otto-Klug-Weg 14, 44532 Lünen', lat: 51.6092, lon: 7.5415, power: '11 kW AC', price: 0.38, city: 'Lünen' },
-            { id: 'parkstr', title: 'Parkstraße 19', address: 'Parkstraße 19, 44532 Lünen', lat: 51.6052, lon: 7.5338, power: '11 kW AC', price: 0.38, city: 'Lünen' },
-            { id: 'schachtweg', title: 'Schachtweg 8b', address: 'Schachtweg 8 b, 44532 Lünen', lat: 51.6012, lon: 7.5298, power: '11 kW AC', price: 0.38, city: 'Lünen' },
-            { id: 'schulstr', title: 'Schulstraße 76', address: 'Schulstraße 76, 44532 Lünen', lat: 51.6142, lon: 7.5195, power: '11 kW AC', price: 0.38, city: 'Lünen' },
-            { id: 'wilhelmallee', title: 'Wilhelm-Löbbe-Allee 24', address: 'Wilhelm-Löbbe-Allee 24, 44532 Lünen', lat: 51.6062, lon: 7.5268, power: '11 kW AC', price: 0.38, city: 'Lünen' },
-            { id: 'goldbach', title: 'Goldbach 51 (Kamen)', address: 'Goldbach 51, 59174 Kamen', lat: 51.5855, lon: 7.6635, power: '11 kW AC', price: 0.38, city: 'Kamen' },
-            { id: 'grillostr', title: 'Grillostraße 103 (Kamen)', address: 'Grillostraße 103, 59174 Kamen', lat: 51.5892, lon: 7.6668, power: '11 kW AC', price: 0.38, city: 'Kamen' },
-            { id: 'lessingstr', title: 'Lessingstraße 6 (Kamen)', address: 'Lessingstraße 6, 59174 Kamen', lat: 51.5912, lon: 7.6610, power: '11 kW AC', price: 0.38, city: 'Kamen' },
-            { id: 'westickerstr', title: 'Westicker Straße 16 (Kamen)', address: 'Westicker Straße 16, 59174 Kamen', lat: 51.5792, lon: 7.6620, power: '11 kW AC', price: 0.38, city: 'Kamen' },
-            { id: 'horsterstr', title: 'Horster Straße 83a (Werne)', address: 'Horster Straße 83a, 59368 Werne', lat: 51.6632, lon: 7.6372, power: '11 kW AC', price: 0.38, city: 'Werne' },
-            { id: 'johannstr', title: 'Johann-Heuser-Straße 9 (Bergkamen)', address: 'Johann-Heuser-Straße 9, 59192 Bergkamen', lat: 51.6162, lon: 7.6325, power: '11 kW AC', price: 0.38, city: 'Bergkamen' },
-            { id: 'campus', title: 'Campus 6 b/c (Selm)', address: 'Campus 6 b/c, 59379 Selm', lat: 51.7092, lon: 7.4675, power: '11 kW AC', price: 0.38, city: 'Selm' }
+            { id: 'winkel13', title: 'Im Winkel 13 (Deine Säule)', address: 'Im Winkel 13, 44536 Lünen-Brambauer', lat: 51.5976, lon: 7.4557, count: '2x', kw: '11 kW', price: 0.38, custom: true, city: 'Lünen', url: 'https://www.google.com/maps/place/Im+Winkel+13,+44536+L%C3%BCnen-Brambauer/@51.5976428,7.4531406,17z/data=!3m1!4b1!4m6!3m5!1s0x47b91ac17c1e5fc7:0x714ccaa852f19b3f!8m2!3d51.5976395!4d7.4557209!16s%2Fg%2F11c4j8dmky?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
+            { id: 'asternweg2', title: 'Asternweg 2', address: 'Asternweg 2, 44532 Lünen-Niederaden', lat: 51.5946, lon: 7.5563, count: '1x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Asternweg+2,+44532+L%C3%BCnen-Niederaden/@51.5946482,7.5537976,17z/data=!3m1!4b1!4m10!1m2!2m1!1sAsternweg+2!3m6!1s0x47b911cf60638425:0xe88f0f17d81d69e2!8m2!3d51.5946449!4d7.5563779!15sCgtBc3Rlcm53ZWcgMpIBCnN1YnByZW1pc2XgAQA!16s%2Fg%2F11bw4f077x?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
+            { id: 'vogelsberg', title: 'Am Vogelsberg 106', address: 'Am Vogelsberg 106, 44534 Lünen', lat: 51.6296, lon: 7.5357, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Am+Vogelsberg+106,+44534+L%C3%BCnen/@51.6296932,7.5331728,17z/data=!3m1!4b1!4m6!3m5!1s0x47b90fc7a921594b:0x48e1434a93ecb1eb!8m2!3d51.6296899!4d7.5357531!16s%2Fg%2F11b8yk918p?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
+            { id: 'bebelstr', title: 'Bebelstraße 188', address: 'Bebelstraße 188, 44532 Lünen', lat: 51.5894, lon: 7.5371, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Bebelstra%C3%9Fe+188,+44532+L%C3%BCnen/@51.589446,7.5345666,17z/data=!3m1!4b1!4m6!3m5!1s0x47b910358814aa49:0x6d3e19072bbf7b43!8m2!3d51.5894427!4d7.5371469!16s%2Fg%2F11c5ky_y8m?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
+            { id: 'christianstr', title: 'Christian-Morgenstern-Straße 9', address: 'Christian-Morgenstern-Straße 9, 44534 Lünen', lat: 51.6212, lon: 7.5261, count: '1x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Christian-Morgenstern-Stra%C3%9Fe+9,+44534+L%C3%BCnen/@51.6212163,7.5236121,17z/data=!4m6!3m5!1s0x47b90fdd28703957:0xbe13e4ce3c48ad43!8m2!3d51.621213!4d7.5261924!16s%2Fg%2F11c2hrk3bn?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
+            { id: 'kurtstr', title: 'Kurt-Schumacher-Straße 11', address: 'Kurt-Schumacher-Straße 11, 44534 Lünen', lat: 51.6173, lon: 7.5267, count: '2x', kw: '22 kW*', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/WBG+L%C3%BCnen/@51.6173435,7.5241458,17z/data=!3m1!4b1!4m6!3m5!1s0x47b90fdc3d94ba93:0xfd570d7ed0d52b41!8m2!3d51.6173402!4d7.5267261!16s%2Fg%2F1tk_nc9q?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
+            { id: 'luisenstr', title: 'Luisenhüttenstraße 24', address: 'Luisenhüttenstraße 24, 44536 Lünen', lat: 51.6137, lon: 7.5131, count: '2x', kw: '22 kW*', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Luisenh%C3%BCttenstra%C3%9Fe+24,+44536+L%C3%BCnen/@51.6137768,7.5105456,17z/data=!3m1!4b1!4m6!3m5!1s0x47b90fe23b6d687d:0xf3c062f6f1c79398!8m2!3d51.6137735!4d7.5131259!16s%2Fg%2F11c1h3w12l?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
+            { id: 'moltkestr', title: 'Moltkestraße 75', address: 'Moltkestraße 75, 44536 Lünen', lat: 51.6148, lon: 7.4971, count: '2x', kw: '22 kW*', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Moltkestra%C3%9Fe+75,+44536+L%C3%BCnen/@51.6148069,7.4945678,17z/data=!3m1!4b1!4m6!3m5!1s0x47b90fffb47094eb:0xbb4bfc66c1d0dd6e!8m2!3d51.6148036!4d7.4971481!16s%2Fg%2F11c0zmz805?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
+            { id: 'nelkenweg', title: 'Nelkenweg 6', address: 'Nelkenweg 6, 44532 Lünen-Niederaden', lat: 51.5949, lon: 7.5543, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Nelkenweg+6,+44532+L%C3%BCnen-Niederaden/@51.5948995,7.5440003,15z/data=!4m6!3m5!1s0x47b911cf16318427:0xda36101209fc07c1!8m2!3d51.5949!4d7.5543!16s%2Fg%2F11c2bnt8kw?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
+            { id: 'ottoklug', title: 'Otto-Klug-Weg 14', address: 'Otto-Klug-Weg 14, 44534 Lünen', lat: 51.6225, lon: 7.5262, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Otto-Klug-Weg+14,+44534+L%C3%BCnen/@51.6225051,7.5236595,17z/data=!3m1!4b1!4m6!3m5!1s0x47b90fc2da72c205:0x691154eafbf14949!8m2!3d51.6225018!4d7.5262398!16s%2Fg%2F11g1x358s8?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
+            { id: 'parkstr', title: 'Parkstraße 19', address: 'Parkstraße 19, 44532 Lünen', lat: 51.6099, lon: 7.5190, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Parkstra%C3%9Fe+19,+44532+L%C3%BCnen/@51.6099633,7.5164822,17z/data=!3m1!4b1!4m6!3m5!1s0x47b9101f91e00857:0xe0d5d07edd10c3af!8m2!3d51.60996!4d7.5190625!16s%2Fg%2F11q2v7ss_5?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
+            { id: 'schachtweg', title: 'Schachtweg 8B', address: 'Schachtweg 8B, 44532 Lünen', lat: 51.5831, lon: 7.5078, count: '1x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Schachtweg+8B,+44532+L%C3%BCnen/@51.583161,7.5052238,17z/data=!3m1!4b1!4m6!3m5!1s0x47b91068e04068e5:0x1209b2adcf871663!8m2!3d51.5831577!4d7.5078041!16s%2Fg%2F11c24rn2tl?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
+            { id: 'schulstr', title: 'Schulstraße 76', address: 'Schulstraße 76, 44534 Lünen', lat: 51.6267, lon: 7.5132, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Schulstra%C3%9Fe+76,+44534+L%C3%BCnen/@51.6268005,7.5106683,17z/data=!3m1!4b1!4m6!3m5!1s0x47b90fee69093579:0x9c049d0f2bc6a8cd!8m2!3d51.6267972!4d7.5132486!16s%2Fg%2F11c28d0rk1?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
+            { id: 'wilhelmallee', title: 'Wilhelm-Löbbe-Allee 24', address: 'Wilhelm-Löbbe-Allee 24, 44534 Lünen', lat: 51.6240, lon: 7.5433, count: '2x', kw: '22 kW*', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Wilhelm-L%C3%B6bbe-Allee+24,+44534+L%C3%BCnen/@51.6240671,7.5408087,17z/data=!3m1!4b1!4m6!3m5!1s0x47b90fce9ab924b5:0xa6af5fa4981baab!8m2!3d51.6240638!4d7.543389!16s%2Fg%2F11tk21xq32?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
+            
+            // Kamen
+            { id: 'goldbach', title: 'Goldbach 51', address: 'Goldbach 51, 59174 Kamen', lat: 51.5994, lon: 7.6715, count: '1x', kw: '11 kW', price: 0.38, city: 'Kamen', url: 'https://www.google.com/maps/place/Goldbach+51,+59174+Kamen/@51.5994138,7.6689513,17z/data=!3m1!4b1!4m6!3m5!1s0x47b9129db4168699:0x956ac9027f6d6f25!8m2!3d51.5994105!4d7.6715316!16s%2Fg%2F11cpmqz_gz?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
+            { id: 'grillostr', title: 'Grillostraße 103', address: 'Grillostraße 103, 59174 Kamen', lat: 51.5913, lon: 7.6467, count: '1x', kw: '11 kW', price: 0.38, city: 'Kamen', url: 'https://www.google.com/maps/place/Grillostra%C3%9Fe+103,+59174+Kamen/@51.5913223,7.644175,17z/data=!3m1!4b1!4m6!3m5!1s0x47b9126317628d81:0x4442efdb960f1758!8m2!3d51.591319!4d7.6467553!16s%2Fg%2F11c28gcpz3?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
+            { id: 'lessingstr', title: 'Lessingstraße 6', address: 'Lessingstraße 6, 59174 Kamen', lat: 51.5943, lon: 7.6526, count: '2x', kw: '11 kW', price: 0.38, city: 'Kamen', url: 'https://www.google.com/maps/place/Lessingstra%C3%9Fe+6,+59174+Kamen/@51.5943117,7.650076,17z/data=!3m1!4b1!4m6!3m5!1s0x47b9128790481235:0xe898dcd3cf3b00c9!8m2!3d51.5943084!4d7.6526563!16s%2Fg%2F11c1gmcb5x?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
+            { id: 'westickerstr', title: 'Westicker Str. 16', address: 'Westicker Str. 16, 59174 Kamen', lat: 51.5858, lon: 7.6589, count: '2x', kw: '22 kW*', price: 0.38, city: 'Kamen', url: 'https://www.google.com/maps/place/Westicker+Str.+16,+59174+Kamen/@51.5858292,7.6563558,17z/data=!3m1!4b1!4m6!3m5!1s0x47b9128c3112cdf5:0xfd21647c576bb515!8m2!3d51.5858259!4d7.6589361!16s%2Fg%2F11c188894n?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
+
+            // Werne
+            { id: 'horsterstr', title: 'Horster Str. 83a', address: 'Horster Str. 83a, 59368 Werne', lat: 51.6712, lon: 7.6486, count: '1x', kw: '11 kW', price: 0.38, city: 'Werne', url: 'https://www.google.com/maps/place/Horster+Str.+83a,+59368+Werne/@51.6712121,7.6461137,17z/data=!3m1!4b1!4m6!3m5!1s0x47b90df8f7ffaf1f:0xa9438e1f105dd31e!8m2!3d51.6712088!4d7.648694!16s%2Fg%2F11sm7mllzb?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
+
+            // Bergkamen
+            { id: 'johannstr', title: 'Johann-Heuser-Straße 9', address: 'Johann-Heuser-Straße 9, 59192 Bergkamen', lat: 51.6228, lon: 7.6421, count: '1x', kw: '11 kW', price: 0.38, city: 'Bergkamen', url: 'https://www.google.com/maps/place/Johann-Heuser-Stra%C3%9Fe+9,+59192+Bergkamen/@51.6228563,7.6395893,17z/data=!3m1!4b1!4m6!3m5!1s0x47b90d9652197115:0x79b422375213eef8!8m2!3d51.622853!4d7.6421696!16s%2Fg%2F11c5kh_m8c?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
+
+            // Selm
+            { id: 'campus', title: 'Campus 6b', address: 'Campus 6b, 59379 Selm', lat: 51.6961, lon: 7.4658, count: '2x', kw: '11 kW', price: 0.38, city: 'Selm', url: 'https://www.google.com/maps/place/Campus+6b,+59379+Selm/@51.6961522,7.4632242,17z/data=!3m1!4b1!4m6!3m5!1s0x47b905d45cb1ff01:0x57cd9f2ca1863212!8m2!3d51.6961489!4d7.4658045!16s%2Fg%2F11pyfysymj?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' }
         ];
 
         function initApp() {
@@ -225,7 +233,6 @@
             let durationStr = hrs > 0 ? `${hrs}h ${mins}m` : `${mins}m`;
             let cost = (grossKwh * 0.38).toFixed(2);
 
-            // Dashboard Hero Box aktualisieren
             document.getElementById('topFinishTime').innerText = `${timeString} Uhr`;
             document.getElementById('topDuration').innerText = `Ladezeit: ${durationStr}`;
             document.getElementById('topCostVal').innerText = cost;
@@ -256,9 +263,8 @@
             processStations();
         }
 
-        function shareStation(title, address) {
+        function shareStation(title, address, mapsUrl) {
             const shareText = `Ladesäule: ${title}\nAdresse: ${address}\nTarif: 0,38 €/kWh`;
-            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
             const fullShareString = `${shareText}\nNavigieren: ${mapsUrl}`;
 
             if (navigator.share) {
@@ -272,7 +278,6 @@
         function createCardHtml(st, isFav, isNearest, metrics) {
             const distText = st.distance < 1 ? (st.distance * 1000).toFixed(0) + ' m' : st.distance.toFixed(1) + ' km';
             const starClass = isFav ? "fa-solid text-amber-400" : "fa-regular text-gray-600 hover:text-amber-300";
-            const mapsQueryUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(st.address)}`;
 
             return `
                 <div class="bg-gray-900/80 border ${isNearest ? 'border-emerald-500/60 shadow-lg shadow-emerald-950/20' : 'border-gray-800/80'} rounded-xl p-2.5 space-y-2 transition">
@@ -292,14 +297,14 @@
                     <div class="flex items-center justify-between text-[11px] text-gray-400 pt-2 border-t border-gray-800/60">
                         <div class="flex items-center space-x-2.5">
                             <span class="text-gray-300 font-medium"><i class="fa-solid fa-location-dot text-emerald-500 mr-1"></i>${distText}</span>
-                            <span class="text-gray-300 font-semibold"><i class="fa-solid fa-bolt text-amber-400 mr-1"></i>${st.power}</span>
+                            <span class="text-gray-300 font-semibold"><i class="fa-solid fa-bolt text-amber-400 mr-1"></i><span class="text-emerald-400 font-bold mr-0.5">${st.count}</span> ${st.kw}</span>
                         </div>
                         <div class="flex items-center space-x-3">
                             <button onclick="toggleFavorite('${st.id}', event)" class="p-1 text-sm"><i class="${starClass} fa-star"></i></button>
-                            <button onclick="shareStation('${st.title}', '${st.address}')" class="text-emerald-400 hover:text-emerald-300 font-medium flex items-center space-x-1">
+                            <button onclick="shareStation('${st.title}', '${st.address}', '${st.url}')" class="text-emerald-400 hover:text-emerald-300 font-medium flex items-center space-x-1">
                                 <i class="fa-solid fa-share-nodes"></i><span>Teilen</span>
                             </button>
-                            <a href="${mapsQueryUrl}" target="_blank" class="text-blue-400 hover:text-blue-300 font-medium flex items-center space-x-1">
+                            <a href="${st.url}" target="_blank" class="text-blue-400 hover:text-blue-300 font-medium flex items-center space-x-1">
                                 <i class="fa-solid fa-diamond-turn-right"></i><span>Navigieren</span>
                             </a>
                         </div>
@@ -328,7 +333,6 @@
 
             document.getElementById('stationCount').innerText = `${filteredStations.length} von ${wbgStations.length} Standorten`;
 
-            // Favoriten Sektion oben
             const favStations = wbgStations.filter(st => favorites.includes(st.id));
             if (favStations.length > 0) {
                 const favSection = document.createElement('div');
@@ -423,7 +427,7 @@
         };
 
         document.getElementById('refreshBtn').onclick = () => {
-            setBaseLocation('Winkel 13, Lünen', 51.5974, 7.4561);
+            setBaseLocation('Im Winkel 13, Lünen', 51.5976, 7.4557);
             setCityFilter('Alle');
         };
 
