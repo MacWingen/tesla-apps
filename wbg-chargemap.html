@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de" class="dark">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -17,8 +17,8 @@
         .custom-scrollbar::-webkit-scrollbar { width: 3px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
-        input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 4px; background: currentColor; outline: none; opacity: 0.2; }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #10b981; cursor: pointer; box-shadow: 0 0 8px rgba(16, 185, 129, 0.5); opacity: 1; }
+        input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 4px; background: #1f2937; outline: none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #10b981; cursor: pointer; box-shadow: 0 0 8px rgba(16, 185, 129, 0.5); }
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-black text-gray-900 dark:text-gray-100 h-screen flex flex-col items-center justify-center overflow-hidden text-xs font-sans transition-colors duration-200">
@@ -38,10 +38,6 @@
                 </div>
             </div>
             <div class="flex items-center space-x-3">
-                <div class="text-right">
-                    <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 block">0,38 €/kWh</span>
-                    <span class="text-[9px] text-gray-500 block truncate max-w-[120px]" id="locationLabel">Lünen (Standard)</span>
-                </div>
                 <!-- Theme Toggle Button -->
                 <button onclick="toggleTheme()" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-800 text-gray-700 dark:text-gray-300 p-2 rounded-xl transition" title="Design wechseln">
                     <i id="themeIcon" class="fa-solid fa-moon text-xs"></i>
@@ -49,10 +45,10 @@
             </div>
         </div>
 
-        <!-- Dashboard / Rechner -->
+        <!-- Dashboard / Rechner (Clean & Modern) -->
         <div class="p-3 bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-900 space-y-2.5 shrink-0">
             
-            <!-- Hero Result Box -->
+            <!-- Hero Result Box (Fertig, Ladezeit & Kosten) -->
             <div class="bg-gradient-to-r from-blue-50 to-emerald-50 dark:from-blue-950/40 dark:to-emerald-950/40 border border-blue-500/20 rounded-2xl p-2.5 flex items-center justify-between shadow-inner">
                 <div>
                     <span class="text-[10px] uppercase tracking-wider text-blue-600 dark:text-blue-400 font-semibold block">Fertig um</span>
@@ -61,7 +57,10 @@
                 </div>
                 <div class="text-right border-l border-gray-200 dark:border-gray-800/80 pl-4">
                     <span class="text-[10px] uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-semibold block">Gesamtkosten</span>
-                    <strong id="topCostVal" class="text-lg font-black text-emerald-600 dark:text-emerald-400 tracking-tight">--,---</strong> <span class="text-xs text-emerald-600 dark:text-emerald-400 font-bold">€</span>
+                    <div>
+                        <strong id="topCostVal" class="text-lg font-black text-emerald-600 dark:text-emerald-400 tracking-tight">--,---</strong> <span class="text-xs text-emerald-600 dark:text-emerald-400 font-bold">€</span>
+                    </div>
+                    <span class="text-[9px] text-emerald-600 dark:text-emerald-400 font-bold block mt-0.5">0,38 € / kWh</span>
                 </div>
             </div>
 
@@ -80,7 +79,7 @@
                 </div>
             </div>
 
-            <!-- Slider SoC -->
+            <!-- Slider SoC (Von / Bis) -->
             <div class="bg-white dark:bg-gray-950/60 border border-gray-200 dark:border-gray-800/50 rounded-xl p-2 space-y-1.5">
                 <div class="flex justify-between text-[11px]">
                     <span class="text-gray-500 dark:text-gray-400">Start SoC: <strong id="startVal" class="text-gray-800 dark:text-gray-200">20%</strong></span>
@@ -93,25 +92,20 @@
             </div>
         </div>
 
-        <!-- Stadt-Filter & Aktionen -->
+        <!-- Stadt-Filter -->
         <div class="p-3 border-b border-gray-200 dark:border-gray-900 bg-white dark:bg-gray-950 shrink-0">
-            <div class="flex items-center justify-between overflow-x-auto pb-0.5 text-[10px] custom-scrollbar space-x-1">
-                <div class="flex items-center space-x-1 shrink-0">
-                    <button onclick="setCityFilter('Alle')" id="filter-Alle" class="bg-emerald-600 text-white px-2.5 py-1 rounded-lg font-bold shrink-0 transition">Alle</button>
-                    <button onclick="setCityFilter('Lünen')" id="filter-Lünen" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-2.5 py-1 rounded-lg shrink-0 transition">Lünen</button>
-                    <button onclick="setCityFilter('Kamen')" id="filter-Kamen" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-2.5 py-1 rounded-lg shrink-0 transition">Kamen</button>
-                    <button onclick="setCityFilter('Werne')" id="filter-Werne" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-2.5 py-1 rounded-lg shrink-0 transition">Werne</button>
-                    <button onclick="setCityFilter('Bergkamen')" id="filter-Bergkamen" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-2.5 py-1 rounded-lg shrink-0 transition">Bergkamen</button>
-                    <button onclick="setCityFilter('Selm')" id="filter-Selm" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-2.5 py-1 rounded-lg shrink-0 transition">Selm</button>
-                </div>
-                <div class="flex items-center space-x-1 shrink-0 pl-1 border-l border-gray-200 dark:border-gray-800">
-                    <button onclick="requestGpsLocation(false)" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-emerald-600 dark:text-emerald-400 px-2.5 py-1 rounded-lg flex items-center space-x-1 transition font-medium" title="GPS neu einlesen">
-                        <i class="fa-solid fa-location-crosshairs"></i>
-                    </button>
-                    <button onclick="resetLocation()" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 px-2.5 py-1 rounded-lg flex items-center space-x-1 transition" title="Reset Standort">
-                        <i class="fa-solid fa-rotate"></i>
-                    </button>
-                </div>
+            <div class="flex items-center overflow-x-auto pb-0.5 text-[10px] custom-scrollbar space-x-1 items-center">
+                <button onclick="setCityFilter('Alle')" id="filter-Alle" class="bg-emerald-600 text-white px-2.5 py-1 rounded-lg font-bold shrink-0 transition">Alle</button>
+                <span class="text-gray-300 dark:text-gray-700 font-light px-0.5">|</span>
+                <button onclick="setCityFilter('Lünen')" id="filter-Lünen" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-2.5 py-1 rounded-lg shrink-0 transition">Lünen</button>
+                <span class="text-gray-300 dark:text-gray-700 font-light px-0.5">|</span>
+                <button onclick="setCityFilter('Kamen')" id="filter-Kamen" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-2.5 py-1 rounded-lg shrink-0 transition">Kamen</button>
+                <span class="text-gray-300 dark:text-gray-700 font-light px-0.5">|</span>
+                <button onclick="setCityFilter('Werne')" id="filter-Werne" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-2.5 py-1 rounded-lg shrink-0 transition">Werne</button>
+                <span class="text-gray-300 dark:text-gray-700 font-light px-0.5">|</span>
+                <button onclick="setCityFilter('Bergkamen')" id="filter-Bergkamen" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-2.5 py-1 rounded-lg shrink-0 transition">Bergkamen</button>
+                <span class="text-gray-300 dark:text-gray-700 font-light px-0.5">|</span>
+                <button onclick="setCityFilter('Selm')" id="filter-Selm" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-2.5 py-1 rounded-lg shrink-0 transition">Selm</button>
             </div>
         </div>
 
@@ -171,8 +165,10 @@
         ];
 
         function initApp() {
-            // Design-Mode laden
-            const savedTheme = localStorage.getItem('wbg_theme') || 'dark';
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const defaultTheme = prefersDark ? 'dark' : 'light';
+            const savedTheme = localStorage.getItem('wbg_theme') || defaultTheme;
+
             if (savedTheme === 'light') {
                 document.documentElement.classList.remove('dark');
                 document.getElementById('themeIcon').className = "fa-solid fa-sun text-xs";
@@ -181,20 +177,21 @@
                 document.getElementById('themeIcon').className = "fa-solid fa-moon text-xs";
             }
 
-            const savedLat = parseFloat(localStorage.getItem('wbg_lat'));
-            const savedLon = parseFloat(localStorage.getItem('wbg_lon'));
-            const savedPlz = localStorage.getItem('wbg_plz');
-
-            if (savedLat && savedLon) {
-                userLat = savedLat;
-                userLon = savedLon;
-                if (savedPlz) document.getElementById('locationLabel').innerText = savedPlz;
-                fetchWeather();
-                processStations();
-            } else {
-                // Beim Start automatisch Standort anfordern
-                requestGpsLocation(true);
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                    if (!localStorage.getItem('wbg_theme')) {
+                        if (e.matches) {
+                            document.documentElement.classList.add('dark');
+                            document.getElementById('themeIcon').className = "fa-solid fa-moon text-xs";
+                        } else {
+                            document.documentElement.classList.remove('dark');
+                            document.getElementById('themeIcon').className = "fa-solid fa-sun text-xs";
+                        }
+                    }
+                });
             }
+
+            requestGpsLocation(true);
         }
 
         function toggleTheme() {
@@ -218,22 +215,10 @@
                         userLon = pos.coords.longitude;
                         localStorage.setItem('wbg_lat', userLat);
                         localStorage.setItem('wbg_lon', userLon);
-                        localStorage.setItem('wbg_plz', 'GPS aktiv');
-
-                        document.getElementById('locationLabel').innerText = "GPS aktiv";
-                        
-                        const hint = document.getElementById('gpsHint');
-                        if (hint) hint.remove();
-
                         fetchWeather();
                         processStations();
                     },
                     (error) => {
-                        if (!isAuto) {
-                            alert("Standortzugriff wurde verweigert. Bitte erlaube den Zugriff in deinen Browsereinstellungen.");
-                        } else {
-                            showGpsHint();
-                        }
                         fetchWeather();
                         processStations();
                     },
@@ -243,33 +228,6 @@
                 fetchWeather();
                 processStations();
             }
-        }
-
-        function showGpsHint() {
-            if (document.getElementById('gpsHint')) return;
-            const listContainer = document.getElementById('stationList');
-            const hintBox = document.createElement('div');
-            hintBox.id = 'gpsHint';
-            hintBox.className = 'bg-amber-500/10 border border-amber-500/30 rounded-xl p-2.5 text-center space-y-1.5 mb-2';
-            hintBox.innerHTML = `
-                <p class="text-[11px] text-amber-600 dark:text-amber-300 font-medium">📍 Hey, ich brauche deinen Standort (GPS), um die nächstgelegenen Stationen zu sortieren!</p>
-                <button onclick="requestGpsLocation(false)" class="bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold px-3 py-1 rounded-lg text-[10px] transition">
-                    GPS jetzt erlauben
-                </button>
-            `;
-            listContainer.prepend(hintBox);
-        }
-
-        function resetLocation() {
-            userLat = 51.5976;
-            userLon = 7.4557;
-            localStorage.removeItem('wbg_lat');
-            localStorage.removeItem('wbg_lon');
-            localStorage.removeItem('wbg_plz');
-            document.getElementById('locationLabel').innerText = "Lünen (Standard)";
-            const hint = document.getElementById('gpsHint');
-            if (hint) hint.remove();
-            setCityFilter('Alle');
         }
 
         function fetchWeather() {
@@ -366,16 +324,13 @@
         }
 
         function shareStation(title, address, kw, count, mapsUrl) {
-            const fullAddress = title.includes(',') ? title : `${title}, ${address}`;
-            const powerText = `${count} ${kw}`;
-
-            const shareText = `⚡ WBG Ladestation\n📍 ${fullAddress}\n🔌 ${powerText}\n💰 Tarif: 0,38 € / kWh`;
+            const shortMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(title + ', ' + address)}`;
+            const shareText = `⚡ WBG Ladestation: ${title}\n📍 ${address}\n🔌 Leistung: ${kw} AC (${count} Ladepunkte)\n💰 Tarif: 0,38 € / kWh\n🗺️ Navigieren: ${shortMapsUrl}`;
 
             if (navigator.share) {
-                navigator.share({ title: 'WBG Ladestation', text: shareText, url: mapsUrl }).catch(() => {});
+                navigator.share({ title: title, text: shareText }).catch(() => {});
             } else {
-                const fullShareString = `${shareText}\n🗺️ Navigieren: ${mapsUrl}`;
-                navigator.clipboard.writeText(fullShareString);
+                navigator.clipboard.writeText(shareText);
                 alert("Ladedetails in die Zwischenablage kopiert!");
             }
         }
@@ -383,16 +338,19 @@
         function createCardHtml(st, isFav, isNearest, metrics) {
             const distText = st.distance < 1 ? (st.distance * 1000).toFixed(0) + ' m' : st.distance.toFixed(1) + ' km';
             const starClass = isFav ? "fa-solid text-amber-400" : "fa-regular text-gray-400 hover:text-amber-300";
+            
+            const streetOnly = st.title.includes(',') ? st.title.split(',')[0].trim() : st.title;
+            const cleanAddress = st.address.includes(',') ? st.address.split(',')[1].trim() : st.address;
 
             return `
-                <div class="bg-white dark:bg-gray-900/80 border ${isNearest ? 'border-emerald-500/60 shadow-lg shadow-emerald-950/10' : 'border-gray-200 dark:border-gray-800/80'} rounded-xl p-2.5 space-y-2 transition">
+                <div class="bg-white dark:bg-gray-900/80 border ${isNearest ? 'border-emerald-500/60 shadow-lg shadow-emerald-950/20' : 'border-gray-200 dark:border-gray-800/80'} rounded-xl p-2.5 space-y-2 transition">
                     <div class="flex items-start justify-between">
                         <div>
                             <div class="flex items-center space-x-1.5">
                                 ${isNearest ? '<span class="bg-emerald-500 text-gray-950 text-[9px] font-black px-1.5 py-0.5 rounded tracking-wide">NÄCHSTE</span>' : ''}
-                                <h3 class="font-bold text-xs ${st.custom ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-gray-900 dark:text-gray-100'}">${st.title}</h3>
+                                <h3 class="font-bold text-xs ${st.custom ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-gray-900 dark:text-gray-100'}">${streetOnly}</h3>
                             </div>
-                            <p class="text-[11px] text-gray-500 dark:text-gray-400 truncate max-w-[210px] mt-0.5">${st.address}</p>
+                            <p class="text-[11px] text-gray-500 dark:text-gray-400 truncate max-w-[210px] mt-0.5">${cleanAddress}</p>
                         </div>
                         <div class="text-right shrink-0">
                             <span class="text-sm font-black text-emerald-600 dark:text-emerald-400 tracking-tight">${metrics.cost} €</span>
@@ -406,7 +364,7 @@
                         </div>
                         <div class="flex items-center space-x-3">
                             <button onclick="toggleFavorite('${st.id}', event)" class="p-1 text-sm"><i class="${starClass} fa-star"></i></button>
-                            <button onclick="shareStation('${st.title}', '${st.address}', '${st.kw}', '${st.count}', '${st.url}')" class="text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 font-medium flex items-center space-x-1">
+                            <button onclick="shareStation('${st.title}', '${cleanAddress}', '${st.kw}', '${st.count}', '${st.url}')" class="text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 font-medium flex items-center space-x-1">
                                 <i class="fa-solid fa-share-nodes"></i><span>Teilen</span>
                             </button>
                             <a href="${st.url}" target="_blank" class="text-blue-600 dark:text-blue-400 hover:text-blue-500 font-medium flex items-center space-x-1">
@@ -420,10 +378,7 @@
 
         function processStations() {
             const listContainer = document.getElementById('stationList');
-            // GPS-Hinweis erhalten, falls vorhanden
-            const existingHint = document.getElementById('gpsHint');
             listContainer.innerHTML = '';
-            if (existingHint) listContainer.appendChild(existingHint);
 
             const metrics = calculateMetrics();
 
@@ -465,7 +420,7 @@
 
             filteredStations.forEach((st, index) => {
                 const isFav = favorites.includes(st.id);
-                const isNearest = (currentFilter === 'Alle' && index === 0 && !existingHint);
+                const isNearest = (currentFilter === 'Alle' && index === 0);
 
                 const cardWrapper = document.createElement('div');
                 cardWrapper.innerHTML = createCardHtml(st, isFav, isNearest, metrics);
@@ -485,6 +440,25 @@
             });
             processStations();
         }
+
+        // Pull to Refresh Logik
+        let startY = 0;
+        window.addEventListener('touchstart', (e) => {
+            if (window.scrollY === 0) {
+                startY = e.touches[0].pageY;
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchend', (e) => {
+            if (window.scrollY === 0) {
+                let endY = e.changedTouches[0].pageY;
+                if (endY - startY > 90) {
+                    requestGpsLocation(true);
+                    weatherLoaded = false;
+                    fetchWeather();
+                }
+            }
+        }, { passive: true });
 
         window.onload = initApp;
     </script>
