@@ -241,18 +241,18 @@
                 <div class="w-1.5 h-4 bg-emerald-500/40 dark:bg-emerald-500/30 rounded-r-sm shrink-0 ml-0.5 shadow-sm"></div>
             </div>
 
-            <!-- Akku & Schnellwahl -->
-            <div class="flex items-center justify-between pt-0.5">
-                <div class="flex items-center space-x-1.5 bg-white dark:bg-gray-950 border border-gray-200/60 dark:border-gray-800/30 rounded-xl px-1.5 py-1">
-                    <span class="text-gray-500 dark:text-gray-400 text-[11px]">Akku:</span>
-                    <input type="number" id="batterySizeInput" value="60" min="10" max="200" step="1" oninput="calculateAll()" class="w-9 bg-transparent text-right font-bold text-emerald-600 dark:text-emerald-400 outline-none text-xs">
+            <!-- Akku & Schnellwahl (Perfekt synchron in einer Box) -->
+            <div class="bg-white dark:bg-gray-950/60 border border-gray-200/60 dark:border-gray-800/30 rounded-xl p-2 flex items-center justify-between gap-2">
+                <div class="flex items-center space-x-1 bg-gray-50 dark:bg-gray-900/80 border border-gray-200/60 dark:border-gray-800/40 rounded-lg px-2 py-1 shrink-0">
+                    <span class="text-gray-500 dark:text-gray-400 text-[11px]">Akkukapazität:</span>
+                    <input type="number" id="batterySizeInput" value="60" min="10" max="200" step="1" oninput="calculateAll()" class="w-8 bg-transparent text-right font-bold text-emerald-600 dark:text-emerald-400 outline-none text-xs">
                     <span class="text-gray-400 text-[10px]">kWh</span>
                 </div>
-                <div class="flex space-x-1">
-                    <button onclick="setBatterySize(40)" class="bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-800 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-lg text-[10px] font-semibold transition">40</button>
-                    <button onclick="setBatterySize(60)" class="bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-800 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-lg text-[10px] font-semibold transition">60</button>
-                    <button onclick="setBatterySize(75)" class="bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-800 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-lg text-[10px] font-semibold transition">75</button>
-                    <button onclick="setBatterySize(100)" class="bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-800 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-lg text-[10px] font-semibold transition">100</button>
+                <div class="flex items-center space-x-1 shrink-0">
+                    <button onclick="setBatterySize(40)" class="bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-800 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg text-[10px] font-semibold transition">40<span class="text-[8px] opacity-60 font-normal ml-0.5">kWh</span></button>
+                    <button onclick="setBatterySize(60)" class="bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-800 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg text-[10px] font-semibold transition">60<span class="text-[8px] opacity-60 font-normal ml-0.5">kWh</span></button>
+                    <button onclick="setBatterySize(75)" class="bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-800 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg text-[10px] font-semibold transition">75<span class="text-[8px] opacity-60 font-normal ml-0.5">kWh</span></button>
+                    <button onclick="setBatterySize(100)" class="bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-800 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg text-[10px] font-semibold transition">100<span class="text-[8px] opacity-60 font-normal ml-0.5">kWh</span></button>
                 </div>
             </div>
 
@@ -432,7 +432,6 @@
                     else currentLossFactor = 1.18;
                     
                     let lossPct = Math.round((currentLossFactor - 1) * 100);
-                    // Wetter im Hintergrund geladen (unsichtbar)
                     weatherLoaded = true;
                     calculateMetrics();
                 })
@@ -440,7 +439,6 @@
                     let temp = 15;
                     currentLossFactor = 1.07;
                     let lossPct = Math.round((currentLossFactor - 1) * 100);
-                    // Wetter im Hintergrund geladen (unsichtbar)
                     calculateMetrics();
                 });
         }
@@ -459,17 +457,13 @@
             document.getElementById('startVal').innerText = start + '%';
             document.getElementById('targetVal').innerText = target + '%';
 
-
             let socDiff = target - start;
             let netKwh = (netCapacity * socDiff) / 100;
             let grossKwh = netKwh * currentLossFactor;
             
-            // Batterie-Animation im Hero-Header Update
             const heroBg = document.getElementById('heroBatteryBg');
-            
             const heroKwhSub = document.getElementById('heroKwhSub');
             if (heroBg) heroBg.style.width = target + '%';
-            
             if (heroKwhSub) heroKwhSub.innerText = `${grossKwh.toFixed(1)} kWh geladen`;
 
             let power = 11.0; 
@@ -521,7 +515,11 @@
 
         function shareStation(title, address, kw, count, mapsUrl) {
             const shortMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(title + ', ' + address)}`;
-            const shareText = `⚡ WBG Ladestation: ${title}\n📍 ${address}\n🔌 Leistung: ${kw} AC (${count} Ladepunkte)\n💰 Tarif: 0,38 € / kWh\n🗺️ Navigieren: ${shortMapsUrl}`;
+            const shareText = `⚡ WBG Ladestation: ${title}
+📍 ${address}
+🔌 Leistung: ${kw} AC (${count} Ladepunkte)
+💰 Tarif: 0,38 € / kWh
+🗺️ Navigieren: ${shortMapsUrl}`;
 
             if (navigator.share) {
                 navigator.share({
@@ -581,7 +579,7 @@
             `;
         }
 
-                function processStations() {
+        function processStations() {
             const listContainer = document.getElementById('stationCardsContainer');
             listContainer.innerHTML = '';
 
@@ -594,7 +592,6 @@
 
             wbgStations.sort((a, b) => a.distance - b.distance);
 
-            // Die absolut nächste Station im gesamten Datensatz ermitteln
             const nearestStationId = wbgStations.length > 0 ? wbgStations[0].id : null;
 
             let filteredStations = wbgStations;
@@ -604,10 +601,8 @@
 
             document.getElementById('stationCount').innerText = `${filteredStations.length} von ${wbgStations.length} Standorten`;
 
-            // Favoriten oben in der Box anzeigen, daher in der Hauptliste unten nicht doppelt anzeigen
             filteredStations = filteredStations.filter(st => !favorites.includes(st.id));
 
-            // Favoriten-Sektion oben (falls Favoriten vorhanden)
             const favStations = wbgStations.filter(st => favorites.includes(st.id));
             if (favStations.length > 0) {
                 const favSection = document.createElement('div');
@@ -639,8 +634,6 @@
                 cardWrapper.innerHTML = createCardHtml(st, isFav, isNearest, metrics);
                 listContainer.appendChild(cardWrapper.firstElementChild);
             });
-
-
         }
 
         function setCityFilter(cityName) {
@@ -681,7 +674,6 @@
                 if (refreshEl) {
                     refreshEl.classList.add('active-refresh');
                 }
-                // Aktualisierung im Hintergrund
                 
                 requestGpsLocation(true);
                 weatherLoaded = false;
