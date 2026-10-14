@@ -169,20 +169,17 @@
             .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
             /* Pull-to-Refresh Indicator Styles */
         #refreshIndicator {
-            max-height: 0;
+            height: 0;
             opacity: 0;
-            overflow: hidden;
             margin: 0;
-            padding: 0;
             border-width: 0;
-            transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease, border-width 0.3s ease, margin 0.3s ease;
+            transition: height 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
         }
         #refreshIndicator.active-refresh {
-            max-height: 50px;
+            height: 38px;
             opacity: 1;
-            padding: 8px 12px;
-            border-width: 1px;
             margin-bottom: 8px;
+            border-width: 1px;
         }
     </style>
 </head>
@@ -582,14 +579,7 @@
 
                 function processStations() {
             const listContainer = document.getElementById('stationList');
-            listContainer.innerHTML = `
-                <div id="refreshIndicator" class="bg-white dark:bg-gray-900/80 border-emerald-500/40 text-emerald-600 dark:text-emerald-400 text-center text-[11px] font-bold flex items-center justify-center rounded-xl shadow-sm">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-circle-notch fa-spin text-emerald-500 text-xs"></i>
-                        <span>Aktualisiere Standorte & Wetter...</span>
-                    </div>
-                </div>
-            `;
+            listContainer.innerHTML = '';
 
             const metrics = calculateMetrics();
 
