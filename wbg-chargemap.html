@@ -418,7 +418,7 @@
 
         function fetchWeather() {
             if (weatherLoaded) return;
-            fetch(`https://api.open-meteo.com/v1/forecast?latitude=51.6074&longitude=7.5286&current=temperature_2m&timezone=auto`)
+            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${userLat}&longitude=${userLon}&current=temperature_2m&timezone=auto`)
                 .then(res => res.json())
                 .then(data => {
                     let temp = 15;
