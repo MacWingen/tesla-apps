@@ -241,17 +241,19 @@
                 <div class="w-1.5 h-4 bg-emerald-500/40 dark:bg-emerald-500/30 rounded-r-sm shrink-0 ml-0.5 shadow-sm"></div>
             </div>
 
-            <!-- Akku & Schnellwahl (Gleichmäßig 5-teilig zentriert & einsortiert) -->
-            <div class="bg-white dark:bg-gray-950/60 border border-gray-200/60 dark:border-gray-800/30 rounded-xl p-1 grid grid-cols-5 gap-1">
-                <div class="flex items-center justify-center space-x-0.5 bg-gray-50 dark:bg-gray-900/80 border border-gray-200/60 dark:border-gray-800/40 rounded-lg py-1 px-0.5">
-                    <span class="text-gray-500 dark:text-gray-400 text-[9px] font-medium truncate">Akku:</span>
-                    <input type="number" id="batterySizeInput" value="60" min="10" max="200" step="1" oninput="calculateAll()" class="w-6 bg-transparent text-right font-bold text-emerald-600 dark:text-emerald-400 outline-none text-[11px]">
-                    <span class="text-gray-400 text-[9px]">kWh</span>
+            <!-- Akku & Schnellwahl (Kompakt links bündig, kein Platzverschleiß) -->
+            <div class="bg-white dark:bg-gray-950/60 border border-gray-200/60 dark:border-gray-800/30 rounded-xl p-1 flex items-center justify-start gap-1 overflow-x-auto">
+                <div class="flex items-center space-x-1 bg-gray-50 dark:bg-gray-900/80 border border-gray-200/60 dark:border-gray-800/40 rounded-lg px-2 py-1 shrink-0">
+                    <span class="text-gray-500 dark:text-gray-400 text-[10px] font-medium">Akkukapazität:</span>
+                    <input type="number" id="batterySizeInput" value="60" min="10" max="200" step="1" oninput="calculateAll()" class="w-7 bg-transparent text-right font-bold text-emerald-600 dark:text-emerald-400 outline-none text-xs">
+                    <span class="text-gray-400 text-[10px]">kWh</span>
                 </div>
-                <button onclick="setBatterySize(40)" class="bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 py-1 rounded-lg text-[10px] font-semibold transition text-center">40<span class="text-[8px] opacity-60 font-normal ml-0.5">kWh</span></button>
-                <button onclick="setBatterySize(60)" class="bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 py-1 rounded-lg text-[10px] font-semibold transition text-center">60<span class="text-[8px] opacity-60 font-normal ml-0.5">kWh</span></button>
-                <button onclick="setBatterySize(75)" class="bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 py-1 rounded-lg text-[10px] font-semibold transition text-center">75<span class="text-[8px] opacity-60 font-normal ml-0.5">kWh</span></button>
-                <button onclick="setBatterySize(100)" class="bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 py-1 rounded-lg text-[10px] font-semibold transition text-center">100<span class="text-[8px] opacity-60 font-normal ml-0.5">kWh</span></button>
+                <div class="flex items-center space-x-1 shrink-0">
+                    <button onclick="setBatterySize(40)" class="bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-lg text-[10px] font-semibold transition">40<span class="text-[8px] opacity-60 font-normal ml-0.5">kWh</span></button>
+                    <button onclick="setBatterySize(60)" class="bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-lg text-[10px] font-semibold transition">60<span class="text-[8px] opacity-60 font-normal ml-0.5">kWh</span></button>
+                    <button onclick="setBatterySize(75)" class="bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-lg text-[10px] font-semibold transition">75<span class="text-[8px] opacity-60 font-normal ml-0.5">kWh</span></button>
+                    <button onclick="setBatterySize(100)" class="bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-lg text-[10px] font-semibold transition">100<span class="text-[8px] opacity-60 font-normal ml-0.5">kWh</span></button>
+                </div>
             </div>
 
             <!-- Slider SoC (Von / Bis) -->
