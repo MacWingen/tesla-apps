@@ -21,7 +21,7 @@
         input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #10b981; cursor: pointer; box-shadow: 0 0 8px rgba(16, 185, 129, 0.5); }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-black text-gray-900 dark:text-gray-100 h-screen flex flex-col items-center justify-center overflow-hidden text-xs font-sans transition-colors duration-200">
+<body class="bg-gray-100 dark:bg-black text-gray-900 dark:text-gray-100 h-screen flex flex-col items-center justify-start pt-3 overflow-hidden text-xs font-sans transition-colors duration-200">
 
     <!-- App Container -->
     <div class="w-full h-full max-w-xl bg-white dark:bg-gray-950 border-x border-gray-200 dark:border-gray-900 flex flex-col shadow-2xl overflow-hidden">
@@ -92,15 +92,15 @@
             </div>
         </div>
 
-        <!-- Stadt-Filter (Kompakt ohne Trennstriche) -->
+        <!-- Stadt-Filter -->
         <div class="px-2 py-2 border-b border-gray-200 dark:border-gray-900 bg-white dark:bg-gray-950 shrink-0 overflow-hidden">
             <div class="flex items-center justify-between text-[10px] w-full space-x-1">
-                <button onclick="setCityFilter('Alle')" id="filter-Alle" class="bg-emerald-600 text-white px-2 py-1 rounded-lg font-bold flex-1 text-center transition">Alle</button>
-                <button onclick="setCityFilter('Lünen')" id="filter-Lünen" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg flex-1 text-center transition">Lünen</button>
-                <button onclick="setCityFilter('Kamen')" id="filter-Kamen" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg flex-1 text-center transition">Kamen</button>
-                <button onclick="setCityFilter('Werne')" id="filter-Werne" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg flex-1 text-center transition">Werne</button>
-                <button onclick="setCityFilter('Bergkamen')" id="filter-Bergkamen" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-1 py-1 rounded-lg flex-1 text-center text-[9px] transition">Bergkamen</button>
-                <button onclick="setCityFilter('Selm')" id="filter-Selm" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg flex-1 text-center transition">Selm</button>
+                <button onclick="setCityFilter('Alle')" id="filter-Alle" class="bg-emerald-600 text-white py-1 rounded-lg font-bold flex-1 text-center text-[10px] transition">Alle</button>
+                <button onclick="setCityFilter('Lünen')" id="filter-Lünen" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 py-1 rounded-lg flex-1 text-center text-[10px] transition">Lünen</button>
+                <button onclick="setCityFilter('Kamen')" id="filter-Kamen" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 py-1 rounded-lg flex-1 text-center text-[10px] transition">Kamen</button>
+                <button onclick="setCityFilter('Werne')" id="filter-Werne" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 py-1 rounded-lg flex-1 text-center text-[10px] transition">Werne</button>
+                <button onclick="setCityFilter('Bergkamen')" id="filter-Bergkamen" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 py-1 rounded-lg flex-1 text-center text-[9px] transition">Bergkamen</button>
+                <button onclick="setCityFilter('Selm')" id="filter-Selm" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 py-1 rounded-lg flex-1 text-center text-[10px] transition">Selm</button>
             </div>
         </div>
 
@@ -432,9 +432,9 @@
             ['Alle', 'Lünen', 'Kamen', 'Werne', 'Bergkamen', 'Selm'].forEach(city => {
                 const btn = document.getElementById(`filter-${city}`);
                 if (city === cityName) {
-                    btn.className = "bg-emerald-600 text-white px-1.5 py-1 rounded-lg font-bold shrink-0 transition";
+                    btn.className = "bg-emerald-600 text-white py-1 rounded-lg font-bold flex-1 text-center text-[10px] transition";
                 } else {
-                    btn.className = "bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg shrink-0 transition";
+                    btn.className = "bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 py-1 rounded-lg flex-1 text-center text-[10px] transition";
                 }
             });
             processStations();
