@@ -320,14 +320,14 @@
 
         function shareStation(title, address, kw, count, mapsUrl) {
             const shortMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(title + ', ' + address)}`;
-            const shareText = `⚡ WBG Ladestation: ${title}
-📍 ${address}
-🔌 Leistung: ${kw} AC (${count} Ladepunkte)
-💰 Tarif: 0,38 € / kWh
-🗺️ Navigieren: ${shortMapsUrl}`;
+            const shareText = `⚡ WBG Ladestation: ${title}\n📍 ${address}\n🔌 Leistung: ${kw} AC (${count} Ladepunkte)\n💰 Tarif: 0,38 € / kWh\n🗺️ Navigieren: ${shortMapsUrl}`;
 
             if (navigator.share) {
-                navigator.share({ title: title, text: shareText }).catch(() => {});
+                navigator.share({
+                    title: `WBG: ${title}`,
+                    text: shareText,
+                    url: shortMapsUrl
+                }).catch(() => {});
             } else {
                 navigator.clipboard.writeText(shareText);
                 alert("Ladedetails in die Zwischenablage kopiert!");
