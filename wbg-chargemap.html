@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>WBG Chargemap</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -166,14 +166,13 @@
             padding: 0 2px;
         }
 
-                    .pb-safe { padding-bottom: env(safe-area-inset-bottom, 28px); }
-        .pt-safe { padding-top: env(safe-area-inset-top, 20px); }
+            .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
     </style>
 </head>
-<body class="bg-white dark:bg-black text-gray-900 dark:text-gray-100 fixed inset-0 overflow-hidden text-xs font-sans transition-colors duration-200">
+<body class="bg-gray-100 dark:bg-black text-gray-900 dark:text-gray-100 h-screen flex flex-col items-center justify-center p-2 sm:py-3 overflow-hidden text-xs font-sans transition-colors duration-200">
 
     <!-- App Container -->
-    <div class="w-full h-full sm:max-w-xl sm:h-[94vh] sm:my-auto sm:mx-auto bg-white dark:bg-gray-950 sm:border sm:border-gray-200 sm:dark:border-gray-800 sm:rounded-2xl flex flex-col shadow-2xl overflow-hidden relative pt-safe pb-safe">
+    <div class="w-full h-full max-w-xl bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-2xl flex flex-col shadow-2xl overflow-hidden relative">
     <!-- Nativer Pull-to-Refresh Ladebalken/Indikator -->
     <div id="refreshIndicator" class="overflow-hidden transition-all duration-300 max-h-0 opacity-0 bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-center text-[11px] font-bold flex items-center justify-center space-x-2 shrink-0">
         <i class="fa-solid fa-spinner fa-spin"></i>
@@ -181,7 +180,7 @@
     </div>
         
         <!-- Header -->
-        <div class="px-4 pt-3 pb-2.5 border-b border-gray-200 dark:border-gray-900 flex items-center justify-between bg-white/90 dark:bg-gray-950/90 backdrop-blur shrink-0">
+        <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-900 flex items-center justify-between bg-white/80 dark:bg-gray-950/80 backdrop-blur shrink-0">
             <div class="flex items-center space-x-2.5">
                 <div class="bg-emerald-500/10 border border-emerald-500/20 p-2 rounded-xl text-emerald-500 dark:text-emerald-400">
                     <i class="fa-solid fa-bolt text-sm"></i>
@@ -245,17 +244,9 @@
 
             <!-- Slider SoC (Von / Bis) -->
             <div class="bg-white dark:bg-gray-950/60 border border-gray-200/60 dark:border-gray-800/30 rounded-xl p-2 space-y-1.5">
-                <div class="flex justify-between text-[11px] items-center">
-                    <div class="flex items-center space-x-1 text-gray-500 dark:text-gray-400">
-                        <span>Start SoC:</span>
-                        <input type="number" id="startInput" value="20" min="0" max="95" step="1" oninput="onInputSoc('start', this.value)" class="w-10 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded px-1 py-0.5 text-center font-bold text-gray-800 dark:text-gray-200 outline-none">
-                        <span>%</span>
-                    </div>
-                    <div class="flex items-center space-x-1 text-gray-500 dark:text-gray-400">
-                        <span>Ziel SoC:</span>
-                        <input type="number" id="targetInput" value="80" min="5" max="100" step="1" oninput="onInputSoc('target', this.value)" class="w-10 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded px-1 py-0.5 text-center font-bold text-emerald-600 dark:text-emerald-400 outline-none">
-                        <span>%</span>
-                    </div>
+                <div class="flex justify-between text-[11px]">
+                    <span class="text-gray-500 dark:text-gray-400">Start SoC: <strong id="startVal" class="text-gray-800 dark:text-gray-200">20%</strong></span>
+                    <span class="text-gray-500 dark:text-gray-400">Ziel SoC: <strong id="targetVal" class="text-emerald-600 dark:text-emerald-400">80%</strong></span>
                 </div>
                 <div class="flex space-x-3 px-1">
                     <input type="range" id="startSoc" min="0" max="95" value="20" oninput="calculateAll()" class="w-1/2">
@@ -442,10 +433,8 @@
             let target = parseInt(document.getElementById('targetSoc').value) || 80;
             if (start >= target) target = start + 5;
 
-            const startInp = document.getElementById('startInput');
-            const targetInp = document.getElementById('targetInput');
-            if (startInp && document.activeElement !== startInp) startInp.value = start;
-            if (targetInp && document.activeElement !== targetInp) targetInp.value = target;
+            document.getElementById('startVal').innerText = start + '%';
+            document.getElementById('targetVal').innerText = target + '%';
 
 
             let socDiff = target - start;
@@ -690,22 +679,6 @@
         window.addEventListener('touchend', () => {
             isPulling = false;
         }, { passive: true });
-
-        
-        function onInputSoc(type, val) {
-            let num = parseInt(val);
-            if (isNaN(num)) return;
-            if (type === 'start') {
-                if (num < 0) num = 0;
-                if (num > 95) num = 95;
-                document.getElementById('startSoc').value = num;
-            } else {
-                if (num < 5) num = 5;
-                if (num > 100) num = 100;
-                document.getElementById('targetSoc').value = num;
-            }
-            calculateAll();
-        }
 
         window.onload = initApp;
     </script>
