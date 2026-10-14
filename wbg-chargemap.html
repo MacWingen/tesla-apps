@@ -284,7 +284,12 @@
         let userLon = 7.4557; 
         let currentFilter = 'Alle';
         let wbgStations = [];
-        let favorites = JSON.parse(localStorage.getItem('wbg_favorites')) || [];
+        let favorites = [];
+        try {
+            favorites = JSON.parse(localStorage.getItem('wbg_favorites')) || [];
+        } catch (e) {
+            favorites = [];
+        }
         let currentLossFactor = 1.07;
         let weatherLoaded = false;
 
@@ -485,7 +490,9 @@
             const index = favorites.indexOf(id);
             if (index > -1) favorites.splice(index, 1);
             else favorites.push(id);
-            localStorage.setItem('wbg_favorites', JSON.stringify(favorites));
+            try {
+                localStorage.setItem('wbg_favorites', JSON.stringify(favorites));
+            } catch (e) {}
             processStations();
         }
 
@@ -657,6 +664,7 @@
                 requestGpsLocation(true);
                 weatherLoaded = false;
                 fetchWeather();
+                processStations();
                 
                 setTimeout(() => {
                     if (refreshEl) {
