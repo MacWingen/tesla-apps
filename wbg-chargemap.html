@@ -267,6 +267,16 @@
             <span>Sortiert nach Entfernung</span>
         </div>
 
+        <!-- Pull-to-Refresh Indikator (statisch außerhalb des Dynamik-Bereichs) -->
+        <div class="px-3 pt-2">
+            <div id="refreshIndicator" class="overflow-hidden transition-all duration-300 max-h-0 opacity-0 bg-white dark:bg-gray-900/80 border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 text-center text-[11px] font-bold flex items-center justify-center py-0 rounded-xl my-0 shadow-sm">
+                <div class="flex items-center space-x-2 py-2">
+                    <i class="fa-solid fa-circle-notch fa-spin text-emerald-500 text-xs"></i>
+                    <span>Aktualisiere Standorte & Wetter...</span>
+                </div>
+            </div>
+        </div>
+
         <!-- Stationsliste -->
         <div id="stationList" class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2 pb-safe">
             <!-- Dynamisch -->
@@ -558,14 +568,7 @@
 
                 function processStations() {
             const listContainer = document.getElementById('stationList');
-            listContainer.innerHTML = `
-                <div id="refreshIndicator" class="overflow-hidden transition-all duration-300 max-h-0 opacity-0 bg-white dark:bg-gray-900/80 border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 text-center text-[11px] font-bold flex items-center justify-center py-0 rounded-xl my-0 shadow-sm">
-                    <div class="flex items-center space-x-2 py-2">
-                        <i class="fa-solid fa-circle-notch fa-spin text-emerald-500 text-xs"></i>
-                        <span>Aktualisiere Standorte & Wetter...</span>
-                    </div>
-                </div>
-            `;
+            listContainer.innerHTML = '';
 
             const metrics = calculateMetrics();
 
