@@ -173,11 +173,7 @@
 
     <!-- App Container -->
     <div class="w-full h-full max-w-xl bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-2xl flex flex-col shadow-2xl overflow-hidden relative">
-    <!-- Nativer Pull-to-Refresh Ladebalken/Indikator -->
-    <div id="refreshIndicator" class="overflow-hidden transition-all duration-300 max-h-0 opacity-0 bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-center text-[11px] font-bold flex items-center justify-center space-x-2 shrink-0">
-        <i class="fa-solid fa-spinner fa-spin"></i>
-        <span>Aktualisiere Standorte & Wetter...</span>
-    </div>
+
         
         <!-- Header -->
         <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-900 flex items-center justify-between bg-white/80 dark:bg-gray-950/80 backdrop-blur shrink-0">
@@ -560,7 +556,12 @@
 
                 function processStations() {
             const listContainer = document.getElementById('stationList');
-            listContainer.innerHTML = '';
+            listContainer.innerHTML = `
+                <div id="refreshIndicator" class="overflow-hidden transition-all duration-300 max-h-0 opacity-0 bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-center text-[11px] font-bold flex items-center justify-center space-x-2 py-0 rounded-lg mb-0">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <span>Aktualisiere Standorte & Wetter...</span>
+                </div>
+            `;
 
             const metrics = calculateMetrics();
 
@@ -616,6 +617,11 @@
                 cardWrapper.innerHTML = createCardHtml(st, isFav, isNearest, metrics);
                 listContainer.appendChild(cardWrapper.firstElementChild);
             });
+
+            const versionFooter = document.createElement('div');
+            versionFooter.className = "text-center pt-4 pb-8 text-[10px] text-gray-400 dark:text-gray-600 font-medium tracking-wide";
+            versionFooter.innerHTML = `v1.0`;
+            listContainer.appendChild(versionFooter);
         }
 
         function setCityFilter(cityName) {
@@ -650,7 +656,7 @@
             let currentY = e.touches[0].pageY;
             const scrollTop = stationListEl ? stationListEl.scrollTop : (window.pageYOffset || window.scrollY);
             
-            if (currentY - startY > 70 && scrollTop <= 2) {
+            if (currentY - startY > 130 && scrollTop <= 2) {
                 isPulling = false;
                 const refreshEl = document.getElementById('refreshIndicator');
                 if (refreshEl) {
