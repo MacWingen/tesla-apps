@@ -66,7 +66,7 @@
 
             <!-- Akku & Schnellwahl -->
             <div class="flex items-center justify-between pt-0.5">
-                <div class="flex items-center space-x-1.5 bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800/80 rounded-xl px-2.5 py-1">
+                <div class="flex items-center space-x-1.5 bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800/80 rounded-xl px-1.5 py-1">
                     <span class="text-gray-500 dark:text-gray-400 text-[11px]">Akku:</span>
                     <input type="number" id="batterySizeInput" value="60" min="10" max="200" step="1" oninput="calculateAll()" class="w-9 bg-transparent text-right font-bold text-emerald-600 dark:text-emerald-400 outline-none text-xs">
                     <span class="text-gray-400 text-[10px]">kWh</span>
@@ -92,20 +92,15 @@
             </div>
         </div>
 
-        <!-- Stadt-Filter -->
-        <div class="p-3 border-b border-gray-200 dark:border-gray-900 bg-white dark:bg-gray-950 shrink-0">
-            <div class="flex items-center overflow-x-auto pb-0.5 text-[10px] custom-scrollbar space-x-1 items-center">
-                <button onclick="setCityFilter('Alle')" id="filter-Alle" class="bg-emerald-600 text-white px-2.5 py-1 rounded-lg font-bold shrink-0 transition">Alle</button>
-                <span class="text-gray-300 dark:text-gray-700 font-light px-0.5">|</span>
-                <button onclick="setCityFilter('Lünen')" id="filter-Lünen" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-2.5 py-1 rounded-lg shrink-0 transition">Lünen</button>
-                <span class="text-gray-300 dark:text-gray-700 font-light px-0.5">|</span>
-                <button onclick="setCityFilter('Kamen')" id="filter-Kamen" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-2.5 py-1 rounded-lg shrink-0 transition">Kamen</button>
-                <span class="text-gray-300 dark:text-gray-700 font-light px-0.5">|</span>
-                <button onclick="setCityFilter('Werne')" id="filter-Werne" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-2.5 py-1 rounded-lg shrink-0 transition">Werne</button>
-                <span class="text-gray-300 dark:text-gray-700 font-light px-0.5">|</span>
-                <button onclick="setCityFilter('Bergkamen')" id="filter-Bergkamen" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-2.5 py-1 rounded-lg shrink-0 transition">Bergkamen</button>
-                <span class="text-gray-300 dark:text-gray-700 font-light px-0.5">|</span>
-                <button onclick="setCityFilter('Selm')" id="filter-Selm" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-2.5 py-1 rounded-lg shrink-0 transition">Selm</button>
+        <!-- Stadt-Filter (Kompakt ohne Trennstriche) -->
+        <div class="px-2 py-2 border-b border-gray-200 dark:border-gray-900 bg-white dark:bg-gray-950 shrink-0 overflow-hidden">
+            <div class="flex items-center justify-between text-[10px] w-full space-x-1">
+                <button onclick="setCityFilter('Alle')" id="filter-Alle" class="bg-emerald-600 text-white px-2 py-1 rounded-lg font-bold flex-1 text-center transition">Alle</button>
+                <button onclick="setCityFilter('Lünen')" id="filter-Lünen" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg flex-1 text-center transition">Lünen</button>
+                <button onclick="setCityFilter('Kamen')" id="filter-Kamen" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg flex-1 text-center transition">Kamen</button>
+                <button onclick="setCityFilter('Werne')" id="filter-Werne" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg flex-1 text-center transition">Werne</button>
+                <button onclick="setCityFilter('Bergkamen')" id="filter-Bergkamen" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-1 py-1 rounded-lg flex-1 text-center text-[9px] transition">Bergkamen</button>
+                <button onclick="setCityFilter('Selm')" id="filter-Selm" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg flex-1 text-center transition">Selm</button>
             </div>
         </div>
 
@@ -325,7 +320,11 @@
 
         function shareStation(title, address, kw, count, mapsUrl) {
             const shortMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(title + ', ' + address)}`;
-            const shareText = `⚡ WBG Ladestation: ${title}\n📍 ${address}\n🔌 Leistung: ${kw} AC (${count} Ladepunkte)\n💰 Tarif: 0,38 € / kWh\n🗺️ Navigieren: ${shortMapsUrl}`;
+            const shareText = `⚡ WBG Ladestation: ${title}
+📍 ${address}
+🔌 Leistung: ${kw} AC (${count} Ladepunkte)
+💰 Tarif: 0,38 € / kWh
+🗺️ Navigieren: ${shortMapsUrl}`;
 
             if (navigator.share) {
                 navigator.share({ title: title, text: shareText }).catch(() => {});
@@ -433,31 +432,49 @@
             ['Alle', 'Lünen', 'Kamen', 'Werne', 'Bergkamen', 'Selm'].forEach(city => {
                 const btn = document.getElementById(`filter-${city}`);
                 if (city === cityName) {
-                    btn.className = "bg-emerald-600 text-white px-2.5 py-1 rounded-lg font-bold shrink-0 transition";
+                    btn.className = "bg-emerald-600 text-white px-1.5 py-1 rounded-lg font-bold shrink-0 transition";
                 } else {
-                    btn.className = "bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-2.5 py-1 rounded-lg shrink-0 transition";
+                    btn.className = "bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg shrink-0 transition";
                 }
             });
             processStations();
         }
 
-        // Pull to Refresh Logik
         let startY = 0;
+        let isPulling = false;
+        const stationListEl = document.getElementById('stationList');
+
         window.addEventListener('touchstart', (e) => {
-            if (window.scrollY === 0) {
+            const scrollTop = stationListEl ? stationListEl.scrollTop : (window.pageYOffset || window.scrollY);
+            if (scrollTop <= 2) {
                 startY = e.touches[0].pageY;
+                isPulling = true;
+            } else {
+                isPulling = false;
             }
         }, { passive: true });
 
-        window.addEventListener('touchend', (e) => {
-            if (window.scrollY === 0) {
-                let endY = e.changedTouches[0].pageY;
-                if (endY - startY > 90) {
-                    requestGpsLocation(true);
-                    weatherLoaded = false;
-                    fetchWeather();
+        window.addEventListener('touchmove', (e) => {
+            if (!isPulling) return;
+            let currentY = e.touches[0].pageY;
+            const scrollTop = stationListEl ? stationListEl.scrollTop : (window.pageYOffset || window.scrollY);
+            
+            if (currentY - startY > 100 && scrollTop <= 2) {
+                isPulling = false;
+                const badge = document.getElementById('weatherInfoBadge');
+                if (badge) {
+                    let oldText = badge.innerText;
+                    badge.innerText = "Aktualisiere...";
+                    setTimeout(() => { badge.innerText = oldText; }, 1200);
                 }
+                requestGpsLocation(true);
+                weatherLoaded = false;
+                fetchWeather();
             }
+        }, { passive: true });
+
+        window.addEventListener('touchend', () => {
+            isPulling = false;
         }, { passive: true });
 
         window.onload = initApp;
