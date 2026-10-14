@@ -11,7 +11,7 @@
             darkMode: 'class',
         }
     </script>
-    <!-- PWA Web App Manifest & Meta Tags für Installation -->
+        <!-- PWA Web App Manifest & Meta Tags für Installation -->
     <link rel="manifest" href='data:application/manifest+json;charset=utf-8,{"name":"WBG Chargemap","short_name":"Chargemap","start_url":".","display":"standalone","background_color":"%23000000","theme_color":"%2310b981"}'>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -166,7 +166,7 @@
             padding: 0 2px;
         }
 
-        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
+            .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-black text-gray-900 dark:text-gray-100 h-screen flex flex-col items-center justify-center p-2 sm:py-3 overflow-hidden text-xs font-sans transition-colors duration-200">
@@ -174,6 +174,7 @@
     <!-- App Container -->
     <div class="w-full h-full max-w-xl bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-2xl flex flex-col shadow-2xl overflow-hidden relative">
 
+        
         <!-- Header -->
         <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-900 flex items-center justify-between bg-white/80 dark:bg-gray-950/80 backdrop-blur shrink-0">
             <div class="flex items-center space-x-2.5">
@@ -196,7 +197,7 @@
         <!-- Dashboard / Rechner (Clean & Modern) -->
         <div class="px-3 py-2 bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-900 space-y-2 shrink-0">
             
-            <!-- Hero Result Box als Batterie -->
+                                    <!-- Hero Result Box als Batterie -->
             <div class="relative flex items-center -mx-0.5">
                 <div class="relative w-full bg-white dark:bg-gray-900/90 border border-emerald-500/20 dark:border-emerald-500/20 rounded-2xl px-3 py-2.5 flex items-center justify-between shadow-inner overflow-hidden">
                     <!-- Animierter Batterie-Füllstands-Hintergrund -->
@@ -260,18 +261,10 @@
                 <button onclick="setCityFilter('Bergkamen')" id="filter-Bergkamen" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 py-1 rounded-lg flex-1 text-center text-[9px] transition">Bergkamen</button>
                 <button onclick="setCityFilter('Selm')" id="filter-Selm" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 py-1 rounded-lg flex-1 text-center text-[10px] transition">Selm</button>
             </div>
-        </div>
-
-        <!-- Zähler & Pull-to-Refresh Bereich -->
+        </div><!-- Zähler -->
         <div class="px-4 py-1 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-900 text-[10px] text-gray-500 shrink-0 flex justify-between items-center font-medium">
             <span id="stationCount">Lade Standorte...</span>
             <span>Sortiert nach Entfernung</span>
-        </div>
-
-        <!-- Pull-to-Refresh Indicator direkt oben in der Spalte -->
-        <div id="refreshIndicator" class="overflow-hidden transition-all duration-300 max-h-0 opacity-0 bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-center text-[11px] font-bold flex items-center justify-center space-x-2 shrink-0">
-            <i class="fa-solid fa-circle-notch fa-spin"></i>
-            <span>Aktualisiere Standorte...</span>
         </div>
 
         <!-- Stationsliste -->
@@ -281,10 +274,7 @@
 
     </div>
 
-    <!-- Außerhalb des App-Rahmens unten drunter (Platzhalter für exakte iPhone-Position) -->
-    <div class="text-center pt-1.5 text-[9px] text-gray-500 dark:text-gray-500 font-medium tracking-wider shrink-0">
-        WBG Chargemap V1.0
-    </div>
+    
 
     <!-- JavaScript Logik -->
     <script>
@@ -444,13 +434,17 @@
             document.getElementById('startVal').innerText = start + '%';
             document.getElementById('targetVal').innerText = target + '%';
 
+
             let socDiff = target - start;
             let netKwh = (netCapacity * socDiff) / 100;
             let grossKwh = netKwh * currentLossFactor;
             
+            // Batterie-Animation im Hero-Header Update
             const heroBg = document.getElementById('heroBatteryBg');
+            
             const heroKwhSub = document.getElementById('heroKwhSub');
             if (heroBg) heroBg.style.width = target + '%';
+            
             if (heroKwhSub) heroKwhSub.innerText = `${grossKwh.toFixed(1)} kWh geladen`;
 
             let power = 11.0; 
@@ -562,20 +556,16 @@
             `;
         }
 
-        function processStations() {
+                function processStations() {
             const listContainer = document.getElementById('stationList');
-            
-            // Behalte den Pull-to-Refresh Indikator am Anfang der Liste bei
-            const refreshHTML = `
-                <div id="refreshIndicator" class="overflow-hidden transition-all duration-300 max-h-0 opacity-0 bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-center text-[11px] font-bold flex items-center justify-center space-x-2 shrink-0 rounded-xl">
-                    <div class="flex items-center space-x-1.5 py-1.5">
-                        <i class="fa-solid fa-circle-notch fa-spin text-emerald-500"></i>
-                        <span>Aktualisiere Standorte...</span>
+            listContainer.innerHTML = `
+                <div id="refreshIndicator" class="overflow-hidden transition-all duration-300 max-h-0 opacity-0 bg-white dark:bg-gray-900/80 border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 text-center text-[11px] font-bold flex items-center justify-center py-0 rounded-xl my-0 shadow-sm">
+                    <div class="flex items-center space-x-2 py-2">
+                        <i class="fa-solid fa-circle-notch fa-spin text-emerald-500 text-xs"></i>
+                        <span>Aktualisiere Standorte & Wetter...</span>
                     </div>
                 </div>
             `;
-
-            let htmlContent = refreshHTML;
 
             const metrics = calculateMetrics();
 
@@ -586,6 +576,7 @@
 
             wbgStations.sort((a, b) => a.distance - b.distance);
 
+            // Die absolut nächste Station im gesamten Datensatz ermitteln
             const nearestStationId = wbgStations.length > 0 ? wbgStations[0].id : null;
 
             let filteredStations = wbgStations;
@@ -595,28 +586,43 @@
 
             document.getElementById('stationCount').innerText = `${filteredStations.length} von ${wbgStations.length} Standorten`;
 
+            // Favoriten oben in der Box anzeigen, daher in der Hauptliste unten nicht doppelt anzeigen
             filteredStations = filteredStations.filter(st => !favorites.includes(st.id));
 
-            // Favoriten oben
+            // Favoriten-Sektion oben (falls Favoriten vorhanden)
             const favStations = wbgStations.filter(st => favorites.includes(st.id));
             if (favStations.length > 0) {
-                htmlContent += `<div class="space-y-1.5 mb-3"><div class="text-[10px] font-bold text-amber-500 dark:text-amber-400 uppercase tracking-wider px-1 pt-1 flex items-center space-x-1"><i class="fa-solid fa-star"></i><span>Favoriten (${favStations.length})</span></div>`;
+                const favSection = document.createElement('div');
+                favSection.className = "space-y-1.5 mb-3";
+                favSection.innerHTML = `<div class="text-[10px] font-bold text-amber-500 dark:text-amber-400 uppercase tracking-wider px-1 pt-1 flex items-center space-x-1"><i class="fa-solid fa-star"></i><span>Favoriten (${favStations.length})</span></div>`;
+                
+                const favList = document.createElement('div');
+                favList.className = "space-y-1.5";
                 favStations.forEach(st => {
                     const isNearest = (st.id === nearestStationId);
-                    htmlContent += createCardHtml(st, true, isNearest, metrics);
+                    const cardWrapper = document.createElement('div');
+                    cardWrapper.innerHTML = createCardHtml(st, true, isNearest, metrics);
+                    favList.appendChild(cardWrapper.firstElementChild);
                 });
-                htmlContent += `</div>`;
+                favSection.appendChild(favList);
+                listContainer.appendChild(favSection);
             }
 
-            htmlContent += `<div class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider px-1 pt-1">${currentFilter === 'Alle' ? "Alle Standorte" : `Standorte in ${currentFilter}`}</div>`;
+            const headerTitle = document.createElement('div');
+            headerTitle.className = "text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider px-1 pt-1";
+            headerTitle.innerText = currentFilter === 'Alle' ? "Alle Standorte" : `Standorte in ${currentFilter}`;
+            listContainer.appendChild(headerTitle);
 
             filteredStations.forEach((st) => {
                 const isFav = favorites.includes(st.id);
                 const isNearest = (st.id === nearestStationId);
-                htmlContent += createCardHtml(st, isFav, isNearest, metrics);
+
+                const cardWrapper = document.createElement('div');
+                cardWrapper.innerHTML = createCardHtml(st, isFav, isNearest, metrics);
+                listContainer.appendChild(cardWrapper.firstElementChild);
             });
 
-            listContainer.innerHTML = htmlContent;
+
         }
 
         function setCityFilter(cityName) {
@@ -637,7 +643,7 @@
         const stationListEl = document.getElementById('stationList');
 
         window.addEventListener('touchstart', (e) => {
-            const scrollTop = stationListEl ? stationListEl.scrollTop : 0;
+            const scrollTop = stationListEl ? stationListEl.scrollTop : (window.pageYOffset || window.scrollY);
             if (scrollTop <= 2) {
                 startY = e.touches[0].pageY;
                 isPulling = true;
@@ -649,15 +655,15 @@
         window.addEventListener('touchmove', (e) => {
             if (!isPulling) return;
             let currentY = e.touches[0].pageY;
-            const scrollTop = stationListEl ? stationListEl.scrollTop : 0;
+            const scrollTop = stationListEl ? stationListEl.scrollTop : (window.pageYOffset || window.scrollY);
             
             if (currentY - startY > 130 && scrollTop <= 2) {
                 isPulling = false;
                 const refreshEl = document.getElementById('refreshIndicator');
                 if (refreshEl) {
-                    refreshEl.style.maxHeight = '45px';
+                    refreshEl.style.maxHeight = '40px';
                     refreshEl.classList.remove('opacity-0');
-                    refreshEl.classList.add('opacity-100', 'py-1.5', 'mb-2');
+                    refreshEl.classList.add('opacity-100', 'py-2');
                 }
                 const badge = document.getElementById('weatherInfoBadge');
                 if (badge) badge.innerText = "Aktualisiere...";
@@ -669,7 +675,7 @@
                 
                 setTimeout(() => {
                     if (refreshEl) {
-                        refreshEl.classList.remove('opacity-100', 'py-1.5', 'mb-2');
+                        refreshEl.classList.remove('opacity-100', 'py-2');
                         refreshEl.classList.add('opacity-0');
                         refreshEl.style.maxHeight = '0px';
                     }
