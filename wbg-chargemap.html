@@ -163,10 +163,15 @@
 
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-black text-gray-900 dark:text-gray-100 h-screen flex flex-col items-center justify-start pt-3 overflow-hidden text-xs font-sans transition-colors duration-200">
+<body class="bg-gray-100 dark:bg-black text-gray-900 dark:text-gray-100 h-screen flex flex-col items-center justify-center p-2 sm:py-3 overflow-hidden text-xs font-sans transition-colors duration-200">
 
     <!-- App Container -->
-    <div class="w-full h-full max-w-xl bg-white dark:bg-gray-950 border-x border-gray-200 dark:border-gray-900 flex flex-col shadow-2xl overflow-hidden">
+    <div class="w-full h-full max-w-xl bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-2xl flex flex-col shadow-2xl overflow-hidden relative">
+    <!-- Pull-to-Refresh Spinner Overlay -->
+    <div id="refreshIndicator" class="absolute top-16 left-1/2 transform -translate-x-1/2 bg-emerald-600 text-white px-3.5 py-1.5 rounded-full shadow-lg text-[11px] font-bold flex items-center space-x-2 transition-all duration-300 opacity-0 pointer-events-none z-50">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        <span>Aktualisiere Standorte & Wetter...</span>
+    </div>
         
         <!-- Header -->
         <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-900 flex items-center justify-between bg-white/80 dark:bg-gray-950/80 backdrop-blur shrink-0">
@@ -188,7 +193,7 @@
         </div>
 
         <!-- Dashboard / Rechner (Clean & Modern) -->
-        <div class="p-3 bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-900 space-y-2.5 shrink-0">
+        <div class="px-3 py-2 bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-900 space-y-2 shrink-0">
             
                                     <!-- Hero Result Box als Batterie -->
             <div class="relative flex items-center -mx-0.5">
@@ -245,7 +250,7 @@
         </div>
 
         <!-- Stadt-Filter -->
-        <div class="px-2 py-2 border-b border-gray-200 dark:border-gray-900 bg-white dark:bg-gray-950 shrink-0 overflow-hidden">
+        <div class="px-2 py-1.5 border-b border-gray-200 dark:border-gray-900 bg-white dark:bg-gray-950 shrink-0 overflow-hidden">
             <div class="flex items-center justify-between text-[10px] w-full space-x-1">
                 <button onclick="setCityFilter('Alle')" id="filter-Alle" class="bg-emerald-600 text-white py-1 rounded-lg font-bold flex-1 text-center text-[10px] transition">Alle</button>
                 <button onclick="setCityFilter('Lünen')" id="filter-Lünen" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 py-1 rounded-lg flex-1 text-center text-[10px] transition">Lünen</button>
@@ -255,7 +260,7 @@
                 <button onclick="setCityFilter('Selm')" id="filter-Selm" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 py-1 rounded-lg flex-1 text-center text-[10px] transition">Selm</button>
             </div>
         </div><!-- Zähler -->
-        <div class="px-4 py-1.5 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-900 text-[10px] text-gray-500 shrink-0 flex justify-between items-center font-medium">
+        <div class="px-4 py-1 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-900 text-[10px] text-gray-500 shrink-0 flex justify-between items-center font-medium">
             <span id="stationCount">Lade Standorte...</span>
             <span>Sortiert nach Entfernung</span>
         </div>
@@ -512,8 +517,13 @@
                             <p class="text-[11px] text-gray-500 dark:text-gray-400 truncate max-w-[210px] mt-0.5">${cleanAddress}</p>
                         </div>
                         <div class="text-right shrink-0">
-                            <span class="text-sm font-black text-emerald-600 dark:text-emerald-400 tracking-tight">${metrics.cost} €</span>
-                            <span class="text-[9px] text-gray-400 dark:text-gray-500 block font-medium">0,38 € / kWh</span>
+                            ${isNearest ? `
+                                <span class="text-sm font-black text-emerald-600 dark:text-emerald-400 tracking-tight">${metrics.cost} €</span>
+                                <span class="text-[9px] text-gray-400 dark:text-gray-500 block font-medium">0,38 € / kWh</span>
+                            ` : `
+                                <span class="text-xs font-bold text-gray-700 dark:text-gray-300 tracking-tight">0,38 €</span>
+                                <span class="text-[9px] text-gray-400 dark:text-gray-500 block font-medium">pro kWh</span>
+                            `}
                         </div>
                     </div>
                     <div class="flex items-center justify-between text-[11px] text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-100 dark:border-gray-800/60">
@@ -535,7 +545,7 @@
             `;
         }
 
-        function processStations() {
+                function processStations() {
             const listContainer = document.getElementById('stationList');
             listContainer.innerHTML = '';
 
@@ -548,6 +558,9 @@
 
             wbgStations.sort((a, b) => a.distance - b.distance);
 
+            // Die absolut nächste Station im gesamten Datensatz ermitteln
+            const nearestStationId = wbgStations.length > 0 ? wbgStations[0].id : null;
+
             let filteredStations = wbgStations;
             if (currentFilter !== 'Alle') {
                 filteredStations = wbgStations.filter(st => st.city === currentFilter);
@@ -555,17 +568,22 @@
 
             document.getElementById('stationCount').innerText = `${filteredStations.length} von ${wbgStations.length} Standorten`;
 
+            // Favoriten oben in der Box anzeigen, daher in der Hauptliste unten nicht doppelt anzeigen
+            filteredStations = filteredStations.filter(st => !favorites.includes(st.id));
+
+            // Favoriten-Sektion oben (falls Favoriten vorhanden)
             const favStations = wbgStations.filter(st => favorites.includes(st.id));
             if (favStations.length > 0) {
                 const favSection = document.createElement('div');
-                favSection.className = "bg-amber-500/10 border border-amber-500/30 rounded-xl p-2 space-y-1.5 mb-2";
-                favSection.innerHTML = `<div class="text-[10px] font-bold text-amber-600 dark:text-amber-400 flex items-center space-x-1 px-1"><i class="fa-solid fa-star"></i><span>Favoriten (${favStations.length})</span></div>`;
+                favSection.className = "space-y-1.5 mb-3";
+                favSection.innerHTML = `<div class="text-[10px] font-bold text-amber-500 dark:text-amber-400 uppercase tracking-wider px-1 pt-1 flex items-center space-x-1"><i class="fa-solid fa-star"></i><span>Favoriten (${favStations.length})</span></div>`;
                 
                 const favList = document.createElement('div');
                 favList.className = "space-y-1.5";
                 favStations.forEach(st => {
+                    const isNearest = (st.id === nearestStationId);
                     const cardWrapper = document.createElement('div');
-                    cardWrapper.innerHTML = createCardHtml(st, true, false, metrics);
+                    cardWrapper.innerHTML = createCardHtml(st, true, isNearest, metrics);
                     favList.appendChild(cardWrapper.firstElementChild);
                 });
                 favSection.appendChild(favList);
@@ -577,9 +595,9 @@
             headerTitle.innerText = currentFilter === 'Alle' ? "Alle Standorte" : `Standorte in ${currentFilter}`;
             listContainer.appendChild(headerTitle);
 
-            filteredStations.forEach((st, index) => {
+            filteredStations.forEach((st) => {
                 const isFav = favorites.includes(st.id);
-                const isNearest = (currentFilter === 'Alle' && index === 0);
+                const isNearest = (st.id === nearestStationId);
 
                 const cardWrapper = document.createElement('div');
                 cardWrapper.innerHTML = createCardHtml(st, isFav, isNearest, metrics);
@@ -619,17 +637,26 @@
             let currentY = e.touches[0].pageY;
             const scrollTop = stationListEl ? stationListEl.scrollTop : (window.pageYOffset || window.scrollY);
             
-            if (currentY - startY > 100 && scrollTop <= 2) {
+            if (currentY - startY > 80 && scrollTop <= 2) {
                 isPulling = false;
-                const badge = document.getElementById('weatherInfoBadge');
-                if (badge) {
-                    let oldText = badge.innerText;
-                    badge.innerText = "Aktualisiere...";
-                    setTimeout(() => { badge.innerText = oldText; }, 1200);
+                const refreshEl = document.getElementById('refreshIndicator');
+                if (refreshEl) {
+                    refreshEl.classList.remove('opacity-0');
+                    refreshEl.classList.add('opacity-100');
                 }
+                const badge = document.getElementById('weatherInfoBadge');
+                if (badge) badge.innerText = "Aktualisiere...";
+                
                 requestGpsLocation(true);
                 weatherLoaded = false;
                 fetchWeather();
+                
+                setTimeout(() => {
+                    if (refreshEl) {
+                        refreshEl.classList.remove('opacity-100');
+                        refreshEl.classList.add('opacity-0');
+                    }
+                }, 1600);
             }
         }, { passive: true });
 
