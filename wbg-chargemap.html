@@ -274,6 +274,11 @@
 
     </div>
 
+    <!-- Außerhalb des App-Rahmens unten drunter -->
+    <div class="text-center pt-1.5 text-[9px] text-gray-400 dark:text-gray-600 font-medium tracking-wider shrink-0">
+        WBG Chargemap v1.0
+    </div>
+
     <!-- JavaScript Logik -->
     <script>
         let userLat = 51.5976;
@@ -557,9 +562,11 @@
                 function processStations() {
             const listContainer = document.getElementById('stationList');
             listContainer.innerHTML = `
-                <div id="refreshIndicator" class="overflow-hidden transition-all duration-300 max-h-0 opacity-0 bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-center text-[11px] font-bold flex items-center justify-center space-x-2 py-0 rounded-lg mb-0">
-                    <i class="fa-solid fa-spinner fa-spin"></i>
-                    <span>Aktualisiere Standorte & Wetter...</span>
+                <div id="refreshIndicator" class="overflow-hidden transition-all duration-300 max-h-0 opacity-0 bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-center text-[11px] font-bold flex items-center justify-center space-x-2 py-0 rounded-xl my-0">
+                    <div class="flex items-center space-x-1.5 py-1.5">
+                        <i class="fa-solid fa-circle-notch fa-spin text-emerald-500"></i>
+                        <span>Aktualisiere Standorte...</span>
+                    </div>
                 </div>
             `;
 
@@ -618,10 +625,7 @@
                 listContainer.appendChild(cardWrapper.firstElementChild);
             });
 
-            const versionFooter = document.createElement('div');
-            versionFooter.className = "text-center pt-4 pb-8 text-[10px] text-gray-400 dark:text-gray-600 font-medium tracking-wide";
-            versionFooter.innerHTML = `v1.0`;
-            listContainer.appendChild(versionFooter);
+
         }
 
         function setCityFilter(cityName) {
