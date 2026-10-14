@@ -25,15 +25,31 @@
         input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 4px; background: #1f2937; outline: none; }
         input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #10b981; cursor: pointer; box-shadow: 0 0 8px rgba(16, 185, 129, 0.5); }
         
-        /* Safe Area Abstände für iPhone Dynamic Island & Home-Leiste */
-        .pt-safe { padding-top: max(env(safe-area-inset-top), 8px); }
-        .pb-safe { padding-bottom: max(env(safe-area-inset-bottom), 24px); }
+        /* Vollbild Safe-Area Insets für iPhone & moderne Smartphones */
+        html, body {
+            height: 100%;
+            height: 100dvh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #000;
+        }
+        .safe-area-container {
+            height: 100%;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+            box-sizing: border-box;
+        }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-black text-gray-900 dark:text-gray-100 h-[100dvh] flex flex-col items-center justify-between px-2 pt-safe pb-safe overflow-hidden text-xs font-sans transition-colors duration-200">
+<body class="bg-gray-100 dark:bg-black text-gray-900 dark:text-gray-100 font-sans text-xs transition-colors duration-200">
 
-    <!-- App Container -->
-    <div class="w-full h-full max-w-xl bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-2xl flex flex-col shadow-2xl overflow-hidden relative">
+    <!-- Exakter Vollbild Container ohne Außenränder auf Mobilgeräten -->
+    <div class="safe-area-container w-full max-w-xl mx-auto bg-white dark:bg-gray-950 flex flex-col shadow-2xl overflow-hidden relative">
+        
         <!-- Nativer Pull-to-Refresh Ladebalken/Indikator -->
         <div id="refreshIndicator" class="overflow-hidden transition-all duration-300 max-h-0 opacity-0 bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-center text-[11px] font-bold flex items-center justify-center space-x-2 shrink-0">
             <i class="fa-solid fa-spinner fa-spin"></i>
@@ -41,7 +57,7 @@
         </div>
         
         <!-- Header -->
-        <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-900 flex items-center justify-between bg-white/80 dark:bg-gray-950/80 backdrop-blur shrink-0">
+        <div class="px-4 py-2.5 border-b border-gray-200 dark:border-gray-900 flex items-center justify-between bg-white/95 dark:bg-gray-950/95 backdrop-blur shrink-0 z-10">
             <div class="flex items-center space-x-2.5">
                 <div class="bg-emerald-500/10 border border-emerald-500/20 p-2 rounded-xl text-emerald-500 dark:text-emerald-400">
                     <i class="fa-solid fa-bolt text-sm"></i>
@@ -59,7 +75,7 @@
             </div>
         </div>
 
-        <!-- Dashboard / Rechner (Clean & Modern) -->
+        <!-- Dashboard / Rechner -->
         <div class="px-3 py-2 bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-900 space-y-2 shrink-0">
             
             <!-- Hero Result Box als Batterie -->
@@ -101,7 +117,7 @@
                 </div>
             </div>
 
-            <!-- Slider SoC (Von / Bis) mit Scroll-Zahlenfeldern -->
+            <!-- Slider SoC (Von / Bis) mit Zahlenfeldern -->
             <div class="bg-white dark:bg-gray-950/60 border border-gray-200/60 dark:border-gray-800/30 rounded-xl p-2 space-y-1.5">
                 <div class="flex justify-between text-[11px] items-center">
                     <div class="flex items-center space-x-1 text-gray-500 dark:text-gray-400">
@@ -123,7 +139,7 @@
         </div>
 
         <!-- Stadt-Filter -->
-        <div class="px-2 py-1.5 border-b border-gray-200 dark:border-gray-900 bg-white dark:bg-gray-950 shrink-0 overflow-hidden">
+        <div class="px-2 py-1.5 border-b border-gray-200 dark:border-gray-900 bg-white dark:bg-gray-950 shrink-0">
             <div class="flex items-center justify-between text-[10px] w-full space-x-1">
                 <button onclick="setCityFilter('Alle')" id="filter-Alle" class="bg-emerald-600 text-white py-1 rounded-lg font-bold flex-1 text-center text-[10px] transition">Alle</button>
                 <button onclick="setCityFilter('Lünen')" id="filter-Lünen" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 py-1 rounded-lg flex-1 text-center text-[10px] transition">Lünen</button>
@@ -140,8 +156,8 @@
             <span>Sortiert nach Entfernung</span>
         </div>
 
-        <!-- Stationsliste -->
-        <div id="stationList" class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2 pb-6">
+        <!-- Stationsliste mit ausreichendem Abstand unten für die Home-Leiste -->
+        <div id="stationList" class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2 pb-12">
             <!-- Dynamisch -->
         </div>
     </div>
@@ -206,20 +222,6 @@
                 document.getElementById('themeIcon').className = "fa-solid fa-moon text-xs";
             }
 
-            if (window.matchMedia) {
-                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-                    if (!localStorage.getItem('wbg_theme')) {
-                        if (e.matches) {
-                            document.documentElement.classList.add('dark');
-                            document.getElementById('themeIcon').className = "fa-solid fa-moon text-xs";
-                        } else {
-                            document.documentElement.classList.remove('dark');
-                            document.getElementById('themeIcon').className = "fa-solid fa-sun text-xs";
-                        }
-                    }
-                });
-            }
-
             requestGpsLocation(true);
         }
 
@@ -242,8 +244,6 @@
                     (pos) => {
                         userLat = pos.coords.latitude;
                         userLon = pos.coords.longitude;
-                        localStorage.setItem('wbg_lat', userLat);
-                        localStorage.setItem('wbg_lon', userLon);
                         fetchWeather();
                         processStations();
                     },
@@ -436,7 +436,6 @@
             });
 
             wbgStations.sort((a, b) => a.distance - b.distance);
-
             const nearestStationId = wbgStations.length > 0 ? wbgStations[0].id : null;
 
             let filteredStations = wbgStations;
@@ -445,7 +444,6 @@
             }
 
             document.getElementById('stationCount').innerText = `${filteredStations.length} von ${wbgStations.length} Standorten`;
-
             filteredStations = filteredStations.filter(st => !favorites.includes(st.id));
 
             const favStations = wbgStations.filter(st => favorites.includes(st.id));
@@ -479,6 +477,12 @@
                 cardWrapper.innerHTML = createCardHtml(st, isFav, isNearest, metrics);
                 listContainer.appendChild(cardWrapper.firstElementChild);
             });
+
+            // Äußerst dezent am Ende der Liste platziert: v1.0
+            const versionFooter = document.createElement('div');
+            versionFooter.className = "text-center pt-5 pb-3 text-[9px] text-gray-300 dark:text-gray-700 tracking-wider font-mono";
+            versionFooter.innerText = "v1.0";
+            listContainer.appendChild(versionFooter);
         }
 
         function setCityFilter(cityName) {
@@ -499,7 +503,7 @@
         const stationListEl = document.getElementById('stationList');
 
         window.addEventListener('touchstart', (e) => {
-            const scrollTop = stationListEl ? stationListEl.scrollTop : (window.pageYOffset || window.scrollY);
+            const scrollTop = stationListEl ? stationListEl.scrollTop : 0;
             if (scrollTop <= 2) {
                 startY = e.touches[0].pageY;
                 isPulling = true;
@@ -511,7 +515,7 @@
         window.addEventListener('touchmove', (e) => {
             if (!isPulling) return;
             let currentY = e.touches[0].pageY;
-            const scrollTop = stationListEl ? stationListEl.scrollTop : (window.pageYOffset || window.scrollY);
+            const scrollTop = stationListEl ? stationListEl.scrollTop : 0;
             
             if (currentY - startY > 70 && scrollTop <= 2) {
                 isPulling = false;
