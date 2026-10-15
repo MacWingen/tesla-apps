@@ -392,7 +392,7 @@
                             `}
                         </div>
                     </div>
-                    <div class="flex items-center justify-between text-[11px] text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-100 dark:border-gray-800/60">
+                    <div class="file-tag flex items-center justify-between text-[11px] text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-100 dark:border-gray-800/60">
                         <div class="flex items-center space-x-2.5">
                             <span class="text-gray-700 dark:text-gray-300 font-medium"><i class="fa-solid fa-location-dot text-emerald-500 mr-1"></i>${distText}</span>
                             <span class="text-gray-700 dark:text-gray-300 font-semibold"><i class="fa-solid fa-bolt text-amber-400 mr-1"></i><span class="text-emerald-600 dark:text-emerald-400 font-bold mr-0.5">${st.count}</span> ${st.kw}</span>
@@ -479,15 +479,17 @@
             processStations();
         }
 
-        // Pull-to-Refresh Logic
+        // Pull-to-Refresh Logic (Smooth Drag & Snap-back with Notification Feedback)
         let touchStartY = 0;
+        let currentPull = 0;
         let isPulling = false;
         const stationListEl = document.getElementById('stationList');
         const refreshIndicator = document.getElementById('refreshIndicator');
+        const refreshTextSpan = refreshIndicator ? refreshIndicator.querySelector('span span') : null;
 
-        if (stationListEl) {
+        if (stationListEl && refreshIndicator) {
             stationListEl.addEventListener('touchstart', (e) => {
-                if (stationListEl.scrollTop === 0) {
+                if (stationListEl.scrollTop <= 0) {
                     touchStartY = e.touches[0].clientY;
                     isPulling = true;
                 }
@@ -496,22 +498,45 @@
             stationListEl.addEventListener('touchmove', (e) => {
                 if (!isPulling) return;
                 const touchY = e.touches[0].clientY;
-                const diff = touchY - touchStartY;
-                if (diff > 50 && stationListEl.scrollTop === 0) {
+                currentPull = touchY - touchStartY;
+                
+                if (currentPull > 30 && stationListEl.scrollTop <= 0) {
                     refreshIndicator.classList.add('active-refresh');
+                    let pullHeight = Math.min(currentPull * 0.5, 60);
+                    refreshIndicator.style.maxHeight = pullHeight + 'px';
                 }
             }, { passive: true });
 
             stationListEl.addEventListener('touchend', (e) => {
                 if (!isPulling) return;
                 isPulling = false;
-                if (refreshIndicator.classList.contains('active-refresh')) {
+
+                if (currentPull > 50 && stationListEl.scrollTop <= 0) {
+                    if (navigator.vibrate) {
+                        navigator.vibrate(50);
+                    }
+
+                    if (refreshTextSpan) refreshTextSpan.innerText = 'Standorte & Wetter aktualisiert!';
+                    refreshIndicator.style.maxHeight = '60px';
+                    refreshIndicator.classList.add('active-refresh');
+
                     weatherLoaded = false;
                     requestGpsLocation(false);
+
                     setTimeout(() => {
+                        refreshIndicator.style.maxHeight = '0px';
                         refreshIndicator.classList.remove('active-refresh');
+                        if (refreshTextSpan) {
+                            setTimeout(() => {
+                                refreshTextSpan.innerText = 'Aktualisiere Standorte & Wetter...';
+                            }, 300);
+                        }
                     }, 1200);
+                } else {
+                    refreshIndicator.style.maxHeight = '0px';
+                    refreshIndicator.classList.remove('active-refresh');
                 }
+                currentPull = 0;
             }, { passive: true });
         }
 
