@@ -98,14 +98,14 @@
             <div class="bg-white dark:bg-gray-950/60 border border-gray-200/60 dark:border-gray-800/30 rounded-xl px-1 py-1.5 flex items-center justify-start gap-1 overflow-x-auto">
                 <div class="flex items-center space-x-0.5 bg-gray-50 dark:bg-gray-900/80 border border-gray-200/60 dark:border-gray-800/40 rounded-lg px-1.5 py-1 shrink-0">
                     <span class="text-gray-500 dark:text-gray-400 text-[10px] font-medium">Akkukapazität:</span>
-                    <input type="number" id="batterySizeInput" value="60" min="10" max="200" step="1" oninput="calculateAll()" class="w-7 bg-transparent text-right font-bold text-emerald-600 dark:text-emerald-400 outline-none text-xs">
+                    <input type="number" id="batterySizeInput" value="60" min="10" max="200" step="1" oninput="onBatteryInputChanged()" class="w-7 bg-transparent text-right font-bold text-emerald-600 dark:text-emerald-400 outline-none text-xs">
                     <span class="text-gray-400 text-[10px]">kWh</span>
                 </div>
                 <div class="flex items-center space-x-1 shrink-0">
-                    <button onclick="setBatterySize(40)" class="bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg text-[10px] font-semibold transition">40<span class="text-[8px] opacity-60 font-normal ml-0.5">kWh</span></button>
-                    <button onclick="setBatterySize(60)" class="bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg text-[10px] font-semibold transition">60<span class="text-[8px] opacity-60 font-normal ml-0.5">kWh</span></button>
-                    <button onclick="setBatterySize(75)" class="bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg text-[10px] font-semibold transition">75<span class="text-[8px] opacity-60 font-normal ml-0.5">kWh</span></button>
-                    <button onclick="setBatterySize(100)" class="bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg text-[10px] font-semibold transition">100<span class="text-[8px] opacity-60 font-normal ml-0.5">kWh</span></button>
+                    <button onclick="setBatterySize(40)" id="bat-40" class="bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg text-[10px] font-semibold transition">40<span class="text-[8px] opacity-60 font-normal ml-0.5">kWh</span></button>
+                    <button onclick="setBatterySize(60)" id="bat-60" class="bg-emerald-600 text-white border border-emerald-600 px-1.5 py-1 rounded-lg text-[10px] font-bold transition">60<span class="text-[8px] opacity-80 font-normal ml-0.5">kWh</span></button>
+                    <button onclick="setBatterySize(75)" id="bat-75" class="bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg text-[10px] font-semibold transition">75<span class="text-[8px] opacity-60 font-normal ml-0.5">kWh</span></button>
+                    <button onclick="setBatterySize(100)" id="bat-100" class="bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg text-[10px] font-semibold transition">100<span class="text-[8px] opacity-60 font-normal ml-0.5">kWh</span></button>
                 </div>
             </div>
 
@@ -116,8 +116,8 @@
                     <span class="text-gray-600 dark:text-gray-300">Aufladen bis ➔ <strong id="targetVal" class="font-bold">80%</strong></span>
                 </div>
                 <div class="flex space-x-3 px-1">
-                    <input type="range" id="startSoc" min="0" max="95" value="20" oninput="calculateAll()" class="w-1/2">
-                    <input type="range" id="targetSoc" min="0" max="100" value="80" oninput="calculateAll()" class="w-1/2">
+                    <input type="range" id="startSoc" min="0" max="95" value="20" oninput="onBatteryInputChanged()" class="w-1/2">
+                    <input type="range" id="targetSoc" min="0" max="100" value="80" oninput="onBatteryInputChanged()" class="w-1/2">
                 </div>
             </div>
         </div>
@@ -262,6 +262,16 @@
 
         function setBatterySize(size) {
             document.getElementById('batterySizeInput').value = size;
+            [40, 60, 75, 100].forEach(s => {
+                const btn = document.getElementById(`bat-${s}`);
+                if (btn) {
+                    if (s === size) {
+                        btn.className = "bg-emerald-600 text-white border border-emerald-600 px-1.5 py-1 rounded-lg text-[10px] font-bold transition";
+                    } else {
+                        btn.className = "bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg text-[10px] font-semibold transition";
+                    }
+                }
+            });
             calculateAll();
         }
 
@@ -327,6 +337,21 @@
             if (heroKwhSub) heroKwhSub.innerText = `${grossKwh.toFixed(1)} kWh geladen`;
 
             return { cost: cost, duration: durationStr };
+        }
+
+        function onBatteryInputChanged() {
+            const val = parseInt(document.getElementById('batterySizeInput').value);
+            [40, 60, 75, 100].forEach(s => {
+                const btn = document.getElementById(`bat-${s}`);
+                if (btn) {
+                    if (s === val) {
+                        btn.className = "bg-emerald-600 text-white border border-emerald-600 px-1.5 py-1 rounded-lg text-[10px] font-bold transition";
+                    } else {
+                        btn.className = "bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg text-[10px] font-semibold transition";
+                    }
+                }
+            });
+            calculateAll();
         }
 
         function calculateAll() {
