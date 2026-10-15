@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kalender, Feiertage & Brückentage</title>
+    
+    <!-- PWA & Mobile / Tesla Browser Leisten-Farben -->
+    <meta name="theme-color" content="#161616" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#F1F1F1" media="(prefers-color-scheme: light)">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <style>
+        :root {
+            /* TESLA LIGHT MODE (Ohne Grün - Alles in Tesla-Blau & Neutral) */
+            --bg-color: #F1F1F1;
+            --card-bg: #FFFFFF;
+            --card-inner: #FFFFFF;
+            --text-color: #111111;
+            --title-color: #111111;
+            --tile-bg: #FFFFFF;
+            --tile-border: rgba(0, 0, 0, 0.08);
+            --subtext-color: #888888;
+            --hover-bg: rgba(0, 0, 0, 0.05);
+            --accent-blue: #007AFF;
+            --accent-red: #E82127;
+            --fav-gold: #FFC700;
+            --slider-track: #E2E2E2;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* TESLA DARK MODE (Ohne Grün) */
+                --bg-color: #161616;
+                --card-bg: #2A2A2A;
+                --card-inner: #2A2A2A;
+                --text-color: #FFFFFF;
+                --title-color: #FFFFFF;
+                --tile-bg: #2A2A2A;
+                --tile-border: rgba(255, 255, 255, 0.08);
+                --subtext-color: #AAAAAA;
+                --hover-bg: rgba(255, 255, 255, 0.07);
+                --accent-blue: #007AFF;
+                --accent-red: #E82127;
+                --fav-gold: #FFC700;
+                --slider-track: #1C1C1C;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: none;
+            background-attachment: fixed;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text-color);
+            margin: 0;
+            padding: 12px 16px 60px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100dvh;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.3s ease;
+        }
+
+        .top-bar {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--tile-border);
+            gap: 12px;
+            box-sizing: border-box;
+        }
+
+        .back-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--tile-border);
+            color: var(--text-color);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 7px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .back-btn:hover {
+            background-color: var(--hover-bg);
+            border-color: var(--subtext-color);
+            transform: translateX(-2px);
+        }
+
+        .state-select {
+            background: var(--card-inner);
+            border: 1px solid var(--tile-border);
+            color: var(--text-color);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 9px 12px;
+            border-radius: 11px;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .state-select:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .options-row {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+            box-sizing: border-box;
+        }
+
+        .option-chip {
+            background: var(--card-inner);
+            border: 1px solid var(--tile-border);
+            color: var(--subtext-color);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .option-chip:hover {
+            color: var(--text-color);
+            background: var(--hover-bg);
+            border-color: var(--subtext-color);
+            transform: translateY(-1px);
+        }
+
+        .option-chip:active {
+            transform: translateY(0) scale(0.96);
+        }
+
+        .option-chip.active {
+            background: rgba(0, 122, 255, 0.15);
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+            font-weight: 700;
+        }
+
+        .calendar-card {
+            width: 100%;
+            max-width: 680px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--tile-border);
+            border-radius: 18px;
+            padding: 20px 22px;
+            box-sizing: border-box;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .calendar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            border-bottom: 1px solid var(--tile-border);
+            padding-bottom: 12px;
+        }
+
+        .nav-btn {
+            background: var(--card-inner);
+            border: 1px solid var(--tile-border);
+            color: var(--text-color);
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.15s ease;
+            flex-shrink: 0;
+        }
+
+        .nav-btn:hover {
+            background: var(--hover-bg);
+            border-color: var(--subtext-color);
+            transform: translateY(-1px);
+        }
+
+        .nav-btn:active {
+            transform: scale(0.94);
+        }
+
+        .weekdays-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--subtext-color);
+            margin-bottom: 10px;
+        }
+
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .day-cell {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-size: 13.5px;
+            font-weight: 500;
+            background-color: var(--card-inner);
+            border: 1px solid var(--tile-border);
+            color: var(--text-color);
+            position: relative;
+            cursor: default;
+            transition: transform 0.15s ease, border-color 0.15s ease;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .day-cell:hover {
+            transform: translateY(-1px);
+            border-color: var(--subtext-color);
+        }
+
+        .day-cell.other-month {
+            color: var(--subtext-color);
+            opacity: 0.2;
+            background-color: transparent;
+            border-color: transparent;
+            box-shadow: none;
+        }
+
+        .day-cell.today {
+            background: rgba(0, 122, 255, 0.15);
+            color: var(--accent-blue);
+            font-weight: 700;
+            border: 1.5px solid var(--accent-blue);
+        }
+
+        .day-cell.holiday {
+            background: rgba(232, 33, 39, 0.15);
+            color: var(--accent-red);
+            font-weight: 700;
+            border-color: rgba(232, 33, 39, 0.4);
+        }
+
+        .day-cell.school-vacation {
+            background: rgba(0, 122, 255, 0.08);
+            color: var(--accent-blue);
+            font-weight: 600;
+            border-color: rgba(0, 122, 255, 0.3);
+        }
+
+        .day-cell.bridge-day {
+            border: 1.5px dashed var(--fav-gold);
+            background: rgba(255, 199, 0, 0.12);
+            color: var(--text-color);
+            font-weight: 700;
+        }
+
+        .day-cell.sunday {
+            color: var(--accent-red);
+        }
+
+        .tooltip-text {
+            font-size: 7px;
+            text-align: center;
+            line-height: 1;
+            width: 95%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-top: 2px;
+            opacity: 0.9;
+        }
+
+        .holiday-tooltip { color: var(--accent-red); }
+        .bridge-tooltip { color: var(--fav-gold); }
+        .vacation-tooltip { color: var(--accent-blue); }
+
+        .info-section {
+            margin-top: 20px;
+            border-top: 1px solid var(--tile-border);
+            padding-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .info-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--subtext-color);
+            margin-bottom: 2px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            padding: 10px 14px;
+            background: var(--card-inner);
+            border: 1px solid var(--tile-border);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.15s ease, border-color 0.15s ease;
+            gap: 8px;
+        }
+
+        .info-item:hover {
+            transform: translateY(-1px);
+            border-color: var(--subtext-color);
+        }
+
+        .info-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            border-radius: 3px 0 0 3px;
+        }
+
+        .info-item.holiday-bar::before { background: var(--accent-red); }
+        .info-item.bridge-bar::before { background: var(--fav-gold); }
+        .info-item.vacation-bar::before { background: var(--accent-blue); }
+
+        .info-date {
+            font-weight: 600;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .info-name {
+            font-weight: 500;
+            color: var(--subtext-color);
+            font-size: 12px;
+            text-align: right;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .year-grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            width: 100%;
+        }
+
+        .mini-month {
+            background: var(--card-inner);
+            border: 1px solid var(--tile-border);
+            border-radius: 12px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+        }
+
+        .mini-month-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--subtext-color);
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .mini-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-size: 8px;
+            font-weight: 700;
+            color: var(--subtext-color);
+            margin-bottom: 2px;
+        }
+
+        .mini-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+        }
+
+        .mini-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-size: 8.5px;
+            font-weight: 500;
+            color: var(--text-color);
+            background: var(--hover-bg);
+            box-sizing: border-box;
+            border: 1px solid transparent;
+            min-width: 0;
+        }
+
+        .mini-day.other {
+            color: var(--subtext-color);
+            opacity: 0.15;
+        }
+
+        .mini-day.today {
+            background: rgba(0, 122, 255, 0.25);
+            color: var(--accent-blue);
+            font-weight: 700;
+            border-color: var(--accent-blue);
+        }
+
+        .mini-day.holiday {
+            background: rgba(232, 33, 39, 0.25);
+            color: var(--accent-red);
+            font-weight: 700;
+            border-color: rgba(232, 33, 39, 0.4);
+        }
+
+        .mini-day.school-vacation {
+            background: rgba(0, 122, 255, 0.15);
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        .mini-day.bridge-day {
+            border: 1px dashed var(--fav-gold);
+            background: rgba(255, 199, 0, 0.15);
+            color: var(--text-color);
+            font-weight: 700;
+        }
+
+        .mini-day.sunday {
+            color: var(--accent-red);
+        }
+
+        .page-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--title-color);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .title-icon-wrap {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: rgba(0, 122, 255, 0.12);
+            border: 1px solid rgba(0, 122, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: var(--accent-blue);
+        }
+
+        .top-spacer { width: 160px; flex-shrink: 0; }
+
+        .legend-bar {
+            width: 100%;
+            max-width: 680px;
+            background: var(--card-inner);
+            border: 1px solid var(--tile-border);
+            border-radius: 12px;
+            padding: 8px 14px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        .legend-dot {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 10.5px;
+            font-weight: 600;
+            color: var(--subtext-color);
+            white-space: nowrap;
+        }
+
+        .legend-swatch {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .today-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--subtext-color);
+            background: var(--hover-bg);
+            padding: 3px 9px;
+            border-radius: 6px;
+            border: 1px solid var(--tile-border);
+            white-space: nowrap;
+        }
+
+        .live-beacon {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: var(--accent-blue);
+            box-shadow: 0 0 8px var(--accent-blue);
+            display: inline-block;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .calendar-title {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--text-color);
+            letter-spacing: -0.5px;
+            margin: 0;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        @media (max-width: 768px) {
+            .year-grid-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 720px) {
+            body { padding: 8px 8px 24px 8px; }
+            .top-bar { margin-bottom: 10px; padding-bottom: 8px; gap: 8px; }
+            .page-title { font-size: 13px; gap: 5px; }
+            .title-icon-wrap { width: 22px; height: 22px; }
+            .top-spacer { width: 5px; }
+            .back-btn { padding: 5px 8px; font-size: 11px; }
+            .state-select { font-size: 11px; padding: 6px 8px; }
+            .options-row { gap: 4px; }
+            .option-chip { font-size: 9.5px; padding: 6px 4px; border-radius: 8px; }
+            .calendar-card { padding: 12px; border-radius: 14px; }
+            .calendar-header { margin-bottom: 12px; padding-bottom: 8px; }
+            .calendar-title { font-size: 13px; }
+            .nav-btn { width: 28px; height: 28px; font-size: 15px; border-radius: 8px; }
+            .day-cell { border-radius: 7px; font-size: 11px; }
+            .info-item { padding: 8px 10px; font-size: 11px; }
+            .legend-bar { gap: 6px; padding: 6px 8px; }
+            .legend-dot { font-size: 9px; }
+        }
+
+        @media (max-width: 480px) {
+            .year-grid-container {
+                grid-template-columns: 1fr;
+            }
+            .top-spacer { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="index.html" class="back-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
+            Dashboard
+        </a>
+        <h1 class="page-title">
+            <div class="title-icon-wrap">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            Feiertage &amp; Brückentage
+        </h1>
+        <div class="top-spacer">
+            <select id="stateSelect" class="state-select" onchange="changeState()" style="width:100%">
+                <option value="NW">NRW</option>
+                <option value="BW">Baden-Württ.</option>
+                <option value="BY">Bayern</option>
+                <option value="BE">Berlin</option>
+                <option value="BB">Brandenburg</option>
+                <option value="HB">Bremen</option>
+                <option value="HH">Hamburg</option>
+                <option value="HE">Hessen</option>
+                <option value="MV">Meckl.-Vorp.</option>
+                <option value="NI">Niedersachsen</option>
+                <option value="RP">Rheinl.-Pfalz</option>
+                <option value="SL">Saarland</option>
+                <option value="SN">Sachsen</option>
+                <option value="ST">Sachsen-Anh.</option>
+                <option value="SH">Schlesw.-Holst.</option>
+                <option value="TH">Thüringen</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="options-row">
+        <button class="option-chip" id="toggleVacation" onclick="toggleVacationMode()">
+            🎓 Schulferien
+        </button>
+        <button class="option-chip" id="toggleBridge" onclick="toggleBridgeMode()">
+            ✈️ Brückentage
+        </button>
+        <button class="option-chip" id="toggleYearView" onclick="toggleYearViewMode()">
+            📋 Jahreskalender
+        </button>
+    </div>
+
+    <div class="legend-bar" id="legendBar">
+        <div class="legend-dot">
+            <span class="live-beacon"></span>
+            Heute
+        </div>
+        <div class="legend-dot">
+            <span class="legend-swatch" style="background:#E82127;"></span>
+            Feiertag
+        </div>
+        <div class="legend-dot">
+            <span class="legend-swatch" style="background:rgba(255,199,0,0.3);border:1px dashed #FFC700;"></span>
+            Brückentag
+        </div>
+        <div class="legend-dot">
+            <span class="legend-swatch" style="background:#007AFF;"></span>
+            Schulferien
+        </div>
+        <div class="legend-dot" style="margin-left:auto;">
+            <span class="today-pill" id="todayPill"></span>
+        </div>
+    </div>
+
+    <div class="calendar-card" id="calendarCard">
+        <div class="calendar-header">
+            <button class="nav-btn" onclick="changeMonth(-1)">‹</button>
+            <h2 class="calendar-title" id="calendarTitle">Kalender</h2>
+            <button class="nav-btn" onclick="changeMonth(1)">›</button>
+        </div>
+
+        <div id="monthViewContainer">
+            <div class="weekdays-grid">
+                <div>Mo</div><div>Di</div><div>Mi</div><div>Do</div><div>Fr</div><div>Sa</div><div>So</div>
+            </div>
+            <div class="days-grid" id="daysGrid"></div>
+        </div>
+
+        <div id="yearViewContainer" style="display: none;">
+            <div class="year-grid-container" id="yearGridContainer"></div>
+        </div>
+
+        <div class="info-section" id="infoSectionWrapper">
+            <div class="info-title" id="infoListTitle">Monatsdetails</div>
+            <div id="infoListContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentDate = new Date();
+        let currentState = localStorage.getItem('tesla_dashboard_state') || 'NW';
+        let showVacations = false;
+        let showBridgeDays = false;
+        let showYearView = false;
+        let vacationsCache = {};
+
+        const monthNames = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+
+        document.getElementById('stateSelect').value = currentState;
+
+        function toDateKey(date) {
+            let y = date.getFullYear();
+            let m = String(date.getMonth() + 1).padStart(2, '0');
+            let d = String(date.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        function addDays(date, days) {
+            let res = new Date(date);
+            res.setDate(res.getDate() + days);
+            return res;
+        }
+
+        function getEasterSunday(year) {
+            let a = year % 19, b = Math.floor(year / 100), c = year % 100,
+                d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25),
+                g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30,
+                i = Math.floor(c / 4), k = c % 4, L = (32 + 2 * e + 2 * i - h - k) % 7,
+                m = Math.floor((a + 11 * h + 22 * L) / 451),
+                month = Math.floor((h + L - 7 * m + 114) / 31),
+                day = ((h + L - 7 * m + 114) % 31) + 1;
+            return new Date(year, month - 1, day);
+        }
+
+        function getHolidays(year, state) {
+            let holidays = {};
+            holidays[`${year}-01-01`] = "Neujahr";
+            holidays[`${year}-05-01`] = "Tag der Arbeit";
+            holidays[`${year}-10-03`] = "Tag der Dt. Einheit";
+            holidays[`${year}-12-25`] = "1. Weihnachtstag";
+            holidays[`${year}-12-26`] = "2. Weihnachtstag";
+
+            if (state === 'BY' || state === 'BW' || state === 'ST') holidays[`${year}-01-06`] = "Heilige Drei Könige";
+            if (state === 'BE' || state === 'MV') holidays[`${year}-03-08`] = "Frauentag";
+            if (state === 'BY' || state === 'SL') holidays[`${year}-08-15`] = "Mariä Himmelfahrt";
+            if (state === 'TH') holidays[`${year}-09-20`] = "Weltkindertag";
+            if (state === 'BB' || state === 'MV' || state === 'SN' || state === 'ST' || state === 'TH') holidays[`${year}-10-31`] = "Reformationsfest";
+            if (state === 'BW' || state === 'BY' || state === 'NW' || state === 'RP' || state === 'SL') holidays[`${year}-11-01`] = "Allerheiligen";
+            
+            if (state === 'SN') {
+                let nov30 = new Date(year, 10, 30);
+                let dayOfWeek = nov30.getDay();
+                let daysToSubtract = (dayOfWeek + 4) % 7 + 1;
+                let bussTag = new Date(nov30);
+                bussTag.setDate(nov30.getDate() - daysToSubtract);
+                holidays[toDateKey(bussTag)] = "Buß- und Bettag";
+            }
+
+            let easterSunday = getEasterSunday(year);
+
+            holidays[toDateKey(addDays(easterSunday, -2))] = "Karfreitag";
+            holidays[toDateKey(addDays(easterSunday, 1))] = "Ostermontag";
+            holidays[toDateKey(addDays(easterSunday, 39))] = "Christi Himmelfahrt";
+            holidays[toDateKey(addDays(easterSunday, 50))] = "Pfingstmontag";
+
+            if (state === 'BW' || state === 'BY' || state === 'NW' || state === 'RP' || state === 'SL') {
+                holidays[toDateKey(addDays(easterSunday, 60))] = "Fronleichnam";
+            }
+
+            return holidays;
+        }
+
+        function fetchVacations(year, state) {
+            let cacheKey = `tesla_vacations_${year}_${state}`;
+            let saved = localStorage.getItem(cacheKey);
+            if (saved) {
+                try {
+                    vacationsCache[`${year}_${state}`] = JSON.parse(saved);
+                    return;
+                } catch(e) {}
+            }
+
+            let url = `https://openholidaysapi.org/SchoolHolidays?countryIsoCode=DE&subdivisionCode=DE-${state}&languageIsoCode=DE&validFrom=${year}-01-01&validTo=${year}-12-31`;
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    if (Array.isArray(data) && data.length > 0) {
+                        let vacMap = {};
+                        data.forEach(item => {
+                            let nameObj = (item.name || []).find(n => n.language === 'DE') || (item.name || [])[0];
+                            let name = nameObj ? nameObj.text : "Schulferien";
+                            let sParts = item.startDate.split('-');
+                            let eParts = item.endDate.split('-');
+                            let curr = new Date(parseInt(sParts[0]), parseInt(sParts[1]) - 1, parseInt(sParts[2]));
+                            let end = new Date(parseInt(eParts[0]), parseInt(eParts[1]) - 1, parseInt(eParts[2]));
+                            while (curr <= end) {
+                                vacMap[toDateKey(curr)] = name;
+                                curr.setDate(curr.getDate() + 1);
+                            }
+                        });
+                        vacationsCache[`${year}_${state}`] = vacMap;
+                        try {
+                            localStorage.setItem(cacheKey, JSON.stringify(vacMap));
+                        } catch(e) {}
+                        
+                        if (showVacations) {
+                            renderCalendar();
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.warn("OpenHolidays API nicht erreichbar, nutze Fallback-Daten:", err);
+                });
+        }
+
+        function getFallbackVacations(year, state) {
+            let vacations = {};
+            let addRange = (start, end, name) => {
+                let curr = new Date(start);
+                let endD = new Date(end);
+                while (curr <= endD) {
+                    vacations[toDateKey(curr)] = name;
+                    curr.setDate(curr.getDate() + 1);
+                }
+            };
+
+            let easterSunday = getEasterSunday(year);
+
+            if (['SN', 'TH', 'BE', 'BB', 'MV', 'ST', 'BY'].includes(state)) {
+                addRange(new Date(year, 1, 9), new Date(year, 1, 14), state === 'BY' ? "Frühjahrsferien" : "Winterferien");
+            }
+
+            let osterStart = addDays(easterSunday, -6);
+            let osterEnd = addDays(easterSunday, 11);
+            addRange(osterStart, osterEnd, "Osterferien");
+
+            if (state === 'BW' || state === 'BY') {
+                let pfingstStart = addDays(easterSunday, 51);
+                let pfingstEnd = addDays(easterSunday, 62);
+                addRange(pfingstStart, pfingstEnd, "Pfingstferien");
+            } else if (['MV', 'ST', 'BE', 'BB', 'HB', 'HH', 'NI'].includes(state)) {
+                let pfingstStart = addDays(easterSunday, 51);
+                let pfingstEnd = addDays(easterSunday, 53);
+                addRange(pfingstStart, pfingstEnd, "Pfingstferien");
+            }
+
+            if (['NW'].includes(state)) {
+                addRange(new Date(year, 6, 13), new Date(year, 7, 25), "Sommerferien");
+            } else if (['BY', 'BW'].includes(state)) {
+                addRange(new Date(year, 6, 30), new Date(year, 8, 12), "Sommerferien");
+            } else if (['HB', 'HH', 'NI', 'SH'].includes(state)) {
+                addRange(new Date(year, 6, 2), new Date(year, 7, 12), "Sommerferien");
+            } else if (['BE', 'BB', 'MV', 'SN', 'ST', 'TH'].includes(state)) {
+                addRange(new Date(year, 6, 9), new Date(year, 7, 21), "Sommerferien");
+            } else {
+                addRange(new Date(year, 6, 15), new Date(year, 7, 27), "Sommerferien");
+            }
+
+            if (['BY', 'BW'].includes(state)) {
+                addRange(new Date(year, 9, 26), new Date(year, 9, 31), "Herbstferien");
+            } else {
+                addRange(new Date(year, 9, 12), new Date(year, 9, 24), "Herbstferien");
+            }
+
+            addRange(new Date(year, 11, 23), new Date(year, 11, 31), "Weihnachtsferien");
+            addRange(new Date(year, 0, 1), new Date(year, 0, 6), "Weihnachtsferien");
+
+            return vacations;
+        }
+
+        function getVacations(year, state) {
+            let key = `${year}_${state}`;
+            if (vacationsCache[key] && Object.keys(vacationsCache[key]).length > 0) {
+                return vacationsCache[key];
+            }
+            return getFallbackVacations(year, state);
+        }
+
+        function getBridgeDays(year, state) {
+            let holidays = getHolidays(year, state);
+            let bridgeDays = {};
+
+            function addBridge(date, name) {
+                let key = toDateKey(date);
+                let day = date.getDay();
+                if (date.getFullYear() === year && day !== 0 && day !== 6 && !holidays[key]) {
+                    bridgeDays[key] = name;
+                }
+            }
+
+            Object.keys(holidays).forEach(hDateStr => {
+                let parts = hDateStr.split('-');
+                let hDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                let dayOfWeek = hDate.getDay();
+
+                if (dayOfWeek === 4) {
+                    addBridge(addDays(hDate, 1), "Top-Brückentag (1 Tag = 4 frei)");
+                } else if (dayOfWeek === 2) {
+                    addBridge(addDays(hDate, -1), "Top-Brückentag (1 Tag = 4 frei)");
+                } else if (dayOfWeek === 3) {
+                    addBridge(addDays(hDate, 1), "Brückentag (2 Tage = 5 frei)");
+                    addBridge(addDays(hDate, 2), "Brückentag (2 Tage = 5 frei)");
+                    addBridge(addDays(hDate, -1), "Brückentag (2 Tage = 5 frei)");
+                    addBridge(addDays(hDate, -2), "Brückentag (2 Tage = 5 frei)");
+                } else if (dayOfWeek === 5) {
+                    for (let i = 1; i <= 4; i++) {
+                        addBridge(addDays(hDate, -i), "Brückenwoche (4 Tage = 9 frei)");
+                    }
+                } else if (dayOfWeek === 1) {
+                    for (let i = 1; i <= 4; i++) {
+                        addBridge(addDays(hDate, i), "Brückenwoche (4 Tage = 9 frei)");
+                    }
+                }
+            });
+
+            for (let d = 27; d <= 31; d++) {
+                addBridge(new Date(year, 11, d), "Zwischen den Jahren");
+            }
+            addBridge(new Date(year, 11, 24), "Heiligabend");
+
+            return bridgeDays;
+        }
+
+        function consolidateNamedRanges(items) {
+            if (!items || items.length === 0) return [];
+            items.sort((a, b) => a.date.localeCompare(b.date));
+            let ranges = [];
+            let current = { start: items[0].date, end: items[0].date, name: items[0].name };
+
+            for (let i = 1; i < items.length; i++) {
+                let pParts = current.end.split('-');
+                let cParts = items[i].date.split('-');
+                let prevDate = new Date(parseInt(pParts[0]), parseInt(pParts[1]) - 1, parseInt(pParts[2]));
+                let currDate = new Date(parseInt(cParts[0]), parseInt(cParts[1]) - 1, parseInt(cParts[2]));
+                let diffDays = Math.round((currDate - prevDate) / (1000 * 60 * 60 * 24));
+
+                if (diffDays === 1 && items[i].name === current.name) {
+                    current.end = items[i].date;
+                } else {
+                    ranges.push(current);
+                    current = { start: items[i].date, end: items[i].date, name: items[i].name };
+                }
+            }
+            ranges.push(current);
+            return ranges;
+        }
+
+        function formatDateReadable(dateStr) {
+            let parts = dateStr.split('-');
+            return `${parseInt(parts[2])}. ${monthNames[parseInt(parts[1]) - 1]}`;
+        }
+
+        function renderCalendar() {
+            let year = currentDate.getFullYear();
+            let month = currentDate.getMonth();
+
+            let selectElem = document.getElementById('stateSelect');
+            let stateName = selectElem.options[selectElem.selectedIndex].text;
+
+            function getWeekNumber(d) {
+                let date = new Date(d);
+                date.setHours(0,0,0,0);
+                date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+                let week1 = new Date(date.getFullYear(), 0, 4);
+                return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+            }
+
+            let titleText = showYearView ? `Jahreskalender ${year}` : `${monthNames[month]} ${year}`;
+            document.getElementById('calendarTitle').innerText = titleText;
+
+            document.getElementById('monthViewContainer').style.display = showYearView ? 'none' : 'block';
+            document.getElementById('yearViewContainer').style.display = showYearView ? 'block' : 'none';
+            document.getElementById('infoSectionWrapper').style.display = showYearView ? 'none' : 'block';
+            document.getElementById('legendBar').style.display = showYearView ? 'none' : 'flex';
+            document.getElementById('infoListTitle').innerText = `Monatsdetails · ${stateName}`;
+
+            let todayObj = new Date();
+            let todayPill = document.getElementById('todayPill');
+            let dayNames = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+            let kw = getWeekNumber(todayObj);
+            todayPill.innerHTML = `📅 ${dayNames[todayObj.getDay()]}, ${todayObj.getDate()}. ${monthNames[todayObj.getMonth()]} · KW ${kw}`;
+
+            let holidays = getHolidays(year, currentState);
+            let vacations = getVacations(year, currentState);
+            let bridgeDays = getBridgeDays(year, currentState);
+
+            let todayStr = toDateKey(todayObj);
+
+            if (showYearView) {
+                let yearGridHTML = '';
+
+                for (let m = 0; m < 12; m++) {
+                    let firstDayIndex = new Date(year, m, 1).getDay();
+                    firstDayIndex = (firstDayIndex === 0) ? 6 : firstDayIndex - 1;
+                    let totalDays = new Date(year, m + 1, 0).getDate();
+
+                    let miniDaysHTML = '';
+                    for (let i = firstDayIndex; i > 0; i--) {
+                        miniDaysHTML += `<div class="mini-day other"><span></span></div>`;
+                    }
+                    for (let d = 1; d <= totalDays; d++) {
+                        let mStr = String(m + 1).padStart(2, '0');
+                        let dStr = String(d).padStart(2, '0');
+                        let dateKey = `${year}-${mStr}-${dStr}`;
+
+                        let isToday = (dateKey === todayStr);
+                        let h = holidays[dateKey];
+                        let v = showVacations ? vacations[dateKey] : null;
+                        let b = showBridgeDays ? bridgeDays[dateKey] : null;
+                        let isSun = (new Date(year, m, d).getDay() === 0);
+
+                        let cName = "mini-day";
+                        if (isToday) cName += " today";
+                        if (h) cName += " holiday";
+                        else if (b) cName += " bridge-day";
+                        else if (v) cName += " school-vacation";
+                        else if (isSun) cName += " sunday";
+
+                        miniDaysHTML += `<div class="${cName}"><span>${d}</span></div>`;
+                    }
+
+                    yearGridHTML += `
+                        <div class="mini-month">
+                            <div class="mini-month-title">${monthNames[m]}</div>
+                            <div class="mini-weekdays">
+                                <div>M</div><div>D</div><div>M</div><div>D</div><div>F</div><div>S</div><div>S</div>
+                            </div>
+                            <div class="mini-days">
+                                ${miniDaysHTML}
+                            </div>
+                        </div>
+                    `;
+                }
+                document.getElementById('yearGridContainer').innerHTML = yearGridHTML;
+
+            } else {
+                let firstDayIndex = new Date(year, month, 1).getDay();
+                firstDayIndex = (firstDayIndex === 0) ? 6 : firstDayIndex - 1;
+
+                let totalDays = new Date(year, month + 1, 0).getDate();
+                let prevTotalDays = new Date(year, month, 0).getDate();
+
+                let gridHTML = '';
+
+                for (let i = firstDayIndex; i > 0; i--) {
+                    let dayNum = prevTotalDays - i + 1;
+                    gridHTML += `<div class="day-cell other-month"><span>${dayNum}</span></div>`;
+                }
+
+                let monthHolidays = [];
+                let monthVacationsDays = [];
+                let monthBridgeDays = [];
+
+                for (let d = 1; d <= totalDays; d++) {
+                    let monthStr = String(month + 1).padStart(2, '0');
+                    let dayStr = String(d).padStart(2, '0');
+                    let dateKey = `${year}-${monthStr}-${dayStr}`;
+
+                    let isToday = (dateKey === todayStr);
+                    let holidayName = holidays[dateKey];
+                    let vacationName = showVacations ? vacations[dateKey] : null;
+                    let isBridge = showBridgeDays ? bridgeDays[dateKey] : null;
+                    
+                    let dayOfWeek = new Date(year, month, d).getDay();
+                    let isSunday = (dayOfWeek === 0);
+
+                    let classList = "day-cell";
+                    if (isToday) classList += " today";
+                    
+                    if (holidayName) {
+                        classList += " holiday";
+                        monthHolidays.push({ date: dateKey, name: holidayName });
+                    } else if (isBridge) {
+                        classList += " bridge-day";
+                        monthBridgeDays.push({ date: dateKey, name: isBridge });
+                    } else if (vacationName) {
+                        classList += " school-vacation";
+                        monthVacationsDays.push({ date: dateKey, name: vacationName });
+                    } else if (isSunday) {
+                        classList += " sunday";
+                    }
+
+                    let tooltipHTML = '';
+                    if (holidayName) tooltipHTML = `<span class="tooltip-text holiday-tooltip">${holidayName}</span>`;
+                    else if (isBridge) tooltipHTML = `<span class="tooltip-text bridge-tooltip">Brücke</span>`;
+                    else if (vacationName) tooltipHTML = `<span class="tooltip-text vacation-tooltip">${vacationName.replace('ferien', '')}</span>`;
+
+                    gridHTML += `
+                        <div class="${classList}">
+                            <span>${d}</span>
+                            ${tooltipHTML}
+                        </div>
+                    `;
+                }
+
+                let totalCellsDrawn = firstDayIndex + totalDays;
+                let nextDaysCount = (totalCellsDrawn <= 35) ? (35 - totalCellsDrawn) : (42 - totalCellsDrawn);
+                for (let n = 1; n <= nextDaysCount; n++) {
+                    gridHTML += `<div class="day-cell other-month"><span>${n}</span></div>`;
+                }
+
+                document.getElementById('daysGrid').innerHTML = gridHTML;
+
+                let monthInfoHTML = '';
+                monthHolidays.forEach(h => {
+                    monthInfoHTML += `
+                        <div class="info-item holiday-bar">
+                            <span class="info-date">🎈 ${formatDateReadable(h.date)}</span>
+                            <span class="info-name">${h.name}</span>
+                        </div>
+                    `;
+                });
+
+                if (showBridgeDays && monthBridgeDays.length > 0) {
+                    let bRanges = consolidateNamedRanges(monthBridgeDays);
+                    bRanges.forEach(r => {
+                        let text = r.start === r.end ? formatDateReadable(r.start) : `${formatDateReadable(r.start)} – ${formatDateReadable(r.end)}`;
+                        monthInfoHTML += `
+                            <div class="info-item bridge-bar">
+                                <span class="info-date">✈️ ${text}</span>
+                                <span class="info-name">${r.name}</span>
+                            </div>
+                        `;
+                    });
+                }
+
+                if (showVacations && monthVacationsDays.length > 0) {
+                    let vRanges = consolidateNamedRanges(monthVacationsDays);
+                    vRanges.forEach(r => {
+                        let text = r.start === r.end ? formatDateReadable(r.start) : `${formatDateReadable(r.start)} – ${formatDateReadable(r.end)}`;
+                        monthInfoHTML += `
+                            <div class="info-item vacation-bar">
+                                <span class="info-date">🎓 ${text}</span>
+                                <span class="info-name">${r.name}</span>
+                            </div>
+                        `;
+                    });
+                }
+
+                document.getElementById('infoListContainer').innerHTML = monthInfoHTML || `<div style="font-size:13px; color:var(--subtext-color); padding: 4px 0;">Keine Einträge in diesem Monat.</div>`;
+            }
+        }
+
+        function changeState() {
+            currentState = document.getElementById('stateSelect').value;
+            localStorage.setItem('tesla_dashboard_state', currentState);
+            fetchVacations(currentDate.getFullYear(), currentState);
+            renderCalendar();
+        }
+
+        function toggleVacationMode() {
+            showVacations = !showVacations;
+            document.getElementById('toggleVacation').classList.toggle('active', showVacations);
+            if (showVacations) {
+                fetchVacations(currentDate.getFullYear(), currentState);
+            }
+            renderCalendar();
+        }
+
+        function toggleBridgeMode() {
+            showBridgeDays = !showBridgeDays;
+            document.getElementById('toggleBridge').classList.toggle('active', showBridgeDays);
+            renderCalendar();
+        }
+
+        function toggleYearViewMode() {
+            showYearView = !showYearView;
+            document.getElementById('toggleYearView').classList.toggle('active', showYearView);
+            renderCalendar();
+        }
+
+        function changeMonth(direction) {
+            let oldYear = currentDate.getFullYear();
+            if (showYearView) {
+                currentDate.setFullYear(currentDate.getFullYear() + direction);
+            } else {
+                currentDate.setDate(1);
+                currentDate.setMonth(currentDate.getMonth() + direction);
+            }
+            let newYear = currentDate.getFullYear();
+            if (newYear !== oldYear) {
+                fetchVacations(newYear, currentState);
+            }
+            renderCalendar();
+        }
+
+        fetchVacations(currentDate.getFullYear(), currentState);
+        renderCalendar();
+    </script>
+</body>
+</html>
