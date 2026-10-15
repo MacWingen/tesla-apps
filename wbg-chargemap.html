@@ -11,7 +11,7 @@
             darkMode: 'class',
         }
     </script>
-        <!-- PWA Web App Manifest & Meta Tags für Installation -->
+    <!-- PWA Web App Manifest & Meta Tags für Installation -->
     <link rel="manifest" href='data:application/manifest+json;charset=utf-8,{"name":"WBG Chargemap","short_name":"Chargemap","start_url":".","display":"standalone","background_color":"%23000000","theme_color":"%2310b981"}'>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -24,150 +24,7 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
         input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 4px; background: #1f2937; outline: none; }
         input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #10b981; cursor: pointer; box-shadow: 0 0 8px rgba(16, 185, 129, 0.5); }
-    
-        /* Tesla Batterie Animation & Gauge Styles */
-        .battery-gauge-card {
-            background: var(--card-inner, rgba(255,255,255,0.05));
-            border: 1px solid rgba(0,0,0,0.08);
-            border-radius: 14px;
-            padding: 10px 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 7px;
-            position: relative;
-        }
-        .dark .battery-gauge-card {
-            background: rgba(17, 24, 39, 0.6);
-            border-color: rgba(255,255,255,0.08);
-        }
-        .gauge-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .gauge-label {
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #6b7280;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .gauge-charged-text {
-            font-size: 11px;
-            font-weight: 700;
-            color: #10b981;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .charge-pulse-icon {
-            display: inline-block;
-            animation: pulseBolt 1.6s ease-in-out infinite;
-        }
-        @keyframes pulseBolt {
-            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px #10b981); }
-            50% { transform: scale(1.2); filter: drop-shadow(0 0 8px #10b981); }
-        }
-        .battery-frame-container {
-            width: 100%;
-            padding-right: 6px;
-            box-sizing: border-box;
-        }
-        .battery-outer-frame {
-            width: 100%;
-            height: 32px;
-            background: rgba(0, 0, 0, 0.15);
-            border: 2px solid rgba(107, 114, 128, 0.3);
-            border-radius: 10px;
-            padding: 2px;
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        .battery-outer-frame::after {
-            content: "";
-            position: absolute;
-            right: -6px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 3px;
-            height: 12px;
-            background: rgba(107, 114, 128, 0.5);
-            border-radius: 0 2px 2px 0;
-        }
-        .battery-cell-ticks {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            pointer-events: none;
-            z-index: 4;
-            background: repeating-linear-gradient(
-                90deg,
-                transparent,
-                transparent calc(20% - 1px),
-                rgba(255, 255, 255, 0.15) calc(20% - 1px),
-                rgba(255, 255, 255, 0.15) 20%
-            );
-        }
-        .battery-track {
-            width: 100%;
-            height: 100%;
-            border-radius: 6px;
-            position: relative;
-            overflow: hidden;
-            background: rgba(107, 114, 128, 0.1);
-        }
-        .battery-base-bar {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            background: #9ca3af;
-            border-radius: 6px 0 0 6px;
-            transition: width 0.3s ease;
-            z-index: 1;
-        }
-        .battery-charge-bar {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            background: #10b981;
-            box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
-            border-radius: 0 6px 6px 0;
-            transition: left 0.3s ease, width 0.3s ease;
-            z-index: 2;
-            overflow: hidden;
-        }
-        .charge-shimmer-wave {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(
-                90deg,
-                transparent 0%,
-                rgba(255, 255, 255, 0.4) 50%,
-                transparent 100%
-            );
-            background-size: 200% 100%;
-            animation: shimmerWave 2.2s linear infinite;
-            pointer-events: none;
-        }
-        @keyframes shimmerWave {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(200%); }
-        }
-        .battery-scale {
-            display: flex;
-            justify-content: space-between;
-            font-size: 9px;
-            font-weight: 600;
-            color: #9ca3af;
-            padding: 0 2px;
-        }
-
-            .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
-            /* Pull-to-Refresh Indicator Styles */
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
         #refreshIndicator {
             max-height: 0;
             opacity: 0;
@@ -193,7 +50,6 @@
     <!-- App Container -->
     <div class="w-full h-full max-w-xl bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-2xl flex flex-col shadow-2xl overflow-hidden relative">
 
-        
         <!-- Header -->
         <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-900 flex items-center justify-between bg-white/80 dark:bg-gray-950/80 backdrop-blur shrink-0">
             <div class="flex items-center space-x-2.5">
@@ -205,20 +61,18 @@
                 </div>
             </div>
             <div class="flex items-center space-x-3">
-                <!-- Theme Toggle Button -->
                 <button onclick="toggleTheme()" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-800 text-gray-700 dark:text-gray-300 p-2 rounded-xl transition" title="Design wechseln">
                     <i id="themeIcon" class="fa-solid fa-moon text-xs"></i>
                 </button>
             </div>
         </div>
 
-        <!-- Dashboard / Rechner (Clean & Modern) -->
+        <!-- Dashboard / Rechner -->
         <div class="px-3 py-2 bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-900 space-y-2 shrink-0">
             
-                                    <!-- Hero Result Box als Batterie -->
+            <!-- Hero Result Box -->
             <div class="relative flex items-center -mx-0.5">
                 <div class="relative w-full bg-white dark:bg-gray-900/90 border border-emerald-500/20 dark:border-emerald-500/20 rounded-2xl px-3 py-2.5 flex items-center justify-between shadow-inner overflow-hidden">
-                    <!-- Animierter Batterie-Füllstands-Hintergrund -->
                     <div class="absolute inset-y-0 left-0 bg-emerald-500/10 dark:bg-emerald-500/15 pointer-events-none transition-all duration-300 z-0" id="heroBatteryBg" style="width: 85%;">
                         <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
                     </div>
@@ -237,11 +91,10 @@
                         <span class="text-[9px] text-emerald-600 dark:text-emerald-400 font-bold block mt-0.5" id="heroKwhSub">-- kWh geladen</span>
                     </div>
                 </div>
-                <!-- Batterie-Pluspol (Nippel rechts) -->
                 <div class="w-1.5 h-4 bg-emerald-500/40 dark:bg-emerald-500/30 rounded-r-sm shrink-0 ml-0.5 shadow-sm"></div>
             </div>
 
-            <!-- Akku & Schnellwahl (Perfekt synchron in einer Box) -->
+            <!-- Akkukapazität & Schnellwahl -->
             <div class="bg-white dark:bg-gray-950/60 border border-gray-200/60 dark:border-gray-800/30 rounded-xl px-1 py-1.5 flex items-center justify-start gap-1 overflow-x-auto">
                 <div class="flex items-center space-x-0.5 bg-gray-50 dark:bg-gray-900/80 border border-gray-200/60 dark:border-gray-800/40 rounded-lg px-1.5 py-1 shrink-0">
                     <span class="text-gray-500 dark:text-gray-400 text-[10px] font-medium">Akkukapazität:</span>
@@ -256,15 +109,15 @@
                 </div>
             </div>
 
-            <!-- Slider SoC (Von / Bis) -->
+            <!-- Slider SoC mit dynamischen Farben -->
             <div class="bg-white dark:bg-gray-950/60 border border-gray-200/60 dark:border-gray-800/30 rounded-xl p-2 space-y-1.5">
-                <div class="flex justify-between text-[11px]">
-                    <span class="text-gray-500 dark:text-gray-400">Start SoC: <strong id="startVal" class="text-gray-800 dark:text-gray-200">20%</strong></span>
-                    <span class="text-gray-500 dark:text-gray-400">Ziel SoC: <strong id="targetVal" class="text-emerald-600 dark:text-emerald-400">80%</strong></span>
+                <div class="flex justify-between text-[11px] font-medium">
+                    <span class="text-gray-600 dark:text-gray-300">Aktueller Akkustand ➔ <strong id="startVal" class="font-bold">20%</strong></span>
+                    <span class="text-gray-600 dark:text-gray-300">Gewünschter Akkustand ➔ <strong id="targetVal" class="font-bold">80%</strong></span>
                 </div>
                 <div class="flex space-x-3 px-1">
-                    <input type="range" id="startSoc" min="0" max="95" value="20" oninput="calculateAll()" class="w-1/2">
-                    <input type="range" id="targetSoc" min="5" max="100" value="80" oninput="calculateAll()" class="w-1/2">
+                    <input type="range" id="startSoc" min="0" max="100" value="20" oninput="calculateAll()" class="w-1/2">
+                    <input type="range" id="targetSoc" min="0" max="100" value="80" oninput="calculateAll()" class="w-1/2">
                 </div>
             </div>
         </div>
@@ -279,7 +132,9 @@
                 <button onclick="setCityFilter('Bergkamen')" id="filter-Bergkamen" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 py-1 rounded-lg flex-1 text-center text-[9px] transition">Bergkamen</button>
                 <button onclick="setCityFilter('Selm')" id="filter-Selm" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 py-1 rounded-lg flex-1 text-center text-[10px] transition">Selm</button>
             </div>
-        </div><!-- Zähler -->
+        </div>
+
+        <!-- Zähler -->
         <div class="px-4 py-1 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-900 text-[10px] text-gray-500 shrink-0 flex justify-between items-center font-medium">
             <span id="stationCount">Lade Standorte...</span>
             <span>Sortiert nach Entfernung</span>
@@ -287,21 +142,16 @@
 
         <!-- Stationsliste -->
         <div id="stationList" class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2 pb-safe">
-            <!-- Pull-to-Refresh Indikator direkt ganz oben im Scroll-Container -->
             <div id="refreshIndicator" class="bg-white dark:bg-gray-900/80 border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 text-center text-[11px] font-bold flex items-center justify-center rounded-xl shadow-sm">
                 <div class="flex items-center space-x-2 py-2">
                     <i class="fa-solid fa-circle-notch fa-spin text-emerald-500 text-xs"></i>
                     <span>Aktualisiere Standorte & Wetter...</span>
                 </div>
             </div>
-            
-            <!-- Hier landen alle dynamischen Stationskarten, der Indikator bleibt immer unangetastet -->
             <div id="stationCardsContainer" class="space-y-2"></div>
         </div>
 
     </div>
-
-    
 
     <!-- JavaScript Logik -->
     <script>
@@ -319,35 +169,27 @@
         let weatherLoaded = false;
 
         const rawWbgData = [
-            { id: 'winkel13', title: 'Im Winkel 13', address: 'Im Winkel 13, 44536 Lünen-Brambauer', lat: 51.5976, lon: 7.4557, count: '2x', kw: '11 kW', price: 0.38, custom: true, city: 'Lünen', url: 'https://www.google.com/maps/place/Im+Winkel+13,+44536+L%C3%BCnen-Brambauer/@51.5976428,7.4531406,17z/data=!3m1!4b1!4m6!3m5!1s0x47b91ac17c1e5fc7:0x714ccaa852f19b3f!8m2!3d51.5976395!4d7.4557209!16s%2Fg%2F11c4j8dmky?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
-            { id: 'asternweg2', title: 'Asternweg 2', address: 'Asternweg 2, 44532 Lünen-Niederaden', lat: 51.5946, lon: 7.5563, count: '1x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Asternweg+2,+44532+L%C3%BCnen-Niederaden/@51.5946482,7.5537976,17z/data=!3m1!4b1!4m10!1m2!2m1!1sAsternweg+2!3m6!1s0x47b911cf60638425:0xe88f0f17d81d69e2!8m2!3d51.5946449!4d7.5563779!15sCgtBc3Rlcm53ZWcgMpIBCnN1YnByZW1pc2XgAQA!16s%2Fg%2F11bw4f077x?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
-            { id: 'vogelsberg', title: 'Am Vogelsberg 106', address: 'Am Vogelsberg 106, 44534 Lünen', lat: 51.6296, lon: 7.5357, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Am+Vogelsberg+106,+44534+L%C3%BCnen/@51.6296932,7.5331728,17z/data=!3m1!4b1!4m6!3m5!1s0x47b90fc7a921594b:0x48e1434a93ecb1eb!8m2!3d51.6296899!4d7.5357531!16s%2Fg%2F11b8yk918p?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
-            { id: 'bebelstr', title: 'Bebelstraße 188', address: 'Bebelstraße 188, 44532 Lünen', lat: 51.5894, lon: 7.5371, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Bebelstra%C3%9Fe+188,+44532+L%C3%BCnen/@51.589446,7.5345666,17z/data=!3m1!4b1!4m6!3m5!1s0x47b910358814aa49:0x6d3e19072bbf7b43!8m2!3d51.5894427!4d7.5371469!16s%2Fg%2F11c5ky_y8m?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
-            { id: 'christianstr', title: 'Christian-Morgenstern-Straße 9', address: 'Christian-Morgenstern-Straße 9, 44534 Lünen', lat: 51.6212, lon: 7.5261, count: '1x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Christian-Morgenstern-Stra%C3%9Fe+9,+44534+L%C3%BCnen/@51.6212163,7.5236121,17z/data=!4m6!3m5!1s0x47b90fdd28703957:0xbe13e4ce3c48ad43!8m2!3d51.621213!4d7.5261924!16s%2Fg%2F11c2hrk3bn?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
-            { id: 'kurtstr', title: 'Kurt-Schumacher-Straße 11', address: 'Kurt-Schumacher-Straße 11, 44534 Lünen', lat: 51.6173, lon: 7.5267, count: '2x', kw: '22 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/WBG+L%C3%BCnen/@51.6173435,7.5241458,17z/data=!3m1!4b1!4m6!3m5!1s0x47b90fdc3d94ba93:0xfd570d7ed0d52b41!8m2!3d51.6173402!4d7.5267261!16s%2Fg%2F1tk_nc9q?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
-            { id: 'luisenstr', title: 'Luisenhüttenstraße 24', address: 'Luisenhüttenstraße 24, 44536 Lünen', lat: 51.6137, lon: 7.5131, count: '2x', kw: '22 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Luisenh%C3%BCttenstra%C3%9Fe+24,+44536+L%C3%BCnen/@51.6137768,7.5105456,17z/data=!3m1!4b1!4m6!3m5!1s0x47b90fe23b6d687d:0xf3c062f6f1c79398!8m2!3d51.6137735!4d7.5131259!16s%2Fg%2F11c1h3w12l?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
-            { id: 'moltkestr', title: 'Moltkestraße 75', address: 'Moltkestraße 75, 44536 Lünen', lat: 51.6148, lon: 7.4971, count: '2x', kw: '22 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Moltkestra%C3%9Fe+75,+44536+L%C3%BCnen/@51.6148069,7.4945678,17z/data=!3m1!4b1!4m6!3m5!1s0x47b90fffb47094eb:0xbb4bfc66c1d0dd6e!8m2!3d51.6148036!4d7.4971481!16s%2Fg%2F11c0zmz805?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
-            { id: 'nelkenweg', title: 'Nelkenweg 6', address: 'Nelkenweg 6, 44532 Lünen-Niederaden', lat: 51.5949, lon: 7.5543, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Nelkenweg+6,+44532+L%C3%BCnen-Niederaden/@51.5948995,7.5440003,15z/data=!4m6!3m5!1s0x47b911cf16318427:0xda36101209fc07c1!8m2!3d51.5949!4d7.5543!16s%2Fg%2F11c2bnt8kw?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
-            { id: 'ottoklug', title: 'Otto-Klug-Weg 14', address: 'Otto-Klug-Weg 14, 44534 Lünen', lat: 51.6225, lon: 7.5262, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Otto-Klug-Weg+14,+44534+L%C3%BCnen/@51.6225051,7.5236595,17z/data=!3m1!4b1!4m6!3m5!1s0x47b90fc2da72c205:0x691154eafbf14949!8m2!3d51.6225018!4d7.5262398!16s%2Fg%2F11g1x358s8?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
-            { id: 'parkstr', title: 'Parkstraße 19', address: 'Parkstraße 19, 44532 Lünen', lat: 51.6099, lon: 7.5190, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Parkstra%C3%9Fe+19,+44532+L%C3%BCnen/@51.6099633,7.5164822,17z/data=!3m1!4b1!4m6!3m5!1s0x47b9101f91e00857:0xe0d5d07edd10c3af!8m2!3d51.60996!4d7.5190625!16s%2Fg%2F11q2v7ss_5?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
-            { id: 'schachtweg', title: 'Schachtweg 8B', address: 'Schachtweg 8B, 44532 Lünen', lat: 51.5831, lon: 7.5078, count: '1x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Schachtweg+8B,+44532+L%C3%BCnen/@51.583161,7.5052238,17z/data=!3m1!4b1!4m6!3m5!1s0x47b91068e04068e5:0x1209b2adcf871663!8m2!3d51.5831577!4d7.5078041!16s%2Fg%2F11c24rn2tl?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
-            { id: 'schulstr', title: 'Schulstraße 76', address: 'Schulstraße 76, 44534 Lünen', lat: 51.6267, lon: 7.5132, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Schulstra%C3%9Fe+76,+44534+L%C3%BCnen/@51.6268005,7.5106683,17z/data=!3m1!4b1!4m6!3m5!1s0x47b90fee69093579:0x9c049d0f2bc6a8cd!8m2!3d51.6267972!4d7.5132486!16s%2Fg%2F11c28d0rk1?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
-            { id: 'wilhelmallee', title: 'Wilhelm-Löbbe-Allee 24', address: 'Wilhelm-Löbbe-Allee 24, 44534 Lünen', lat: 51.6240, lon: 7.5433, count: '2x', kw: '22 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Wilhelm-L%C3%B6bbe-Allee+24,+44534+L%C3%BCnen/@51.6240671,7.5408087,17z/data=!3m1!4b1!4m6!3m5!1s0x47b90fce9ab924b5:0xa6af5fa4981baab!8m2!3d51.6240638!4d7.543389!16s%2Fg%2F11tk21xq32?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
-            
-            // Kamen
-            { id: 'goldbach', title: 'Goldbach 51', address: 'Goldbach 51, 59174 Kamen', lat: 51.5994, lon: 7.6715, count: '1x', kw: '11 kW', price: 0.38, city: 'Kamen', url: 'https://www.google.com/maps/place/Goldbach+51,+59174+Kamen/@51.5994138,7.6689513,17z/data=!3m1!4b1!4m6!3m5!1s0x47b9129db4168699:0x956ac9027f6d6f25!8m2!3d51.5994105!4d7.6715316!16s%2Fg%2F11cpmqz_gz?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
-            { id: 'grillostr', title: 'Grillostraße 103', address: 'Grillostraße 103, 59174 Kamen', lat: 51.5913, lon: 7.6467, count: '1x', kw: '11 kW', price: 0.38, city: 'Kamen', url: 'https://www.google.com/maps/place/Grillostra%C3%9Fe+103,+59174+Kamen/@51.5913223,7.644175,17z/data=!3m1!4b1!4m6!3m5!1s0x47b9126317628d81:0x4442efdb960f1758!8m2!3d51.591319!4d7.6467553!16s%2Fg%2F11c28gcpz3?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
-            { id: 'lessingstr', title: 'Lessingstraße 6', address: 'Lessingstraße 6, 59174 Kamen', lat: 51.5943, lon: 7.6526, count: '2x', kw: '11 kW', price: 0.38, city: 'Kamen', url: 'https://www.google.com/maps/place/Lessingstra%C3%9Fe+6,+59174+Kamen/@51.5943117,7.650076,17z/data=!3m1!4b1!4m6!3m5!1s0x47b9128790481235:0xe898dcd3cf3b00c9!8m2!3d51.5943084!4d7.6526563!16s%2Fg%2F11c1gmcb5x?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
-            { id: 'westickerstr', title: 'Westicker Str. 16', address: 'Westicker Str. 16, 59174 Kamen', lat: 51.5858, lon: 7.6589, count: '2x', kw: '22 kW', price: 0.38, city: 'Kamen', url: 'https://www.google.com/maps/place/Westicker+Str.+16,+59174+Kamen/@51.5858292,7.6563558,17z/data=!3m1!4b1!4m6!3m5!1s0x47b9128c3112cdf5:0xfd21647c576bb515!8m2!3d51.5858259!4d7.6589361!16s%2Fg%2F11c188894n?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
-
-            // Werne
-            { id: 'horsterstr', title: 'Horster Str. 83a', address: 'Horster Str. 83a, 59368 Werne', lat: 51.6712, lon: 7.6486, count: '1x', kw: '11 kW', price: 0.38, city: 'Werne', url: 'https://www.google.com/maps/place/Horster+Str.+83a,+59368+Werne/@51.6712121,7.6461137,17z/data=!3m1!4b1!4m6!3m5!1s0x47b90df8f7ffaf1f:0xa9438e1f105dd31e!8m2!3d51.6712088!4d7.648694!16s%2Fg%2F11sm7mllzb?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
-
-            // Bergkamen
-            { id: 'johannstr', title: 'Johann-Heuser-Straße 9', address: 'Johann-Heuser-Straße 9, 59192 Bergkamen', lat: 51.6228, lon: 7.6421, count: '1x', kw: '11 kW', price: 0.38, city: 'Bergkamen', url: 'https://www.google.com/maps/place/Johann-Heuser-Stra%C3%9Fe+9,+59192+Bergkamen/@51.6228563,7.6395893,17z/data=!3m1!4b1!4m6!3m5!1s0x47b90d9652197115:0x79b422375213eef8!8m2!3d51.622853!4d7.6421696!16s%2Fg%2F11c5kh_m8c?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' },
-
-            // Selm
-            { id: 'campus', title: 'Campus 6b', address: 'Campus 6b, 59379 Selm', lat: 51.6961, lon: 7.4658, count: '2x', kw: '11 kW', price: 0.38, city: 'Selm', url: 'https://www.google.com/maps/place/Campus+6b,+59379+Selm/@51.6961522,7.4632242,17z/data=!3m1!4b1!4m6!3m5!1s0x47b905d45cb1ff01:0x57cd9f2ca1863212!8m2!3d51.6961489!4d7.4658045!16s%2Fg%2F11pyfysymj?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D' }
+            { id: 'winkel13', title: 'Im Winkel 13', address: 'Im Winkel 13, 44536 Lünen-Brambauer', lat: 51.5976, lon: 7.4557, count: '2x', kw: '11 kW', price: 0.38, custom: true, city: 'Lünen', url: 'https://www.google.com/maps/place/Im+Winkel+13,+44536+L%C3%BCnen-Brambauer/@51.5976428,7.4531406,17z' },
+            { id: 'asternweg2', title: 'Asternweg 2', address: 'Asternweg 2, 44532 Lünen-Niederaden', lat: 51.5946, lon: 7.5563, count: '1x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Asternweg+2,+44532+L%C3%BCnen-Niederaden/@51.5946482,7.5537976,17z' },
+            { id: 'vogelsberg', title: 'Am Vogelsberg 106', address: 'Am Vogelsberg 106, 44534 Lünen', lat: 51.6296, lon: 7.5357, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Am+Vogelsberg+106,+44534+L%C3%BCnen/@51.6296932,7.5331728,17z' },
+            { id: 'bebelstr', title: 'Bebelstraße 188', address: 'Bebelstraße 188, 44532 Lünen', lat: 51.5894, lon: 7.5371, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Bebelstra%C3%9Fe+188,+44532+L%C3%BCnen/@51.589446,7.5345666,17z' },
+            { id: 'christianstr', title: 'Christian-Morgenstern-Straße 9', address: 'Christian-Morgenstern-Straße 9, 44534 Lünen', lat: 51.6212, lon: 7.5261, count: '1x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Christian-Morgenstern-Stra%C3%9Fe+9,+44534+L%C3%BCnen/@51.6212163,7.5236121,17z' },
+            { id: 'kurtstr', title: 'Kurt-Schumacher-Straße 11', address: 'Kurt-Schumacher-Straße 11, 44534 Lünen', lat: 51.6173, lon: 7.5267, count: '2x', kw: '22 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/WBG+L%C3%BCnen/@51.6173435,7.5241458,17z' },
+            { id: 'luisenstr', title: 'Luisenhüttenstraße 24', address: 'Luisenhüttenstraße 24, 44536 Lünen', lat: 51.6137, lon: 7.5131, count: '2x', kw: '22 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Luisenh%C3%BCttenstra%C3%9Fe+24,+44536+L%C3%BCnen/@51.6137768,7.5105456,17z' },
+            { id: 'moltkestr', title: 'Moltkestraße 75', address: 'Moltkestraße 75, 44536 Lünen', lat: 51.6148, lon: 7.4971, count: '2x', kw: '22 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Moltkestra%C3%9Fe+75,+44536+L%C3%BCnen/@51.6148069,7.4945678,17z' },
+            { id: 'nelkenweg', title: 'Nelkenweg 6', address: 'Nelkenweg 6, 44532 Lünen-Niederaden', lat: 51.5949, lon: 7.5543, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Nelkenweg+6,+44532+L%C3%BCnen-Niederaden/@51.5948995,7.5440003,15z' },
+            { id: 'ottoklug', title: 'Otto-Klug-Weg 14', address: 'Otto-Klug-Weg 14, 44534 Lünen', lat: 51.6225, lon: 7.5262, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Otto-Klug-Weg+14,+44534+L%C3%BCnen/@51.6225051,7.5236595,17z' },
+            { id: 'parkstr', title: 'Parkstraße 19', address: 'Parkstraße 19, 44532 Lünen', lat: 51.6099, lon: 7.5190, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Parkstra%C3%9Fe+19,+44532+L%C3%BCnen/@51.6099633,7.5164822,17z' },
+            { id: 'schachtweg', title: 'Schachtweg 8B', address: 'Schachtweg 8B, 44532 Lünen', lat: 51.5831, lon: 7.5078, count: '1x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Schachtweg+8B,+44532+L%C3%BCnen/@51.583161,7.5052238,17z' },
+            { id: 'schulstr', title: 'Schulstraße 76', address: 'Schulstraße 76, 44534 Lünen', lat: 51.6267, lon: 7.5132, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Schulstra%C3%9Fe+76,+44534+L%C3%BCnen/@51.6268005,7.5106683,17z' },
+            { id: 'wilhelmallee', title: 'Wilhelm-Löbbe-Allee 24', address: 'Wilhelm-Löbbe-Allee 24, 44534 Lünen', lat: 51.6240, lon: 7.5433, count: '2x', kw: '22 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Wilhelm-L%C3%B6bbe-Allee+24,+44534+L%C3%BCnen/@51.6240671,7.5408087,17z' },
+            { id: 'goldbach', title: 'Goldbach 51', address: 'Goldbach 51, 59174 Kamen', lat: 51.5994, lon: 7.6715, count: '1x', kw: '11 kW', price: 0.38, city: 'Kamen', url: 'https://www.google.com/maps/place/Goldbach+51,+59174+Kamen/@51.5994138,7.6689513,17z' },
+            { id: 'grillostr', title: 'Grillostraße 103', address: 'Grillostraße 103, 59174 Kamen', lat: 51.5913, lon: 7.6467, count: '1x', kw: '11 kW', price: 0.38, city: 'Kamen', url: 'https://www.google.com/maps/place/Grillostra%C3%9Fe+103,+59174+Kamen/@51.5913223,7.644175,17z' },
+            { id: 'lessingstr', title: 'Lessingstraße 6', address: 'Lessingstraße 6, 59174 Kamen', lat: 51.5943, lon: 7.6526, count: '2x', kw: '11 kW', price: 0.38, city: 'Kamen', url: 'https://www.google.com/maps/place/Lessingstra%C3%9Fe+6,+59174+Kamen/@51.5943117,7.650076,17z' },
+            { id: 'westickerstr', title: 'Westicker Str. 16', address: 'Westicker Str. 16, 59174 Kamen', lat: 51.5858, lon: 7.6589, count: '2x', kw: '22 kW', price: 0.38, city: 'Kamen', url: 'https://www.google.com/maps/place/Westicker+Str.+16,+59174+Kamen/@51.5858292,7.6563558,17z' },
+            { id: 'horsterstr', title: 'Horster Str. 83a', address: 'Horster Str. 83a, 59368 Werne', lat: 51.6712, lon: 7.6486, count: '1x', kw: '11 kW', price: 0.38, city: 'Werne', url: 'https://www.google.com/maps/place/Horster+Str.+83a,+59368+Werne/@51.6712121,7.6461137,17z' },
+            { id: 'johannstr', title: 'Johann-Heuser-Straße 9', address: 'Johann-Heuser-Straße 9, 59192 Bergkamen', lat: 51.6228, lon: 7.6421, count: '1x', kw: '11 kW', price: 0.38, city: 'Bergkamen', url: 'https://www.google.com/maps/place/Johann-Heuser-Stra%C3%9Fe+9,+59192+Bergkamen/@51.6228563,7.6395893,17z' },
+            { id: 'campus', title: 'Campus 6b', address: 'Campus 6b, 59379 Selm', lat: 51.6961, lon: 7.4658, count: '2x', kw: '11 kW', price: 0.38, city: 'Selm', url: 'https://www.google.com/maps/place/Campus+6b,+59379+Selm/@51.6961522,7.4632242,17z' }
         ];
 
         function initApp() {
@@ -362,21 +204,6 @@
                 document.documentElement.classList.add('dark');
                 document.getElementById('themeIcon').className = "fa-solid fa-moon text-xs";
             }
-
-            if (window.matchMedia) {
-                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-                    if (!localStorage.getItem('wbg_theme')) {
-                        if (e.matches) {
-                            document.documentElement.classList.add('dark');
-                            document.getElementById('themeIcon').className = "fa-solid fa-moon text-xs";
-                        } else {
-                            document.documentElement.classList.remove('dark');
-                            document.getElementById('themeIcon').className = "fa-solid fa-sun text-xs";
-                        }
-                    }
-                });
-            }
-
             requestGpsLocation(true);
         }
 
@@ -399,8 +226,6 @@
                     (pos) => {
                         userLat = pos.coords.latitude;
                         userLon = pos.coords.longitude;
-                        localStorage.setItem('wbg_lat', userLat);
-                        localStorage.setItem('wbg_lon', userLon);
                         fetchWeather();
                         processStations();
                     },
@@ -421,24 +246,16 @@
             fetch(`https://api.open-meteo.com/v1/forecast?latitude=${userLat}&longitude=${userLon}&current=temperature_2m&timezone=auto`)
                 .then(res => res.json())
                 .then(data => {
-                    let temp = 15;
-                    if (data && data.current && data.current.temperature_2m !== undefined) {
-                        temp = data.current.temperature_2m;
-                    }
-                    
+                    let temp = (data && data.current && data.current.temperature_2m !== undefined) ? data.current.temperature_2m : 15;
                     if (temp > 20) currentLossFactor = 1.04;
                     else if (temp >= 10) currentLossFactor = 1.07;
                     else if (temp >= 0) currentLossFactor = 1.12;
                     else currentLossFactor = 1.18;
-                    
-                    let lossPct = Math.round((currentLossFactor - 1) * 100);
                     weatherLoaded = true;
                     calculateMetrics();
                 })
                 .catch(() => {
-                    let temp = 15;
                     currentLossFactor = 1.07;
-                    let lossPct = Math.round((currentLossFactor - 1) * 100);
                     calculateMetrics();
                 });
         }
@@ -450,12 +267,35 @@
 
         function calculateMetrics() {
             let netCapacity = parseFloat(document.getElementById('batterySizeInput').value) || 60;
-            let start = parseInt(document.getElementById('startSoc').value) || 20;
-            let target = parseInt(document.getElementById('targetSoc').value) || 80;
-            if (start >= target) target = start + 5;
+            let start = parseInt(document.getElementById('startSoc').value) || 0;
+            let target = parseInt(document.getElementById('targetSoc').value) || 0;
+            
+            if (start > target) {
+                target = start;
+            }
 
             document.getElementById('startVal').innerText = start + '%';
             document.getElementById('targetVal').innerText = target + '%';
+
+            const startValEl = document.getElementById('startVal');
+            startValEl.className = "font-bold ";
+            if (start < 15) {
+                startValEl.className += "text-red-500 dark:text-red-400";
+            } else if (start <= 25) {
+                startValEl.className += "text-amber-500 dark:text-amber-400";
+            } else {
+                startValEl.className += "text-gray-900 dark:text-white";
+            }
+
+            const targetValEl = document.getElementById('targetVal');
+            targetValEl.className = "font-bold ";
+            if (target < 50) {
+                targetValEl.className += "text-amber-500 dark:text-amber-400";
+            } else if (target <= 80) {
+                targetValEl.className += "text-emerald-500 dark:text-emerald-400";
+            } else {
+                targetValEl.className += "text-emerald-600 dark:text-emerald-300 font-black";
+            }
 
             let socDiff = target - start;
             let netKwh = (netCapacity * socDiff) / 100;
@@ -484,6 +324,7 @@
             document.getElementById('topFinishTime').innerText = `${timeString} Uhr`;
             document.getElementById('topDuration').innerText = `Ladezeit: ${durationStr}`;
             document.getElementById('topCostVal').innerText = cost;
+            if (heroKwhSub) heroKwhSub.innerText = `${grossKwh.toFixed(1)} kWh geladen`;
 
             return { cost: cost, duration: durationStr };
         }
@@ -515,18 +356,10 @@
 
         function shareStation(title, address, kw, count, mapsUrl) {
             const shortMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(title + ', ' + address)}`;
-            const shareText = `⚡ WBG Ladestation: ${title}
-📍 ${address}
-🔌 Leistung: ${kw} AC (${count} Ladepunkte)
-💰 Tarif: 0,38 € / kWh
-🗺️ Navigieren: ${shortMapsUrl}`;
+            const shareText = `⚡ WBG Ladestation: ${title}\n📍 ${address}\n🔌 Leistung: ${kw} AC (${count} Ladepunkte)\n💰 Tarif: 0,38 € / kWh\n🗺️ Navigieren: ${shortMapsUrl}`;
 
             if (navigator.share) {
-                navigator.share({
-                    title: `WBG: ${title}`,
-                    text: shareText,
-                    url: shortMapsUrl
-                }).catch(() => {});
+                navigator.share({ title: `WBG: ${title}`, text: shareText, url: shortMapsUrl }).catch(() => {});
             } else {
                 navigator.clipboard.writeText(shareText);
                 alert("Ladedetails in die Zwischenablage kopiert!");
@@ -536,7 +369,6 @@
         function createCardHtml(st, isFav, isNearest, metrics) {
             const distText = st.distance < 1 ? (st.distance * 1000).toFixed(0) + ' m' : st.distance.toFixed(1) + ' km';
             const starClass = isFav ? "fa-solid text-amber-400" : "fa-regular text-gray-400 hover:text-amber-300";
-            
             const streetOnly = st.title.includes(',') ? st.title.split(',')[0].trim() : st.title;
             const cleanAddress = st.address.includes(',') ? st.address.split(',')[1].trim() : st.address;
 
@@ -582,7 +414,6 @@
         function processStations() {
             const listContainer = document.getElementById('stationCardsContainer');
             listContainer.innerHTML = '';
-
             const metrics = calculateMetrics();
 
             wbgStations = rawWbgData.map(st => {
@@ -591,7 +422,6 @@
             });
 
             wbgStations.sort((a, b) => a.distance - b.distance);
-
             const nearestStationId = wbgStations.length > 0 ? wbgStations[0].id : null;
 
             let filteredStations = wbgStations;
@@ -600,7 +430,6 @@
             }
 
             document.getElementById('stationCount').innerText = `${filteredStations.length} von ${wbgStations.length} Standorten`;
-
             filteredStations = filteredStations.filter(st => !favorites.includes(st.id));
 
             const favStations = wbgStations.filter(st => favorites.includes(st.id));
@@ -629,7 +458,6 @@
             filteredStations.forEach((st) => {
                 const isFav = favorites.includes(st.id);
                 const isNearest = (st.id === nearestStationId);
-
                 const cardWrapper = document.createElement('div');
                 cardWrapper.innerHTML = createCardHtml(st, isFav, isNearest, metrics);
                 listContainer.appendChild(cardWrapper.firstElementChild);
@@ -640,57 +468,16 @@
             currentFilter = cityName;
             ['Alle', 'Lünen', 'Kamen', 'Werne', 'Bergkamen', 'Selm'].forEach(city => {
                 const btn = document.getElementById(`filter-${city}`);
-                if (city === cityName) {
-                    btn.className = "bg-emerald-600 text-white px-1 py-1 rounded-lg font-bold flex-1 text-center text-[10px] transition";
-                } else {
-                    btn.className = "bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-1 py-1 rounded-lg flex-1 text-center text-[10px] transition";
+                if (btn) {
+                    if (city === cityName) {
+                        btn.className = "bg-emerald-600 text-white px-1 py-1 rounded-lg font-bold flex-1 text-center text-[10px] transition";
+                    } else {
+                        btn.className = "bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-1 py-1 rounded-lg flex-1 text-center text-[10px] transition";
+                    }
                 }
             });
             processStations();
         }
-
-        let startY = 0;
-        let isPulling = false;
-        const stationListEl = document.getElementById('stationList');
-
-        window.addEventListener('touchstart', (e) => {
-            const scrollTop = stationListEl ? stationListEl.scrollTop : (window.pageYOffset || window.scrollY);
-            if (scrollTop <= 2) {
-                startY = e.touches[0].pageY;
-                isPulling = true;
-            } else {
-                isPulling = false;
-            }
-        }, { passive: true });
-
-        window.addEventListener('touchmove', (e) => {
-            if (!isPulling) return;
-            let currentY = e.touches[0].pageY;
-            const scrollTop = stationListEl ? stationListEl.scrollTop : (window.pageYOffset || window.scrollY);
-            
-            if (currentY - startY > 130 && scrollTop <= 2) {
-                isPulling = false;
-                const refreshEl = document.getElementById('refreshIndicator');
-                if (refreshEl) {
-                    refreshEl.classList.add('active-refresh');
-                }
-                
-                requestGpsLocation(true);
-                weatherLoaded = false;
-                fetchWeather();
-                processStations();
-                
-                setTimeout(() => {
-                    if (refreshEl) {
-                        refreshEl.classList.remove('active-refresh');
-                    }
-                }, 1600);
-            }
-        }, { passive: true });
-
-        window.addEventListener('touchend', () => {
-            isPulling = false;
-        }, { passive: true });
 
         window.onload = initApp;
     </script>
