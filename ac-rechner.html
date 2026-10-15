@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tesla AC-Laderechner</title>
+    <link rel="icon" type="image/png" href="icons/hedgehog.png">
+    
+    <meta name="theme-color" content="#161616" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#F1F1F1" media="(prefers-color-scheme: light)">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <style>
+        :root {
+            /* TESLA LIGHT MODE */
+            --bg-color: #F1F1F1;
+            --card-bg: #FFFFFF;
+            --card-inner: #FFFFFF;
+            --text-color: #111111;
+            --title-color: #111111;
+            --tile-bg: #FFFFFF;
+            --tile-border: rgba(0, 0, 0, 0.08);
+            --name-color: #777777;
+            --section-color: #888888;
+            --hover-bg: rgba(0, 0, 0, 0.04);
+            
+            --accent-blue: #007AFF;
+            --live-red: #E82127;
+            --tesla-green: #3CC13F;
+            --fav-gold: #FFC700;
+            
+            --batt-glow: rgba(60, 193, 63, 0.25);
+            --slider-track: #E2E2E2;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* TESLA DARK MODE */
+                --bg-color: #161616;
+                --card-bg: #2A2A2A;
+                --card-inner: #2A2A2A;
+                --text-color: #FFFFFF;
+                --title-color: #FFFFFF;
+                --tile-bg: #2A2A2A;
+                --tile-border: rgba(255, 255, 255, 0.08);
+                --name-color: #999999;
+                --section-color: #AAAAAA;
+                --hover-bg: rgba(255, 255, 255, 0.06);
+                
+                --accent-blue: #007AFF;
+                --live-red: #E82127;
+                --tesla-green: #3CC13F;
+                --fav-gold: #FFC700;
+                
+                --slider-track: #1C1C1C;
+                --batt-glow: rgba(60, 193, 63, 0.35);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text-color);
+            margin: 0;
+            padding: 12px 16px 36px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100dvh;
+            box-sizing: border-box;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .top-bar {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--tile-border);
+            gap: 12px;
+        }
+
+        .back-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--tile-border);
+            color: var(--text-color);
+            padding: 6px 12px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.15s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .back-btn:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .page-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--title-color);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .title-bolt-wrap {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: var(--hover-bg);
+            border: 1px solid var(--tile-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+        }
+
+        .top-spacer {
+            width: 85px;
+            flex-shrink: 0;
+        }
+
+        .layout-grid {
+            width: 100%;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1fr 1.15fr;
+            gap: 16px;
+            align-items: start;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--tile-border);
+            border-radius: 18px;
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            min-width: 0;
+            position: relative;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--tile-border);
+            padding-bottom: 8px;
+            margin-bottom: 2px;
+        }
+
+        .card-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--section-color);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .badge-type {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2.5px 8px;
+            border-radius: 6px;
+            border: 1px solid var(--tile-border);
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            background: var(--hover-bg);
+            color: var(--text-color);
+        }
+
+        select {
+            background-color: var(--card-inner);
+            border: 1px solid var(--tile-border);
+            color: var(--text-color);
+            font-size: 13.5px;
+            font-weight: 500;
+            padding: 9px 12px;
+            border-radius: 11px;
+            outline: none;
+            width: 100%;
+            transition: border-color 0.15s ease;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+
+        select:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .slider-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .hud-pill {
+            font-size: 13px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 6px;
+            letter-spacing: -0.2px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .hud-start {
+            background: var(--hover-bg);
+            color: var(--name-color);
+            border: 1px solid var(--tile-border);
+        }
+
+        .hud-target {
+            background: rgba(60, 193, 63, 0.15);
+            color: var(--tesla-green);
+            border: 1px solid rgba(60, 193, 63, 0.4);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 9px;
+            border-radius: 8px;
+            background: var(--slider-track);
+            outline: none;
+            margin: 5px 0;
+            cursor: pointer;
+        }
+
+        #startSoc {
+            background: linear-gradient(to right, var(--section-color) 0%, var(--section-color) var(--start-pct, 16%), var(--slider-track) var(--start-pct, 16%), var(--slider-track) 100%);
+        }
+
+        #targetSoc {
+            background: linear-gradient(to right, var(--tesla-green) 0%, var(--tesla-green) var(--target-pct, 84%), var(--slider-track) var(--target-pct, 84%), var(--slider-track) 100%);
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+            border: 2px solid var(--section-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        #targetSoc::-webkit-slider-thumb {
+            border-color: var(--tesla-green);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover, input[type="range"]:active::-webkit-slider-thumb {
+            transform: scale(1.15);
+        }
+
+        .preset-chips {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-top: 2px;
+        }
+
+        .chip-btn {
+            background: var(--card-inner);
+            border: 1px solid var(--tile-border);
+            color: var(--name-color);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 5px 9px;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .chip-btn:hover {
+            color: var(--text-color);
+            background: var(--hover-bg);
+        }
+
+        .chip-btn.active {
+            background: rgba(0, 122, 255, 0.12);
+            color: var(--accent-blue);
+            border-color: var(--accent-blue);
+            font-weight: 700;
+        }
+
+        .chip-sub {
+            font-size: 8.5px;
+            opacity: 0.85;
+            padding: 1px 3px;
+            background: var(--card-bg);
+            border-radius: 4px;
+            line-height: 1;
+        }
+
+        .sweet-spot-box {
+            background: var(--card-inner);
+            border: 1px solid var(--tile-border);
+            border-left: 3px solid var(--accent-blue);
+            border-radius: 11px;
+            padding: 9px 12px;
+            font-size: 11.5px;
+            color: var(--text-color);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            line-height: 1.35;
+        }
+
+        .sweet-spot-icon-wrap {
+            width: 24px;
+            height: 24px;
+            border-radius: 7px;
+            background: rgba(0, 122, 255, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: var(--accent-blue);
+        }
+
+        .sweet-spot-body {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .sweet-spot-title {
+            font-size: 9.5px;
+            font-weight: 800;
+            letter-spacing: 0.6px;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+        }
+
+        .power-spec-badge {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--accent-blue);
+            background: rgba(0, 122, 255, 0.12);
+            border: 1px solid rgba(0, 122, 255, 0.3);
+            padding: 2px 7px;
+            border-radius: 6px;
+            letter-spacing: 0.2px;
+            white-space: nowrap;
+        }
+
+        .power-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+
+        .power-btn {
+            background: var(--card-inner);
+            border: 1px solid var(--tile-border);
+            border-radius: 10px;
+            padding: 8px 4px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            transition: all 0.15s ease;
+            color: var(--name-color);
+            position: relative;
+        }
+
+        .power-btn:hover {
+            background: var(--hover-bg);
+            color: var(--text-color);
+        }
+
+        .power-btn.active {
+            background: rgba(0, 122, 255, 0.12);
+            border-color: var(--accent-blue);
+            color: var(--text-color);
+        }
+
+        .power-btn-val {
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            color: var(--text-color);
+        }
+
+        .power-btn.active .power-btn-val {
+            color: var(--accent-blue);
+        }
+
+        .power-btn-sub {
+            font-size: 8.5px;
+            font-weight: 600;
+            opacity: 0.75;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* Goldener Favoritenstern oben rechts */
+        .power-fav-star {
+            position: absolute;
+            top: 4px;
+            right: 5px;
+            width: 14px;
+            height: 14px;
+            color: var(--section-color);
+            opacity: 0.3;
+            transition: all 0.2s ease;
+        }
+
+        .power-btn.favorite .power-fav-star {
+            color: var(--fav-gold);
+            opacity: 1;
+            filter: drop-shadow(0 0 3px rgba(255, 199, 0, 0.5));
+        }
+
+        .power-fine-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 5px 10px;
+            background: var(--card-inner);
+            border-radius: 10px;
+            border: 1px solid var(--tile-border);
+            margin-top: 2px;
+        }
+
+        .power-fine-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--name-color);
+        }
+
+        .cockpit-stepper-mini {
+            display: flex;
+            align-items: center;
+            background: var(--card-inner);
+            border: 1px solid var(--tile-border);
+            border-radius: 8px;
+            padding: 2px 4px;
+            gap: 4px;
+        }
+
+        .step-btn-mini {
+            background: var(--hover-bg);
+            border: none;
+            color: var(--text-color);
+            width: 22px;
+            height: 22px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s ease;
+        }
+
+        .step-btn-mini:hover {
+            background: var(--tile-border);
+        }
+
+        .cockpit-stepper-mini input {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 12px;
+            font-weight: 700;
+            width: 40px;
+            text-align: center;
+            padding: 0;
+            outline: none;
+        }
+
+        .step-unit-mini {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--section-color);
+            padding-right: 2px;
+        }
+
+        .cockpit-stepper {
+            background: var(--card-inner);
+            border: 1px solid var(--tile-border);
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 3px 6px;
+        }
+
+        .cockpit-stepper:focus-within {
+            border-color: var(--accent-blue);
+        }
+
+        .step-btn {
+            background: var(--hover-bg);
+            border: 1px solid var(--tile-border);
+            color: var(--text-color);
+            width: 26px;
+            height: 26px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+            flex-shrink: 0;
+        }
+
+        .step-btn:hover {
+            background: var(--tile-border);
+        }
+
+        .stepper-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .stepper-center input {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 13.5px;
+            font-weight: 700;
+            width: 44px;
+            text-align: right;
+            padding: 2px 0;
+            outline: none;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .stepper-unit {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--section-color);
+            white-space: nowrap;
+        }
+
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+
+        .battery-gauge-card {
+            background: var(--card-inner);
+            border: 1px solid var(--tile-border);
+            border-radius: 16px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+        }
+
+        .gauge-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .gauge-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--section-color);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .gauge-charged-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--tesla-green);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .charge-pulse-icon {
+            display: inline-block;
+            animation: pulseBolt 1.6s ease-in-out infinite;
+        }
+
+        @keyframes pulseBolt {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px var(--tesla-green)); }
+            50% { transform: scale(1.2); filter: drop-shadow(0 0 8px var(--tesla-green)); }
+        }
+
+        .battery-frame-container {
+            width: 100%;
+            padding-right: 7px;
+            box-sizing: border-box;
+        }
+
+        .battery-outer-frame {
+            width: 100%;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.15);
+            border: 2px solid var(--tile-border);
+            border-radius: 12px;
+            padding: 3px;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .battery-outer-frame::after {
+            content: "";
+            position: absolute;
+            right: -7px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 16px;
+            background: var(--section-color);
+            border-radius: 0 3px 3px 0;
+        }
+
+        .battery-cell-ticks {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 4;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent calc(20% - 1px),
+                rgba(255, 255, 255, 0.1) calc(20% - 1px),
+                rgba(255, 255, 255, 0.1) 20%
+            );
+        }
+
+        .battery-track {
+            width: 100%;
+            height: 100%;
+            border-radius: 7px;
+            position: relative;
+            overflow: hidden;
+            background: var(--hover-bg);
+        }
+
+        .battery-base-bar {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            background: var(--section-color);
+            border-radius: 7px 0 0 7px;
+            transition: width 0.3s ease;
+            z-index: 1;
+        }
+
+        .battery-charge-bar {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            background: var(--tesla-green);
+            box-shadow: 0 0 16px var(--batt-glow);
+            border-radius: 0 7px 7px 0;
+            transition: left 0.3s ease, width 0.3s ease;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .charge-shimmer-wave {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.35) 50%,
+                transparent 100%
+            );
+            background-size: 200% 100%;
+            animation: shimmerWave 2.2s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes shimmerWave {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
+        }
+
+        .battery-scale {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9.5px;
+            font-weight: 600;
+            color: var(--section-color);
+            padding: 0 3px;
+        }
+
+        .finish-hero {
+            background: var(--card-inner);
+            border: 1px solid var(--tile-border);
+            border-radius: 14px;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 2px;
+            position: relative;
+        }
+
+        .hero-top-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .live-beacon {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: var(--tesla-green);
+            box-shadow: 0 0 8px var(--tesla-green);
+            display: inline-block;
+            position: relative;
+        }
+
+        .finish-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--section-color);
+        }
+
+        .finish-time-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 1px 0;
+        }
+
+        .finish-time-giant {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.8px;
+            color: var(--text-color);
+            line-height: 1.15;
+            white-space: nowrap;
+        }
+
+        .day-diff-badge {
+            background: rgba(60, 193, 63, 0.15);
+            border: 1px solid rgba(60, 193, 63, 0.4);
+            color: var(--tesla-green);
+            border-radius: 6px;
+            padding: 2px 7px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .finish-duration-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--name-color);
+            background: var(--hover-bg);
+            padding: 3px 9px;
+            border-radius: 6px;
+            border: 1px solid var(--tile-border);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px;
+        }
+
+        .metric-tile {
+            background: var(--card-inner);
+            border: 1px solid var(--tile-border);
+            border-radius: 12px;
+            padding: 10px 11px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            min-width: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-icon-wrap {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: var(--hover-bg);
+            color: var(--text-color);
+            border: 1px solid var(--tile-border);
+        }
+
+        .metric-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .metric-name {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--section-color);
+            letter-spacing: 0.4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .metric-val {
+            font-size: 16.5px;
+            font-weight: 700;
+            color: var(--text-color);
+            line-height: 1.15;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .metric-sub {
+            font-size: 10px;
+            color: var(--name-color);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .alert-box {
+            padding: 10px 12px;
+            border-radius: 11px;
+            font-size: 11.5px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            line-height: 1.35;
+            border: 1px solid var(--tile-border);
+            background: var(--card-inner);
+            color: var(--text-color);
+        }
+
+        .alert-box.safe {
+            border-color: rgba(60, 193, 63, 0.4);
+            color: var(--tesla-green);
+        }
+
+        .alert-box.safe .alert-icon-wrap {
+            background: rgba(60, 193, 63, 0.15);
+            color: var(--tesla-green);
+        }
+
+        .alert-box.warning {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .alert-box.warning .alert-icon-wrap {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+        .alert-icon-wrap {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        footer {
+            margin-top: 30px;
+            font-size: 11px;
+            color: var(--section-color);
+            text-align: center;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 860px) {
+            body { padding: 8px 10px 18px 10px; }
+            .layout-grid { grid-template-columns: 1fr; gap: 12px; }
+            .card { padding: 14px; gap: 10px; }
+            .finish-time-giant { font-size: 23px; }
+        }
+
+        @media (max-width: 619px) {
+            .top-spacer { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="index.html" class="back-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
+            Dashboard
+        </a>
+        <h1 class="page-title">
+            <div class="title-bolt-wrap">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+            Tesla AC-Laderechner
+        </h1>
+        <div class="top-spacer"></div>
+    </div>
+
+    <div class="layout-grid">
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20v-6M6 20V10M18 20V4"/></svg>
+                    Live Lade-Prognose
+                </span>
+                <span id="weatherInfoSub" style="font-size: 11px; color: var(--section-color); font-weight: 600;">Wetter: Lokal (15°C)</span>
+            </div>
+
+            <div class="battery-gauge-card">
+                <div class="gauge-header">
+                    <span class="gauge-label">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="7" width="16" height="10" rx="2"/><line x1="22" y1="11" x2="22" y2="13"/></svg>
+                        Akkustand-Hub
+                    </span>
+                    <span class="gauge-charged-text" id="gaugeHubText">
+                        <span class="charge-pulse-icon">⚡</span> +68 % geladen
+                    </span>
+                </div>
+                
+                <div class="battery-frame-container">
+                    <div class="battery-outer-frame">
+                        <div class="battery-cell-ticks"></div>
+                        <div class="battery-track">
+                            <div class="battery-base-bar" id="batteryBaseBar" style="width: 16%;"></div>
+                            <div class="battery-charge-bar" id="batteryChargeBar" style="left: 16%; width: 68%;">
+                                <div class="charge-shimmer-wave"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="battery-scale">
+                    <span>0%</span>
+                    <span>20%</span>
+                    <span>40%</span>
+                    <span>60%</span>
+                    <span>80%</span>
+                    <span>100%</span>
+                </div>
+            </div>
+
+            <div class="finish-hero">
+                <div class="hero-top-status">
+                    <span class="live-beacon"></span>
+                    <span class="finish-label">Voll geladen um ca.</span>
+                </div>
+                <div class="finish-time-row">
+                    <span class="finish-time-giant" id="resEndTime">--:-- Uhr</span>
+                    <span class="day-diff-badge" id="dayDiffBadge" style="display:none;">+1 Tag</span>
+                </div>
+                <div class="finish-duration-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span id="resTime">Dauer: -- Std. -- Min.</span>
+                </div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-tile">
+                    <div class="metric-icon-wrap">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    </div>
+                    <div class="metric-content">
+                        <span class="metric-name">Brutto Energie</span>
+                        <span class="metric-val" id="resKwh">-- kWh</span>
+                        <span class="metric-sub" id="resKwhNetto">Netto: -- kWh</span>
+                    </div>
+                </div>
+
+                <div class="metric-tile">
+                    <div class="metric-icon-wrap">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                    </div>
+                    <div class="metric-content">
+                        <span class="metric-name">Gesamtkosten</span>
+                        <span class="metric-val" id="resCost">-- €</span>
+                        <span class="metric-sub" id="resCostDetail">Inkl. Verluste</span>
+                    </div>
+                </div>
+
+                <div class="metric-tile">
+                    <div class="metric-icon-wrap">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    </div>
+                    <div class="metric-content">
+                        <span class="metric-name">Leistung</span>
+                        <span class="metric-val" id="resPowerDisplay">11 kW</span>
+                        <span class="metric-sub" id="resPowerPhase">AC 3-phasig</span>
+                    </div>
+                </div>
+
+                <div class="metric-tile">
+                    <div class="metric-icon-wrap">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+                    </div>
+                    <div class="metric-content">
+                        <span class="metric-name">Ladeverlust</span>
+                        <span class="metric-val" id="lossPercentDisplay">ca. 7 %</span>
+                        <span class="metric-sub" id="lossTempText">Temperaturbasiert</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="alertBox" class="alert-box safe">
+                <div class="alert-icon-wrap">
+                    <svg id="alertSvg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <span id="alertText">Ladezeit liegt im sicheren Zeitfenster.</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9L2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+                    Fahrzeug & Akku
+                </span>
+                <span id="battTypeBadge" class="badge-type">LFP Akku</span>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label-row" for="batteryProfile">
+                    <span>Modell & Batteriegröße</span>
+                </label>
+                <select id="batteryProfile" onchange="onProfileChange()">
+                    <option value="60" data-min="16" data-max="84" data-info="LFP-Optimum: 16% bis 84% (flache Zellkurve). Für das BMS gelegentlich auf 100% vollladen!" data-type="lfp">Model 3 / Y RWD (LFP ~60 kWh)</option>
+                    <option value="79" data-min="20" data-max="80" data-info="NMC-Optimum: 20% bis 80%. Vermeidet Zellstress und minimiert chemische Degradation." data-type="nmc">Model 3 / Y LR & Perf (NMC ~79 kWh)</option>
+                    <option value="100" data-min="20" data-max="80" data-info="NMC-Optimum: 20% bis 80% empfohlen für den täglichen Pendelverkehr." data-type="nmc">Model S / X Plaid/LR (NMC ~100 kWh)</option>
+                    <option value="55" data-min="15" data-max="85" data-info="Älteres LFP-Profil: Ca. 15% bis 85% als flacher, schonender Arbeitsbereich." data-type="lfp">Model 3 SR+ älter (LFP ~55 kWh)</option>
+                </select>
+            </div>
+
+            <div class="sweet-spot-box" id="sweetSpotBox">
+                <div class="sweet-spot-icon-wrap">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </div>
+                <div class="sweet-spot-body">
+                    <span class="sweet-spot-title">BMS Empfehlung</span>
+                    <span id="sweetSpotText">Lade-Empfehlung wird geladen...</span>
+                </div>
+            </div>
+
+            <div class="input-group slider-wrapper">
+                <div class="input-label-row">
+                    <span>Start Akkustand</span>
+                    <span id="startVal" class="hud-pill hud-start">16 %</span>
+                </div>
+                <input type="range" id="startSoc" min="0" max="99" value="16" oninput="updateValues()">
+            </div>
+
+            <div class="input-group slider-wrapper">
+                <div class="input-label-row">
+                    <span>Ziel Akkustand</span>
+                    <span id="targetVal" class="hud-pill hud-target">84 %</span>
+                </div>
+                <input type="range" id="targetSoc" min="1" max="100" value="84" oninput="updateValues()">
+                <div class="preset-chips">
+                    <button class="chip-btn" onclick="setTargetPreset(50)">50%</button>
+                    <button class="chip-btn" onclick="setTargetPreset(70)">70%</button>
+                    <button class="chip-btn" onclick="setTargetPreset(80)" title="NMC Empfehlung">80% <span class="chip-sub">NMC</span></button>
+                    <button class="chip-btn" onclick="setTargetPreset(84)" title="LFP Empfehlung">84% <span class="chip-sub">LFP</span></button>
+                    <button class="chip-btn" onclick="setTargetPreset(90)">90%</button>
+                    <button class="chip-btn" onclick="setTargetPreset(100)" title="Trip">100%</button>
+                </div>
+            </div>
+
+            <div style="border-top: 1px solid var(--tile-border); margin: 2px 0;"></div>
+
+            <div class="input-group">
+                <div class="input-label-row">
+                    <span>Ladeleistung</span>
+                    <span class="power-spec-badge" id="powerSpecBadge">AC 3-phasig • 16A</span>
+                </div>
+                
+                <div class="power-grid">
+                    <button type="button" class="power-btn active" data-power="11.0" onclick="setPower(11.0)">
+                        <svg class="power-fav-star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <span class="power-btn-val">11 kW</span>
+                        <span class="power-btn-sub">Standard</span>
+                    </button>
+                    <button type="button" class="power-btn" data-power="22.0" onclick="setPower(22.0)">
+                        <svg class="power-fav-star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <span class="power-btn-val">22 kW</span>
+                        <span class="power-btn-sub">Doppel</span>
+                    </button>
+                    <button type="button" class="power-btn" data-power="3.7" onclick="setPower(3.7)">
+                        <svg class="power-fav-star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <span class="power-btn-val">3,7 kW</span>
+                        <span class="power-btn-sub">Camping</span>
+                    </button>
+                    <button type="button" class="power-btn" data-power="2.3" onclick="setPower(2.3)">
+                        <svg class="power-fav-star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <span class="power-btn-val">2,3 kW</span>
+                        <span class="power-btn-sub">Schuko</span>
+                    </button>
+                </div>
+
+                <div class="power-fine-row">
+                    <span class="power-fine-label">Feinjustierung:</span>
+                    <div class="cockpit-stepper-mini">
+                        <button type="button" class="step-btn-mini" onclick="stepPower(-0.5)">−</button>
+                        <input type="number" id="chargePowerInput" value="11.0" step="0.1" min="1.0" max="22.0" oninput="onCustomPowerInput()">
+                        <span class="step-unit-mini">kW</span>
+                        <button type="button" class="step-btn-mini" onclick="stepPower(0.5)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div class="input-group">
+                    <div class="input-label-row">
+                        <span>Strompreis</span>
+                    </div>
+                    <div class="cockpit-stepper">
+                        <button type="button" class="step-btn" onclick="stepPrice(-1)">−</button>
+                        <div class="stepper-center">
+                            <input type="number" id="kwhPriceCents" value="38" step="0.5" min="0" oninput="calculate()">
+                            <span class="stepper-unit">ct/kWh</span>
+                        </div>
+                        <button type="button" class="step-btn" onclick="stepPrice(1)">+</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <div class="input-label-row">
+                        <span>Standzeit-Limit</span>
+                    </div>
+                    <div class="cockpit-stepper">
+                        <button type="button" class="step-btn" onclick="stepLimit(-30)">−</button>
+                        <div class="stepper-center">
+                            <input type="number" id="blockLimit" value="240" step="10" min="0" oninput="calculate()">
+                            <span class="stepper-unit">Min.</span>
+                        </div>
+                        <button type="button" class="step-btn" onclick="stepLimit(30)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="input-label-row">
+                    <span>Blockiergebühr (nach Ablauf)</span>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <div class="cockpit-stepper" style="flex: 1;">
+                        <button type="button" class="step-btn" onclick="stepFee(-5)">−</button>
+                        <div class="stepper-center">
+                            <input type="number" id="blockFeeCents" value="10" step="1" min="0" oninput="calculate()">
+                            <span class="stepper-unit">ct/Min.</span>
+                        </div>
+                        <button type="button" class="step-btn" onclick="stepFee(5)">+</button>
+                    </div>
+                    <div class="preset-chips" style="margin-top: 0;">
+                        <button type="button" class="chip-btn" onclick="setFee(0)">0 ct</button>
+                        <button type="button" class="chip-btn" onclick="setFee(10)">10 ct</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        Tesla AC-Laderechner &copy; 2026 McWingen &bull; Optimiert für das Tesla Fahrzeug-Cockpit
+    </footer>
+
+    <script>
+        let currentLossFactor = 1.07;
+        let currentChargePower = 11.0;
+        let activeFavoritePower = parseFloat(localStorage.getItem('tesla_ac_active_fav') || '11.0');
+
+        function fetchWeatherLossFactor() {
+            let city = localStorage.getItem('tesla_dashboard_city') || 'Lünen';
+            fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=de&format=json`)
+                .then(res => res.json())
+                .then(geo => {
+                    if (geo.results && geo.results.length > 0) {
+                        let loc = geo.results[0];
+                        return fetch(`https://api.open-meteo.com/v1/forecast?latitude=${loc.latitude}&longitude=${loc.longitude}&current=temperature_2m&timezone=auto`);
+                    } else { throw new Error("Ort nicht gefunden"); }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.current && data.current.temperature_2m !== undefined) {
+                        calculateLossFactor(data.current.temperature_2m);
+                        calculate();
+                    }
+                })
+                .catch(err => { calculateLossFactor(15); });
+        }
+
+        function calculateLossFactor(temp) {
+            let tempRound = Math.round(temp);
+            if (temp > 20) {
+                currentLossFactor = 1.04;
+                document.getElementById('weatherInfoSub').innerText = `Wetter: ${tempRound}°C (Sommer)`;
+                document.getElementById('lossPercentDisplay').innerText = `ca. 4 %`;
+            } else if (temp >= 10) {
+                currentLossFactor = 1.07;
+                document.getElementById('weatherInfoSub').innerText = `Wetter: ${tempRound}°C (Mild)`;
+                document.getElementById('lossPercentDisplay').innerText = `ca. 7 %`;
+            } else if (temp >= 0) {
+                currentLossFactor = 1.12;
+                document.getElementById('weatherInfoSub').innerText = `Wetter: ${tempRound}°C (Kühl)`;
+                document.getElementById('lossPercentDisplay').innerText = `ca. 12 %`;
+            } else {
+                currentLossFactor = 1.18;
+                document.getElementById('weatherInfoSub').innerText = `Wetter: ${tempRound}°C (Frost)`;
+                document.getElementById('lossPercentDisplay').innerText = `ca. 18 %`;
+            }
+        }
+
+        function updateSweetSpotInfo() {
+            let select = document.getElementById('batteryProfile');
+            if (!select || select.selectedIndex === -1) return;
+            let selectedOption = select.options[select.selectedIndex];
+            document.getElementById('sweetSpotText').innerText = selectedOption.getAttribute('data-info');
+            let battType = selectedOption.getAttribute('data-type');
+            let badge = document.getElementById('battTypeBadge');
+            badge.innerText = battType === 'nmc' ? 'NMC Akku' : 'LFP Akku';
+        }
+
+        function onProfileChange() {
+            let select = document.getElementById('batteryProfile');
+            if (!select || select.selectedIndex === -1) return;
+            let selectedOption = select.options[select.selectedIndex];
+            document.getElementById('startSoc').value = parseInt(selectedOption.getAttribute('data-min'));
+            document.getElementById('targetSoc').value = parseInt(selectedOption.getAttribute('data-max'));
+            updateValues();
+            updateSweetSpotInfo();
+        }
+
+        function setTargetPreset(val) {
+            let start = parseInt(document.getElementById('startSoc').value);
+            if (val <= start) { document.getElementById('startSoc').value = Math.max(0, val - 10); }
+            document.getElementById('targetSoc').value = val;
+            updateValues();
+        }
+
+        function updateValues() {
+            let start = parseInt(document.getElementById('startSoc').value);
+            let target = parseInt(document.getElementById('targetSoc').value);
+            if (start >= target) {
+                document.getElementById('targetSoc').value = start + 1;
+                target = start + 1;
+            }
+            document.getElementById('startVal').innerText = start + " %";
+            document.getElementById('targetVal').innerText = target + " %";
+            document.getElementById('startSoc').style.setProperty('--start-pct', start + '%');
+            document.getElementById('targetSoc').style.setProperty('--target-pct', target + '%');
+            let hub = target - start;
+            document.getElementById('batteryBaseBar').style.width = start + "%";
+            document.getElementById('batteryChargeBar').style.left = start + "%";
+            document.getElementById('batteryChargeBar').style.width = hub + "%";
+            document.getElementById('gaugeHubText').innerHTML = `<span class="charge-pulse-icon">⚡</span> +${hub} % geladen`;
+            document.querySelectorAll('.chip-btn').forEach(btn => {
+                if (parseInt(btn.innerText) === target) { btn.classList.add('active'); }
+                else { btn.classList.remove('active'); }
+            });
+            calculate();
+        }
+
+        function setPower(val) {
+            currentChargePower = val;
+            activeFavoritePower = val;
+            localStorage.setItem('tesla_ac_active_fav', val);
+            document.getElementById('chargePowerInput').value = val.toFixed(1);
+            updatePowerUI();
+            calculate();
+        }
+
+        function stepPower(delta) {
+            let newPower = Math.round((currentChargePower + delta) * 10) / 10;
+            if (newPower < 1.0) newPower = 1.0;
+            if (newPower > 22.0) newPower = 22.0;
+            currentChargePower = newPower;
+            document.getElementById('chargePowerInput').value = newPower.toFixed(1);
+            updatePowerUI();
+            calculate();
+        }
+
+        function onCustomPowerInput() {
+            let val = parseFloat(document.getElementById('chargePowerInput').value);
+            if (!isNaN(val) && val >= 1.0 && val <= 22.0) {
+                currentChargePower = val;
+                updatePowerUI();
+                calculate();
+            }
+        }
+
+        function updatePowerUI() {
+            document.querySelectorAll('.power-btn').forEach(btn => {
+                let p = parseFloat(btn.getAttribute('data-power'));
+                if (Math.abs(p - currentChargePower) < 0.05) { btn.classList.add('active'); }
+                else { btn.classList.remove('active'); }
+
+                if (Math.abs(p - activeFavoritePower) < 0.05) {
+                    btn.classList.add('favorite');
+                } else {
+                    btn.classList.remove('favorite');
+                }
+            });
+            let badge = document.getElementById('powerSpecBadge');
+            if (currentChargePower === 11.0) badge.innerText = 'AC 3-phasig • 16A';
+            else if (currentChargePower === 22.0) badge.innerText = 'AC 3-phasig • 32A';
+            else if (currentChargePower === 3.7) badge.innerText = 'AC 1-phasig • 16A';
+            else if (currentChargePower === 2.3) badge.innerText = 'AC 1-phasig • 10A';
+            else badge.innerText = `Individuell • ${currentChargePower >= 11.0 ? '3-phasig' : '1-phasig'}`;
+        }
+
+        function stepPrice(delta) {
+            let inp = document.getElementById('kwhPriceCents');
+            inp.value = Math.max(0, Math.round(((parseFloat(inp.value) || 0) + delta) * 10) / 10);
+            calculate();
+        }
+
+        function stepLimit(delta) {
+            let inp = document.getElementById('blockLimit');
+            inp.value = Math.max(0, (parseInt(inp.value) || 0) + delta);
+            calculate();
+        }
+
+        function stepFee(delta) {
+            let inp = document.getElementById('blockFeeCents');
+            inp.value = Math.max(0, (parseFloat(inp.value) || 0) + delta);
+            calculate();
+        }
+
+        function setFee(val) {
+            document.getElementById('blockFeeCents').value = val;
+            calculate();
+        }
+
+        function calculate() {
+            let netCapacity = parseFloat(document.getElementById('batteryProfile').value) || 60;
+            let start = parseInt(document.getElementById('startSoc').value) || 0;
+            let target = parseInt(document.getElementById('targetSoc').value) || 100;
+            let chargePower = currentChargePower;
+            let pricePerKwhCents = parseFloat(document.getElementById('kwhPriceCents').value) || 0;
+            let maxMinutes = parseInt(document.getElementById('blockLimit').value) || 0;
+            let blockFeeCentsPerMin = parseFloat(document.getElementById('blockFeeCents').value) || 0;
+
+            document.getElementById('resPowerDisplay').innerText = `${chargePower.toFixed(1).replace('.0', '')} kW`;
+            document.getElementById('resPowerPhase').innerText = chargePower >= 11 ? "AC 3-phasig" : "AC 1-phasig";
+
+            let socDiff = Math.max(0, target - start);
+            let netKwh = (netCapacity * socDiff) / 100;
+            let kwhWithLosses = netKwh * currentLossFactor;
+            let totalMinutes = Math.round((kwhWithLosses / chargePower) * 60);
+            let hrs = Math.floor(totalMinutes / 60);
+            let mins = totalMinutes % 60;
+
+            let now = new Date();
+            let finishTime = new Date(now.getTime() + totalMinutes * 60000);
+            document.getElementById('dayDiffBadge').style.display = finishTime.getDate() !== now.getDate() ? 'inline-flex' : 'none';
+
+            let energyCost = (kwhWithLosses * pricePerKwhCents) / 100;
+            let blockFeeTotal = 0;
+            let alertBox = document.getElementById('alertBox');
+            let alertText = document.getElementById('alertText');
+            let alertSvg = document.getElementById('alertSvg');
+
+            if (maxMinutes > 0) {
+                if (totalMinutes > maxMinutes) {
+                    let overMins = totalMinutes - maxMinutes;
+                    if (blockFeeCentsPerMin > 0) blockFeeTotal = (overMins * blockFeeCentsPerMin) / 100;
+                    alertBox.className = 'alert-box warning';
+                    alertSvg.innerHTML = '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>';
+                    alertText.innerText = `Achtung! Ladezeit überschreitet Standzeit-Limit um ca. ${overMins} Min.${blockFeeTotal > 0 ? ` (+ ${blockFeeTotal.toFixed(2)} €)` : ''}`;
+                } else {
+                    alertBox.className = 'alert-box safe';
+                    alertSvg.innerHTML = '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>';
+                    alertText.innerText = `Alles sicher! Ca. ${maxMinutes - totalMinutes} Minuten Puffer vor Ablauf der Standzeit.`;
+                }
+            } else {
+                alertBox.className = 'alert-box safe';
+                alertSvg.innerHTML = '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>';
+                alertText.innerText = `Kein Standzeit-Limit hinterlegt. Ladezeit basiert auf ${chargePower} kW AC.`;
+            }
+
+            let totalCost = energyCost + blockFeeTotal;
+            document.getElementById('resKwh').innerText = kwhWithLosses.toFixed(1) + ' kWh';
+            document.getElementById('resKwhNetto').innerText = `Netto: ${netKwh.toFixed(1)} kWh`;
+            document.getElementById('resTime').innerText = hrs > 0 ? `Dauer: ${hrs} Std. ${mins} Min.` : `Dauer: ${mins} Min.`;
+            document.getElementById('resEndTime').innerText = `${String(finishTime.getHours()).padStart(2, '0')}:${String(finishTime.getMinutes()).padStart(2, '0')} Uhr`;
+            document.getElementById('resCost').innerText = totalCost.toFixed(2) + ' €';
+            document.getElementById('resCostDetail').innerText = blockFeeTotal > 0 ? `Inkl. ${blockFeeTotal.toFixed(2)} € Blockiergebühr` : `Inkl. Verluste (${Math.round((currentLossFactor - 1) * 100)}%)`;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            currentChargePower = activeFavoritePower;
+            document.getElementById('chargePowerInput').value = currentChargePower.toFixed(1);
+            onProfileChange();
+            updatePowerUI();
+            fetchWeatherLossFactor();
+        });
+    </script>
+</body>
+</html>
