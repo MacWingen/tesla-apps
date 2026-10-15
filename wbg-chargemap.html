@@ -116,7 +116,7 @@
                     <span class="text-gray-600 dark:text-gray-300">Gewünschter Akkustand ➔ <strong id="targetVal" class="font-bold">80%</strong></span>
                 </div>
                 <div class="flex space-x-3 px-1">
-                    <input type="range" id="startSoc" min="0" max="100" value="20" oninput="calculateAll()" class="w-1/2">
+                    <input type="range" id="startSoc" min="0" max="95" value="20" oninput="calculateAll()" class="w-1/2">
                     <input type="range" id="targetSoc" min="0" max="100" value="80" oninput="calculateAll()" class="w-1/2">
                 </div>
             </div>
@@ -477,6 +477,42 @@
                 }
             });
             processStations();
+        }
+
+        // Pull-to-Refresh Logic
+        let touchStartY = 0;
+        let isPulling = false;
+        const stationListEl = document.getElementById('stationList');
+        const refreshIndicator = document.getElementById('refreshIndicator');
+
+        if (stationListEl) {
+            stationListEl.addEventListener('touchstart', (e) => {
+                if (stationListEl.scrollTop === 0) {
+                    touchStartY = e.touches[0].clientY;
+                    isPulling = true;
+                }
+            }, { passive: true });
+
+            stationListEl.addEventListener('touchmove', (e) => {
+                if (!isPulling) return;
+                const touchY = e.touches[0].clientY;
+                const diff = touchY - touchStartY;
+                if (diff > 50 && stationListEl.scrollTop === 0) {
+                    refreshIndicator.classList.add('active-refresh');
+                }
+            }, { passive: true });
+
+            stationListEl.addEventListener('touchend', (e) => {
+                if (!isPulling) return;
+                isPulling = false;
+                if (refreshIndicator.classList.contains('active-refresh')) {
+                    weatherLoaded = false;
+                    requestGpsLocation(false);
+                    setTimeout(() => {
+                        refreshIndicator.classList.remove('active-refresh');
+                    }, 1200);
+                }
+            }, { passive: true });
         }
 
         window.onload = initApp;
