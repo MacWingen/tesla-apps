@@ -14,7 +14,7 @@
     
     <style>
         :root {
-            /* TESLA LIGHT MODE (Original-Farbwerte aus Fotos) */
+            /* TESLA LIGHT MODE (Original-Farbwerte mit Tesla-Blau) */
             --bg-color: #F1F1F1;
             --card-bg: #FFFFFF;
             --text-color: #111111;
@@ -24,12 +24,16 @@
             --name-color: #888888;
             --section-color: #888888;
             --hover-bg: rgba(0, 0, 0, 0.05);
-            --accent-blue: #3CC13F;
+            --accent-blue: #007AFF;
+            --live-red: #E82127;
+            --fav-gold: #FFC700;
+            --update-green: #3CC13F;
+            --fav-glow: rgba(255, 199, 0, 0.12);
         }
 
         @media (prefers-color-scheme: dark) {
             :root {
-                /* TESLA DARK MODE (Original-Farbwerte aus Fotos) */
+                /* TESLA DARK MODE (Original-Farbwerte mit Tesla-Blau) */
                 --bg-color: #161616;
                 --card-bg: #2A2A2A;
                 --text-color: #FFFFFF;
@@ -39,7 +43,11 @@
                 --name-color: #AAAAAA;
                 --section-color: #AAAAAA;
                 --hover-bg: rgba(255, 255, 255, 0.07);
-                --accent-blue: #3CC13F;
+                --accent-blue: #007AFF;
+                --live-red: #E82127;
+                --fav-gold: #FFC700;
+                --update-green: #3CC13F;
+                --fav-glow: rgba(255, 199, 0, 0.18);
             }
         }
 
@@ -69,7 +77,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Top Bar - Glassmorphism sticky */
+        /* Top Bar - Glassmorphism sticky & absolut statisch (kein Wackeln) */
         .top-bar {
             width: 100%;
             max-width: 900px;
@@ -94,7 +102,7 @@
             display: none;
         }
 
-        /* Logo / Info Trigger */
+        /* Logo / Info Trigger mit originalem Update-Grün (statisch) */
         .brand-logo {
             display: flex;
             align-items: center;
@@ -158,7 +166,7 @@
             justify-content: center;
             gap: 2px;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: color 0.15s ease, background-color 0.15s ease;
             flex-shrink: 0;
             position: relative;
         }
@@ -166,7 +174,7 @@
         .bar-icon-btn:hover, .bar-icon-btn.active {
             color: var(--text-color);
             background: var(--hover-bg);
-            border: 1px solid var(--tile-border);
+            border: none;
         }
 
         .bar-icon-btn.playing-radio::after {
@@ -176,7 +184,7 @@
             right: 5px;
             width: 6px;
             height: 6px;
-            background-color: #3CC13F;
+            background-color: var(--accent-blue);
             border-radius: 50%;
         }
 
@@ -195,43 +203,45 @@
             border-radius: 50%;
         }
 
+        /* Minimalistisches, ruhiges Top-Bar Wetter Widget (statisch) */
         .top-weather-btn {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             background: transparent;
-            border: 1px solid transparent;
-            padding: 4px 8px;
+            border: none;
+            padding: 3px 6px;
             border-radius: 9px;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: background-color 0.15s ease;
             color: var(--text-color);
         }
 
         .top-weather-btn:hover {
             background-color: var(--hover-bg);
-            border-color: var(--tile-border);
         }
 
         .top-weather-icon-wrapper {
-            width: 20px;
-            height: 20px;
+            width: 16px;
+            height: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
+            opacity: 0.85;
         }
 
         .top-weather-icon-wrapper svg {
-            width: 18px;
-            height: 18px;
+            width: 15px;
+            height: 15px;
         }
 
         .top-weather-temp {
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: -0.3px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: -0.2px;
             color: var(--text-color);
             line-height: 1;
+            opacity: 0.9;
         }
 
         .tabs-container {
@@ -242,7 +252,7 @@
 
         .tab-btn {
             background: transparent;
-            border: 1px solid transparent;
+            border: none;
             color: var(--section-color);
             font-size: 13px;
             font-weight: 600;
@@ -250,13 +260,13 @@
             border-radius: 9px;
             cursor: pointer;
             white-space: nowrap;
-            transition: all 0.15s ease;
+            transition: color 0.15s ease, background-color 0.15s ease;
         }
 
         .tab-btn:hover, .tab-btn.active {
             color: var(--text-color);
             background: var(--hover-bg);
-            border-color: var(--tile-border);
+            border: none;
         }
 
         .genre-filter-container {
@@ -368,7 +378,6 @@
             font-size: 18px;
             font-weight: 400;
             line-height: 1;
-            transition: transform 0.15s ease;
         }
 
         .category-title.is-back::after {
@@ -376,7 +385,6 @@
             font-size: 18px;
             font-weight: 400;
             line-height: 1;
-            transition: transform 0.15s ease;
         }
 
         .category-title:hover {
@@ -432,12 +440,19 @@
             border: 1px solid var(--tile-border);
             position: relative;
             flex-shrink: 0;
-            transition: border-color 0.2s ease, transform 0.15s ease;
+            transition: transform 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease;
         }
 
+        /* Favoriten Schimmer-Effekt */
+        .app-item.is-favorite-tile .app-icon, .app-list-item.is-favorite-tile .app-list-icon {
+            background-color: var(--fav-glow);
+            box-shadow: 0 0 12px var(--fav-glow);
+        }
+
+        /* KEIN weißer/heller Rand beim Hovern über Kacheln */
         .app-item:hover .app-icon {
             transform: translateY(-2px);
-            border-color: var(--section-color);
+            border-color: var(--tile-border);
         }
 
         .press-border-svg {
@@ -452,7 +467,7 @@
 
         .press-border-rect {
             fill: none;
-            stroke: #3CC13F;
+            stroke: var(--accent-blue);
             stroke-width: 2;
             stroke-dasharray: 318;
             stroke-dashoffset: 318;
@@ -493,11 +508,12 @@
             color: var(--text-color);
         }
 
+        /* Live Badge in Rot */
         .app-item .live-badge {
             position: absolute;
             top: 6px;
             right: 6px;
-            background-color: #3CC13F;
+            background-color: var(--live-red);
             color: #fff;
             font-size: 8px;
             font-weight: 700;
@@ -513,7 +529,7 @@
             position: absolute;
             top: 3px;
             right: 3px;
-            background-color: #3CC13F;
+            background-color: var(--live-red);
             color: #fff;
             font-size: 7px;
             font-weight: 700;
@@ -529,12 +545,9 @@
             display: block;
         }
 
-        .app-item.playing .app-icon, .app-list-item.playing .app-list-icon {
-            border-color: #3CC13F;
-        }
-
+        /* KEIN roter Rahmen im aktiven Zustand, nur Tesla-Blau beim Halten */
         .app-item.is-holding .app-icon, .app-list-item.is-holding .app-list-icon {
-            border-color: #3CC13F;
+            border-color: var(--accent-blue);
         }
 
         .radio-state-overlay {
@@ -560,6 +573,7 @@
             height: 28px;
         }
 
+        /* Favoriten-Stern in Goldgelb */
         .fav-btn {
             position: absolute;
             bottom: 6px;
@@ -586,7 +600,7 @@
         }
 
         .fav-btn.is-fav {
-            color: #3CC13F;
+            color: var(--fav-gold);
             opacity: 1;
             transform: scale(1.2);
         }
@@ -648,7 +662,7 @@
             justify-content: center;
             flex-shrink: 0;
             position: relative;
-            transition: border-color 0.2s ease;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
         }
 
         .app-list-name {
@@ -671,7 +685,7 @@
         }
 
         .list-fav-btn.is-fav {
-            color: #3CC13F;
+            color: var(--fav-gold);
             transform: scale(1.15);
         }
 
@@ -1145,11 +1159,11 @@
 
         <div class="bar-divider"></div>
 
-        <!-- Wetter Button -->
+        <!-- Wetter Button (minimalistisch & ruhig im Tesla-Stil) -->
         <button class="top-weather-btn" onclick="toggleWeatherModal(true)" title="Wetter & 7-Tage-Vorhersage">
             <div class="top-weather-icon-wrapper" id="topBarWeatherIconContainer">
                 <svg viewBox="0 0 32 32">
-                    <circle cx="16" cy="16" r="7" fill="#3CC13F"/>
+                    <circle cx="16" cy="16" r="7" fill="currentColor" opacity="0.6"/>
                 </svg>
             </div>
             <span class="top-weather-temp" id="topBarTemp">--°</span>
@@ -1528,8 +1542,6 @@
         let activeGenre = 'all'; 
         let selectedLetter = null;
         
-        let categoryIds = ['all', 'streaming', 'productivity', 'musik', 'navigation', 'radio'];
-
         let favorites = JSON.parse(localStorage.getItem('tesla_dashboard_favs') || '[]');
 
         const globalAudio = document.getElementById('globalAudioStream');
@@ -1654,24 +1666,7 @@
                 favorites.splice(index, 1);
             }
             localStorage.setItem('tesla_dashboard_favs', JSON.stringify(favorites));
-
-            document.querySelectorAll(`[data-url="${CSS.escape(appUrl)}"]`).forEach(el => {
-                const favBtn = el.querySelector('.fav-btn, .list-fav-btn');
-                if (favBtn) {
-                    if (isNowFav) {
-                        favBtn.classList.add('is-fav');
-                    } else {
-                        favBtn.classList.remove('is-fav');
-                    }
-                }
-                
-                el.classList.add('just-favorited');
-                setTimeout(() => el.classList.remove('just-favorited'), 300);
-            });
-
-            setTimeout(() => {
-                renderDashboard();
-            }, 250);
+            renderDashboard();
         }
 
         function isFavorite(appUrl) {
@@ -1860,9 +1855,6 @@
             }
         }
 
-        let cachedNewsItems = null;
-        let lastNewsFetchTime = 0;
-
         function renderNewsItems(items) {
             const container = document.getElementById('newsModalBody');
             if (!container) return;
@@ -1911,17 +1903,12 @@
 
         function fetchWeltNews() {
             const container = document.getElementById('newsModalBody');
-            const now = Date.now();
+            container.innerHTML = `<div style="text-align: center; color: var(--section-color); padding: 20px;">Lade frische Eilmeldungen...</div>`;
 
-            if (cachedNewsItems && (now - lastNewsFetchTime < 5 * 60 * 1000)) {
-                renderNewsItems(cachedNewsItems);
-                return;
-            }
-
-            container.innerHTML = `<div style="text-align: center; color: var(--section-color); padding: 20px;">Lade Eilmeldungen...</div>`;
-
+            const cacheBuster = `&_cb=${Date.now()}`;
             const rssUrl = encodeURIComponent('https://www.welt.de/?service=Rss');
-            fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`)
+            
+            fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}${cacheBuster}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data && data.items && data.items.length > 0) {
@@ -1935,8 +1922,6 @@
                             items = data.items.slice(0, 5);
                         }
 
-                        cachedNewsItems = items;
-                        lastNewsFetchTime = Date.now();
                         renderNewsItems(items);
                     } else {
                         container.innerHTML = `<div style="text-align: center; color: var(--section-color); padding: 20px;">Keine aktuellen Eilmeldungen.</div>`;
@@ -1948,13 +1933,10 @@
         }
 
         function checkBackgroundNews() {
-            const now = Date.now();
-            if (cachedNewsItems && (now - lastNewsFetchTime < 5 * 60 * 1000)) {
-                return;
-            }
-
+            const cacheBuster = `&_cb=${Date.now()}`;
             const rssUrl = encodeURIComponent('https://www.welt.de/?service=Rss');
-            fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`)
+            
+            fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}${cacheBuster}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data && data.items && data.items.length > 0) {
@@ -1964,9 +1946,6 @@
                             return title.includes('eilmeldung') || title.includes('breaking') || cats.includes('eilmeldung') || cats.includes('breaking');
                         });
                         if (items.length === 0) items = data.items.slice(0, 5);
-
-                        cachedNewsItems = items;
-                        lastNewsFetchTime = Date.now();
 
                         if (items.length > 0 && items[0].pubDate) {
                             let latestPubTime = new Date(items[0].pubDate).getTime();
@@ -2048,7 +2027,7 @@
                 return `<svg class="${cls}" viewBox="0 0 32 32"><path d="M4 12h24M6 16h20M4 20h24M8 8h16" stroke="#888888" stroke-width="2.2" stroke-linecap="round"/></svg>`;
             }
             if ((code >= 51 && code <= 65) || (code >= 80 && code <= 82)) {
-                return `<svg class="${cls}" viewBox="0 0 32 32">${defs}<path d="M25 18H9a5.5 5.5 0 0 1-.7-10.9 6.5 6.5 0 0 1 12.5-1.8 4.5 4.5 0 0 1 3.2 12.7z" fill="url(#darkCloudGrad)" class="anim-cloud"/><path d="m11 22-1.5 5" class="anim-rain-1" stroke="#3CC13F" stroke-width="2.4" stroke-linecap="round"/><path d="m16 22-1.5 5" class="anim-rain-2" stroke="#3CC13F" stroke-width="2.4" stroke-linecap="round"/><path d="m21 22-1.5 5" class="anim-rain-3" stroke="#3CC13F" stroke-width="2.4" stroke-linecap="round"/></svg>`;
+                return `<svg class="${cls}" viewBox="0 0 32 32">${defs}<path d="M25 18H9a5.5 5.5 0 0 1-.7-10.9 6.5 6.5 0 0 1 12.5-1.8 4.5 4.5 0 0 1 3.2 12.7z" fill="url(#darkCloudGrad)" class="anim-cloud"/><path d="m11 22-1.5 5" class="anim-rain-1" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="m16 22-1.5 5" class="anim-rain-2" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="m21 22-1.5 5" class="anim-rain-3" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>`;
             }
             return `<svg class="${cls}" viewBox="0 0 32 32">${defs}<circle cx="16" cy="16" r="7" fill="url(#sunCore)" class="anim-sun-core"/></svg>`;
         }
@@ -2300,6 +2279,7 @@
                     favAppsList.forEach(app => {
                         let isPlaying = (currentPlayingId === app.id && !globalAudio.paused);
                         let isPlayingClass = isPlaying && app.isRadio ? ' app-list-item playing' : 'app-list-item';
+                        isPlayingClass += ' is-favorite-tile';
                         let isFav = isFavorite(app.url);
                         let favClass = isFav ? 'list-fav-btn is-fav' : 'list-fav-btn';
                         let iconContent = app.image 
@@ -2338,13 +2318,15 @@
                     }
                 });
 
-                if (selectedLetter && targetApps.length > 0) {
+                let nonFavTargetApps = targetApps.filter(app => !favorites.includes(app.url));
+
+                if (selectedLetter && nonFavTargetApps.length > 0) {
                     let sectionHTML = `
                         <div class="category-section">
                             <h2 class="category-title is-back" onclick="filterByLetter(null)" title="Zurück zur Übersicht">${selectedLetter}</h2>
                             <div class="app-list">
                     `;
-                    targetApps.forEach(app => {
+                    nonFavTargetApps.forEach(app => {
                         let isPlaying = (currentPlayingId === app.id && !globalAudio.paused);
                         let isPlayingClass = isPlaying && app.isRadio ? ' app-list-item playing' : 'app-list-item';
                         let isFav = isFavorite(app.url);
@@ -2374,7 +2356,7 @@
                     container.innerHTML += sectionHTML;
                 } else {
                     let grouped = {};
-                    targetApps.forEach(app => {
+                    nonFavTargetApps.forEach(app => {
                         let firstChar = app.name.trim()[0].toUpperCase();
                         let groupKey = /^[0-9]$/.test(firstChar) ? '#' : firstChar;
                         if (!grouped[groupKey]) grouped[groupKey] = [];
@@ -2456,6 +2438,7 @@
                         catFavs.forEach(app => {
                             let isPlaying = (currentPlayingId === app.id && !globalAudio.paused);
                             let isPlayingClass = isPlaying && app.isRadio ? ' app-item playing' : 'app-item';
+                            isPlayingClass += ' is-favorite-tile';
                             let isFav = isFavorite(app.url);
                             let favClass = isFav ? 'fav-btn is-fav' : 'fav-btn';
                             let iconContent = app.image 
@@ -2491,6 +2474,9 @@
                                 .filter(app => {
                                     if (activeCategory === 'radio' && activeGenre !== 'all' && app.genre !== activeGenre) {
                                         return false;
+                                    }
+                                    if (favorites.includes(app.url)) {
+                                        return false; // Ausgeblendet in der Originalkategorie, da Favorit
                                     }
                                     let firstChar = app.name.trim()[0].toUpperCase();
                                     let sortKey = /^[0-9]$/.test(firstChar) ? '#' : firstChar;
@@ -2534,11 +2520,16 @@
                         });
 
                         sectionHTML += `</div>`;
-                        container.innerHTML += sectionHTML;
+                        if (sectionHTML !== `<div class="category-section is-category"></div>`) {
+                            container.innerHTML += sectionHTML;
+                        }
 
                     } else {
                         const filteredApps = category.apps
                             .filter(app => {
+                                if (favorites.includes(app.url)) {
+                                    return false; // Ausgeblendet in der Originalkategorie, da Favorit
+                                }
                                 let firstChar = app.name.trim()[0].toUpperCase();
                                 let sortKey = /^[0-9]$/.test(firstChar) ? '#' : firstChar;
                                 let matchesKey = selectedLetter ? (sortKey === selectedLetter) : true;
