@@ -239,14 +239,15 @@
 
         async function fetchLiveStatus() {
             try {
-                const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://laden.wbg-luenen.com/');
+                // Nutzung eines stabilen HTTPS CORS-Proxies für GitHub Pages & Browser
+                const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://laden.wbg-luenen.com/');
                 const response = await fetch(proxyUrl);
-                const data = await response.json();
+                const htmlText = await response.text();
                 
-                if (!data.contents) return;
+                if (!htmlText) return;
 
                 const parser = new DOMParser();
-                const doc = parser.parseFromString(data.contents, 'text/html');
+                const doc = parser.parseFromString(htmlText, 'text/html');
                 const rows = doc.querySelectorAll('main table tbody tr');
                 
                 rows.forEach(row => {
