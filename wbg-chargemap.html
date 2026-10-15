@@ -18,7 +18,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <!-- Open Graph / Social Media Vorschau -->
+    <!-- Open Graph / Social Media Vorschau (WhatsApp, iMessage, etc.) -->
     <meta property="og:title" content="WBG Chargemap">
     <meta property="og:description" content="Ladeinfrastruktur & Ladezeit-Rechner für WBG Standorte">
     <meta property="og:image" content="https://macwingen.github.io/tesla-apps/wbg-chargemap/icons/wbg-chargemap.png">
@@ -123,7 +123,7 @@
                 </div>
             </div>
 
-            <!-- Slider SoC -->
+            <!-- Slider SoC mit dynamischen Farben -->
             <div class="bg-white dark:bg-gray-950/60 border border-gray-200/60 dark:border-gray-800/30 rounded-xl p-2 space-y-1.5">
                 <div class="flex justify-between text-[11px] font-medium">
                     <span class="text-gray-600 dark:text-gray-300">Aktueller Akkustand ➔ <strong id="startVal" class="font-bold">20%</strong></span>
@@ -159,7 +159,7 @@
             <div id="refreshIndicator" class="bg-white dark:bg-gray-900/80 border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 text-center text-[11px] font-bold flex items-center justify-center rounded-xl shadow-sm">
                 <div class="flex items-center space-x-2 py-2">
                     <i class="fa-solid fa-circle-notch fa-spin text-emerald-500 text-xs"></i>
-                    <span>Aktualisiere Live-Status & Standorte...</span>
+                    <span>Aktualisiere Standorte & Wetter...</span>
                 </div>
             </div>
             <div id="stationCardsContainer" class="space-y-2"></div>
@@ -174,8 +174,6 @@
         let currentFilter = 'Alle';
         let wbgStations = [];
         let favorites = [];
-        let liveStationStatus = {};
-
         try {
             favorites = JSON.parse(localStorage.getItem('wbg_favorites')) || [];
         } catch (e) {
@@ -221,7 +219,6 @@
                 document.getElementById('themeIcon').className = "fa-solid fa-moon text-xs";
             }
             requestGpsLocation(true);
-            fetchLiveStatus();
         }
 
         function toggleTheme() {
@@ -234,40 +231,6 @@
                 document.documentElement.classList.add('dark');
                 localStorage.setItem('wbg_theme', 'dark');
                 document.getElementById('themeIcon').className = "fa-solid fa-moon text-xs";
-            }
-        }
-
-        async function fetchLiveStatus() {
-            try {
-                // Nutzung eines stabilen HTTPS CORS-Proxies für GitHub Pages & Browser
-                const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://laden.wbg-luenen.com/');
-                const response = await fetch(proxyUrl);
-                const htmlText = await response.text();
-                
-                if (!htmlText) return;
-
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(htmlText, 'text/html');
-                const rows = doc.querySelectorAll('main table tbody tr');
-                
-                rows.forEach(row => {
-                    const cols = row.querySelectorAll('td');
-                    if (cols.length >= 2) {
-                        const rawText = cols[0].innerText.replace(/\s+/g, ' ').trim();
-                        const keyMatch = rawText.match(/^([A-Za-zÄÖÜäöüß\-\.\s]+?\d+[a-zA-Z]?[^\d]*)/);
-                        const streetKey = keyMatch ? keyMatch[1].trim() : rawText.split(',')[0].trim();
-                        
-                        const statusSpans = cols[1].querySelectorAll('span');
-                        const p1 = statusSpans[0] ? statusSpans[0].innerText.trim() : '';
-                        const p2 = statusSpans[1] ? statusSpans[1].innerText.trim() : '';
-                        
-                        liveStationStatus[streetKey] = { p1, p2 };
-                        liveStationStatus[streetKey.split(' ')[0]] = { p1, p2 };
-                    }
-                });
-                processStations();
-            } catch (error) {
-                console.error("Live-Status konnte nicht geladen werden:", error);
             }
         }
 
@@ -331,10 +294,32 @@
             let start = parseInt(document.getElementById('startSoc').value) || 0;
             let target = parseInt(document.getElementById('targetSoc').value) || 0;
             
-            if (start > target) target = start;
+            if (start > target) {
+                target = start;
+            }
 
             document.getElementById('startVal').innerText = start + '%';
             document.getElementById('targetVal').innerText = target + '%';
+
+            const startValEl = document.getElementById('startVal');
+            startValEl.className = "font-bold ";
+            if (start < 15) {
+                startValEl.className += "text-red-500 dark:text-red-400";
+            } else if (start <= 25) {
+                startValEl.className += "text-amber-500 dark:text-amber-400";
+            } else {
+                startValEl.className += "text-gray-900 dark:text-white";
+            }
+
+            const targetValEl = document.getElementById('targetVal');
+            targetValEl.className = "font-bold ";
+            if (target < 50) {
+                targetValEl.className += "text-amber-500 dark:text-amber-400";
+            } else if (target <= 80) {
+                targetValEl.className += "text-emerald-500 dark:text-emerald-400";
+            } else {
+                targetValEl.className += "text-emerald-600 dark:text-emerald-300 font-black";
+            }
 
             let socDiff = target - start;
             let netKwh = (netCapacity * socDiff) / 100;
@@ -426,36 +411,6 @@
             const streetOnly = st.title.includes(',') ? st.title.split(',')[0].trim() : st.title;
             const cleanAddress = st.address.includes(',') ? st.address.split(',')[1].trim() : st.address;
 
-            let liveData = liveStationStatus[streetOnly] || liveStationStatus[streetOnly.split(' ')[0]];
-            let powerBadgeContent = '';
-
-            if (liveData) {
-                const p1IsFree = liveData.p1.includes('Frei');
-                const p1Class = p1IsFree ? 'bg-emerald-500 text-white' : 'bg-rose-600 text-white';
-                
-                let p2Html = '';
-                if (liveData.p2) {
-                    const p2IsFree = liveData.p2.includes('Frei');
-                    const p2Class = p2IsFree ? 'bg-emerald-500 text-white' : 'bg-rose-600 text-white';
-                    p2Html = `<span class="px-1.5 py-0.5 rounded text-[9px] font-bold ${p2Class}">${liveData.p2}</span>`;
-                }
-
-                powerBadgeContent = `
-                    <div class="flex items-center space-x-1">
-                        <span class="px-1.5 py-0.5 rounded text-[9px] font-bold ${p1Class}">${liveData.p1}</span>
-                        ${p2Html}
-                        <span class="text-gray-400 dark:text-gray-500 text-[10px] ml-1">(${st.kw})</span>
-                    </div>
-                `;
-            } else {
-                powerBadgeContent = `
-                    <span class="text-gray-700 dark:text-gray-300 font-semibold">
-                        <i class="fa-solid fa-bolt text-amber-400 mr-1"></i>
-                        <span class="text-emerald-600 dark:text-emerald-400 font-bold mr-0.5">${st.count}</span> ${st.kw}
-                    </span>
-                `;
-            }
-
             return `
                 <div class="bg-white dark:bg-gray-900/80 border ${isNearest ? 'border-emerald-500/60 shadow-lg shadow-emerald-950/20' : 'border-gray-200/60 dark:border-gray-800/30'} rounded-xl p-2.5 space-y-2 transition">
                     <div class="flex items-start justify-between">
@@ -476,10 +431,10 @@
                             `}
                         </div>
                     </div>
-                    <div class="flex items-center justify-between text-[11px] text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-100 dark:border-gray-800/60">
+                    <div class="file-tag flex items-center justify-between text-[11px] text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-100 dark:border-gray-800/60">
                         <div class="flex items-center space-x-2.5">
                             <span class="text-gray-700 dark:text-gray-300 font-medium"><i class="fa-solid fa-location-dot text-emerald-500 mr-1"></i>${distText}</span>
-                            ${powerBadgeContent}
+                            <span class="text-gray-700 dark:text-gray-300 font-semibold"><i class="fa-solid fa-bolt text-amber-400 mr-1"></i><span class="text-emerald-600 dark:text-emerald-400 font-bold mr-0.5">${st.count}</span> ${st.kw}</span>
                         </div>
                         <div class="flex items-center space-x-3">
                             <button onclick="toggleFavorite('${st.id}', event)" class="p-1 text-sm"><i class="${starClass} fa-star"></i></button>
@@ -563,7 +518,7 @@
             processStations();
         }
 
-        // Pull-to-Refresh Logic
+        // Pull-to-Refresh Logic (Smooth Drag & Snap-back with Notification Feedback)
         let touchStartY = 0;
         let currentPull = 0;
         let isPulling = false;
@@ -596,19 +551,25 @@
                 isPulling = false;
 
                 if (currentPull > 50 && stationListEl.scrollTop <= 0) {
-                    if (navigator.vibrate) navigator.vibrate(50);
+                    if (navigator.vibrate) {
+                        navigator.vibrate(50);
+                    }
 
-                    if (refreshTextSpan) refreshTextSpan.innerText = 'Aktualisiere Live-Status & Wetter...';
+                    if (refreshTextSpan) refreshTextSpan.innerText = 'Standorte & Wetter aktualisiert!';
                     refreshIndicator.style.maxHeight = '60px';
                     refreshIndicator.classList.add('active-refresh');
 
                     weatherLoaded = false;
                     requestGpsLocation(false);
-                    fetchLiveStatus();
 
                     setTimeout(() => {
                         refreshIndicator.style.maxHeight = '0px';
                         refreshIndicator.classList.remove('active-refresh');
+                        if (refreshTextSpan) {
+                            setTimeout(() => {
+                                refreshTextSpan.innerText = 'Aktualisiere Standorte & Wetter...';
+                            }, 300);
+                        }
                     }, 1200);
                 } else {
                     refreshIndicator.style.maxHeight = '0px';
