@@ -220,13 +220,13 @@
         }
     
         /* Collapsible Calculator Panel */
-        #calculatorSection {
-            max-height: 350px;
+        #calculatorSection, #infoSection {
+            max-height: 450px;
             opacity: 1;
             overflow: hidden;
             transition: max-height 0.8s ease-in-out, opacity 0.8s ease-in-out, padding 0.8s ease-in-out, margin 0.8s ease-in-out;
         }
-        #calculatorSection.collapsed {
+        #calculatorSection.collapsed, #infoSection.collapsed {
             max-height: 0 !important;
             opacity: 0 !important;
             padding-top: 0 !important;
@@ -259,6 +259,9 @@
                 </button>
                 <button onclick="toggleTheme()" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-800 text-gray-700 dark:text-gray-300 p-2 rounded-xl transition" title="Design wechseln">
                     <i id="themeIcon" class="fa-solid fa-moon text-xs"></i>
+                </button>
+                <button onclick="toggleInfo()" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-800 text-gray-700 dark:text-gray-300 p-2 rounded-xl transition" title="WBG Info & Tarife">
+                    <i id="infoIcon" class="fa-solid fa-circle-info text-xs"></i>
                 </button>
             </div>
         </div>
@@ -316,6 +319,48 @@
                 <div class="flex space-x-3 px-1">
                     <input type="range" id="startSoc" min="0" max="95" value="20" oninput="onBatteryInputChanged()" class="w-1/2">
                     <input type="range" id="targetSoc" min="0" max="100" value="80" oninput="onBatteryInputChanged()" class="w-1/2">
+                </div>
+            </div>
+        </div>
+
+        <!-- WBG Info & Tarife Panel -->
+        <div id="infoSection" class="collapsed px-3 py-2.5 bg-gray-50/80 dark:bg-gray-900/40 border-b border-gray-200/60 dark:border-gray-900/60 space-y-2 shrink-0">
+            <div class="wbg-card-3d bg-white/80 dark:bg-gray-950/80 border border-gray-200/60 dark:border-gray-800/40 rounded-xl p-2.5 space-y-2">
+                <div class="flex items-center space-x-2 border-b border-gray-100 dark:border-gray-800/60 pb-1.5">
+                    <div class="text-emerald-600 dark:text-emerald-400 font-bold"><i class="fa-solid fa-building mr-1.5"></i>WBG Lünen - Ladeinfrastruktur</div>
+                </div>
+                
+                <!-- Tarife -->
+                <div class="space-y-1 text-[11px]">
+                    <div class="font-semibold text-gray-800 dark:text-gray-200"><i class="fa-solid fa-tags text-amber-500 mr-1"></i>Tarife & Optionen:</div>
+                    <div class="space-y-1 pl-1 text-gray-600 dark:text-gray-300">
+                        <div class="flex items-start space-x-1.5"><span class="text-gray-400 select-none">•</span><div class="flex-1"><i class="fa-solid fa-charging-station text-emerald-500 mr-1"></i><strong>Stellplatz mit eigener Wallbox:</strong> 0,38 € / kWh + erhöhte Stellplatzmiete</div></div>
+                        <div class="flex items-start space-x-1.5"><span class="text-gray-400 select-none">•</span><div class="flex-1"><i class="fa-solid fa-bolt text-amber-500 mr-1"></i><strong>Laden an WBG-Ladesäulen:</strong> 0,38 € / kWh + 5,00 € mtl. Grundgebühr</div></div>
+                        <div class="flex items-start space-x-1.5"><span class="text-gray-400 select-none">•</span><div class="flex-1"><i class="fa-solid fa-wallet text-blue-500 mr-1"></i><strong>Mit zwei Ladekarten & Monatsabrechnung:</strong> 0,38 € / kWh + 7,00 € mtl. Grundgebühr</div></div>
+                    </div>
+                </div>
+
+                <!-- Voraussetzung & Ladekarte -->
+                <div class="pt-2 border-t border-gray-100 dark:border-gray-800/60 space-y-1 text-[11px]">
+                    <div class="font-semibold text-gray-800 dark:text-gray-200"><i class="fa-solid fa-wallet text-emerald-500 mr-1"></i>Ladekarte & Voraussetzungen:</div>
+                    <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                        Voraussetzung ist ein gültiges Mietverhältnis bei der WBG Lünen. Die Beantragung und Ausgabe der Ladekarte erfolgt direkt über den zuständigen Ansprechpartner.
+                    </p>
+                </div>
+
+                <!-- Ansprechpartner -->
+                <div class="pt-2 border-t border-gray-100 dark:border-gray-800/60 space-y-1 text-[11px]">
+                    <div class="font-semibold text-gray-800 dark:text-gray-200"><i class="fa-solid fa-headset text-blue-500 mr-1"></i>Ansprechpartner & Support:</div>
+                    <div class="text-gray-700 dark:text-gray-300 font-medium">Arie Schnettler</div>
+                    <div class="text-[10px] text-gray-500 dark:text-gray-400">Bauleitung & Projektleitung Klimaneutralität</div>
+                    <div class="flex items-center space-x-3 pt-1">
+                        <a href="tel:02306700653" class="text-emerald-600 dark:text-emerald-400 hover:underline font-semibold flex items-center">
+                            <i class="fa-solid fa-phone text-xs mr-1"></i>02306 7006‑53
+                        </a>
+                        <a href="mailto:a.schnettler@wbg-luenen.de" class="text-blue-600 dark:text-blue-400 hover:underline font-semibold flex items-center">
+                            <i class="fa-solid fa-envelope text-xs mr-1"></i>a.schnettler@wbg-luenen.de
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -409,6 +454,22 @@
                 document.getElementById('calculatorSection').classList.add('collapsed');
                 document.getElementById('calcIcon').className = "fa-solid fa-calculator text-xs opacity-50";
             }
+
+            const savedFilter = localStorage.getItem('wbg_city_filter');
+            if (savedFilter) {
+                currentFilter = savedFilter;
+                ['Alle', 'Lünen', 'Kamen', 'Werne', 'Bergkamen', 'Selm'].forEach(city => {
+                    const btn = document.getElementById(`filter-${city}`);
+                    if (btn) {
+                        if (city === currentFilter) {
+                            btn.className = "bg-emerald-600 text-white px-1 py-1 rounded-lg font-bold flex-1 text-center text-[10px] transition shadow-sm";
+                        } else {
+                            btn.className = "bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-1 py-1 rounded-lg flex-1 text-center text-[10px] transition";
+                        }
+                    }
+                });
+            }
+
             requestGpsLocation(true);
         }
 
@@ -701,8 +762,11 @@
             });
         }
 
-        function setCityFilter(cityName) {
+                function setCityFilter(cityName) {
             currentFilter = cityName;
+            try {
+                localStorage.setItem('wbg_city_filter', cityName);
+            } catch (e) {}
             ['Alle', 'Lünen', 'Kamen', 'Werne', 'Bergkamen', 'Selm'].forEach(city => {
                 const btn = document.getElementById(`filter-${city}`);
                 if (btn) {
@@ -791,6 +855,18 @@
                 localStorage.setItem('wbg_calc_collapsed', 'true');
             }
             processStations();
+        }
+
+                function toggleInfo() {
+            const infoEl = document.getElementById('infoSection');
+            const infoIcon = document.getElementById('infoIcon');
+            if (infoEl.classList.contains('collapsed')) {
+                infoEl.classList.remove('collapsed');
+                infoIcon.className = "fa-solid fa-circle-info text-xs";
+            } else {
+                infoEl.classList.add('collapsed');
+                infoIcon.className = "fa-solid fa-circle-info text-xs opacity-50";
+            }
         }
 
         window.onload = initApp;
