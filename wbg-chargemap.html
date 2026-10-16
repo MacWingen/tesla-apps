@@ -218,6 +218,24 @@
         .dark button, .dark .wbg-btn-pop {
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
         }
+    
+        /* Collapsible Calculator Panel */
+        #calculatorSection {
+            max-height: 350px;
+            opacity: 1;
+            overflow: hidden;
+            transition: max-height 0.8s ease-in-out, opacity 0.8s ease-in-out, padding 0.8s ease-in-out, margin 0.8s ease-in-out;
+        }
+        #calculatorSection.collapsed {
+            max-height: 0 !important;
+            opacity: 0 !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            border-width: 0 !important;
+        }
+
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-black text-gray-900 dark:text-gray-100 h-screen flex flex-col items-center justify-center p-2 sm:py-3 overflow-hidden text-xs font-sans transition-colors duration-200">
@@ -235,7 +253,10 @@
                     <h1 class="font-bold text-sm tracking-tight text-gray-900 dark:text-gray-100">WBG Chargemap</h1>
                 </div>
             </div>
-            <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-2">
+                <button onclick="toggleCalculator()" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-800 text-gray-700 dark:text-gray-300 p-2 rounded-xl transition" title="Rechner ein-/ausblenden">
+                    <i id="calcIcon" class="fa-solid fa-calculator text-xs"></i>
+                </button>
                 <button onclick="toggleTheme()" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-800 text-gray-700 dark:text-gray-300 p-2 rounded-xl transition" title="Design wechseln">
                     <i id="themeIcon" class="fa-solid fa-moon text-xs"></i>
                 </button>
@@ -243,7 +264,7 @@
         </div>
 
         <!-- Dashboard / Rechner -->
-        <div class="px-3 py-2 bg-gray-50/50 dark:bg-gray-900/30 border-b border-gray-200/60 dark:border-gray-900/60 space-y-2 shrink-0">
+        <div id="calculatorSection" class="px-3 py-2 bg-gray-50/50 dark:bg-gray-900/30 border-b border-gray-200/60 dark:border-gray-900/60 space-y-2 shrink-0">
             
             <!-- Hero Result Box -->
             <div class="relative flex items-center -mx-0.5">
@@ -370,16 +391,23 @@
         ];
 
         function initApp() {
+            const savedTheme = localStorage.getItem('wbg_theme');
             const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const defaultTheme = prefersDark ? 'dark' : 'light';
-            const savedTheme = localStorage.getItem('wbg_theme') || defaultTheme;
-
-            if (savedTheme === 'light') {
-                document.documentElement.classList.remove('dark');
-                document.getElementById('themeIcon').className = "fa-solid fa-sun text-xs";
-            } else {
+            
+            // Startet standardmäßig im Hellmodus, erkennt aber System / gespeicherte Einstellung
+            let currentTheme = savedTheme ? savedTheme : 'light';
+            
+            if (currentTheme === 'dark') {
                 document.documentElement.classList.add('dark');
                 document.getElementById('themeIcon').className = "fa-solid fa-moon text-xs";
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('themeIcon').className = "fa-solid fa-sun text-xs";
+            }
+            const savedCalcState = localStorage.getItem('wbg_calc_collapsed');
+            if (savedCalcState === 'true') {
+                document.getElementById('calculatorSection').classList.add('collapsed');
+                document.getElementById('calcIcon').className = "fa-solid fa-calculator text-xs opacity-50";
             }
             requestGpsLocation(true);
         }
@@ -574,7 +602,10 @@
             const streetOnly = st.title.includes(',') ? st.title.split(',')[0].trim() : st.title;
             const cleanAddress = st.address.includes(',') ? st.address.split(',')[1].trim() : st.address;
 
-            const cardClass = isNearest 
+            const calcCollapsed = document.getElementById('calculatorSection').classList.contains('collapsed');
+            const showCustomCost = isNearest && !calcCollapsed;
+
+            const cardClass = showCustomCost 
                 ? "wbg-card-3d wbg-nearest-glow rounded-xl p-2.5 space-y-2" 
                 : "wbg-card-3d rounded-xl p-2.5 space-y-2";
 
@@ -589,7 +620,7 @@
                             <p class="text-[11px] text-gray-500 dark:text-gray-400 truncate max-w-[210px] mt-0.5">${cleanAddress}</p>
                         </div>
                         <div class="text-right shrink-0">
-                            ${isNearest ? `
+                            ${showCustomCost ? `
                                 <span class="text-sm font-black text-emerald-600 dark:text-emerald-400 tracking-tight">${metrics.cost} €</span>
                                 <span class="text-[9px] text-gray-400 dark:text-gray-500 block font-medium">0,38 € / kWh</span>
                             ` : `
@@ -744,6 +775,22 @@
                 }
                 currentPull = 0;
             }, { passive: true });
+        }
+
+        
+        function toggleCalculator() {
+            const calcEl = document.getElementById('calculatorSection');
+            const calcIcon = document.getElementById('calcIcon');
+            if (calcEl.classList.contains('collapsed')) {
+                calcEl.classList.remove('collapsed');
+                calcIcon.className = "fa-solid fa-calculator text-xs";
+                localStorage.setItem('wbg_calc_collapsed', 'false');
+            } else {
+                calcEl.classList.add('collapsed');
+                calcIcon.className = "fa-solid fa-calculator text-xs opacity-50";
+                localStorage.setItem('wbg_calc_collapsed', 'true');
+            }
+            processStations();
         }
 
         window.onload = initApp;
