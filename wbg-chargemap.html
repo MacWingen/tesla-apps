@@ -394,8 +394,8 @@
             const savedTheme = localStorage.getItem('wbg_theme');
             const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             
-            // Startet standardmäßig im Hellmodus, erkennt aber System / gespeicherte Einstellung
-            let currentTheme = savedTheme ? savedTheme : 'light';
+            // Erkennt gespeicherte Einstellung oder schaut auf das System (Dark/Light Mode)
+            let currentTheme = savedTheme ? savedTheme : (prefersDark ? 'dark' : 'light');
             
             if (currentTheme === 'dark') {
                 document.documentElement.classList.add('dark');
