@@ -267,7 +267,7 @@
         </div>
 
         <!-- Dashboard / Rechner -->
-        <div id="calculatorSection" class="px-3 py-2 bg-gray-50/50 dark:bg-gray-900/30 border-b border-gray-200/60 dark:border-gray-900/60 space-y-2 shrink-0">
+        <div id="calculatorSection" class="collapsed px-3 py-2 bg-gray-50/50 dark:bg-gray-900/30 border-b border-gray-200/60 dark:border-gray-900/60 space-y-2 shrink-0">
             
             <!-- Hero Result Box -->
             <div class="relative flex items-center -mx-0.5">
@@ -450,7 +450,10 @@
                 document.getElementById('themeIcon').className = "fa-solid fa-sun text-xs";
             }
             const savedCalcState = localStorage.getItem('wbg_calc_collapsed');
-            if (savedCalcState === 'true') {
+            if (savedCalcState === 'false') {
+                document.getElementById('calculatorSection').classList.remove('collapsed');
+                document.getElementById('calcIcon').className = "fa-solid fa-calculator text-xs";
+            } else {
                 document.getElementById('calculatorSection').classList.add('collapsed');
                 document.getElementById('calcIcon').className = "fa-solid fa-calculator text-xs opacity-50";
             }
