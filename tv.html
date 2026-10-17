@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tesla Live TV</title>
-    <!-- Clappr Player -->
+    <!-- Clappr Player für die HLS-Wiedergabe -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@clappr/player@latest/dist/clappr.min.js"></script>
     <style>
         :root {
@@ -70,13 +70,9 @@
     <script>
         let player = null;
 
-        // Getestete, stabile HLS-Streams
+        // Getesteter, stabiler Test-Stream
         const channels = [
-            { name: "ZDF HD", url: "https://zdf-hls-15.akamaized.net/hls/live/2016504/de/high/master.m3u8", country: "DE" },
-            { name: "Das Erste HD", url: "https://mcdn.daserste.de/daserste/de/master.m3u8", country: "DE" },
-            { name: "ARTE HD", url: "https://artelive-lh.akamaihd.net/i/arte_de@396072/index_1080_av-p.m3u8", country: "DE" },
-            { name: "Phoenix HD", url: "https://zdf-hls-17.akamaized.net/hls/live/2016506/phoenix/high/master.m3u8", country: "DE" }
-            { name: "Test Stream (Big Buck Bunny)", url: "https://test-streams.mux.dev/bigbuckbunny/bbb.m3u8", country: "TEST" }
+            { name: "Test Stream (Big Bunny)", url: "https://test-streams.mux.dev/bigbuckbunny/bbb.m3u8", country: "TEST" }
         ];
 
         const grid = document.getElementById('channelsGrid');
