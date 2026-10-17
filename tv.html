@@ -76,8 +76,8 @@
             overflow: hidden;
         }
         .card:hover { border-color: var(--accent-blue); }
+        .card img { width: 40px; height: 40px; object-fit: contain; margin-bottom: 6px; display: block; margin-left: auto; margin-right: auto; }
         .card b { font-size: 14px; }
-        .card small { color: #aaa; font-size: 11px; display: block; margin-top: 2px; }
 
         /* Live Badge in Rot */
         .live-badge {
@@ -128,16 +128,16 @@
 
     <script>
         const channels = [
-            { id: "ard", name: "Das Erste", url: "https://daserste-live.ard-mcdn.de/daserste/live/hls/de/master.m3u8", country: "ARD" },
-            { id: "zdf", name: "ZDF", url: "https://zdf-hls-15.akamaized.net/hls/live/2016498/de/high/master.m3u8", country: "ZDF" },
-            { id: "wdr", name: "WDR", url: "https://wdrfs247.akamaized.net/hls/live/681509/wdr_msl4_fs247/master.m3u8", country: "WDR" },
-            { id: "ndr", name: "NDR", url: "https://mcdn.ndr.de/ndr/hls/ndr_fs/ndr_nds/master.m3u8", country: "NDR" },
-            { id: "swr", name: "SWR", url: "https://swrbwd-hls.akamaized.net/hls/live/2018672/swrbwd/master.m3u8", country: "SWR" },
-            { id: "br", name: "BR", url: "https://mcdn.br.de/br/fs/bfs_sued/hls/de/master.m3u8", country: "BR" },
-            { id: "mdr", name: "MDR", url: "https://mdrtvsnhls.akamaized.net/hls/live/2016928/mdrtvsn/master.m3u8", country: "MDR" },
-            { id: "hr", name: "HR", url: "https://hrhlsde.akamaized.net/hls/live/2024526/hrhlsde/index.m3u8", country: "HR" },
-            { id: "rbb", name: "RBB", url: "https://rbb-hls-berlin.akamaized.net/hls/live/2017824/rbb_berlin/index.m3u8", country: "RBB" },
-            { id: "tagesschau24", name: "Tagesschau24", url: "https://tagesschau.akamaized.net/hls/live/2020115/tagesschau/tagesschau_1/master.m3u8", country: "ARD" }
+            { id: "ard", name: "Das Erste", url: "https://daserste-live.ard-mcdn.de/daserste/live/hls/de/master.m3u8", logo: "tv-icons/ard-de.png" },
+            { id: "zdf", name: "ZDF", url: "https://zdf-hls-15.akamaized.net/hls/live/2016498/de/high/master.m3u8", logo: "tv-icons/zdf-de.png" },
+            { id: "wdr", name: "WDR", url: "https://wdrfs247.akamaized.net/hls/live/681509/wdr_msl4_fs247/master.m3u8", logo: "tv-icons/wdr-de.png" },
+            { id: "ndr", name: "NDR", url: "https://mcdn.ndr.de/ndr/hls/ndr_fs/ndr_nds/master.m3u8", logo: "tv-icons/ndr-de.png" },
+            { id: "swr", name: "SWR", url: "https://swrbwd-hls.akamaized.net/hls/live/2018672/swrbwd/master.m3u8", logo: "tv-icons/swr-de.png" },
+            { id: "br", name: "BR", url: "https://mcdn.br.de/br/fs/bfs_sued/hls/de/master.m3u8", logo: "tv-icons/br-de.png" },
+            { id: "mdr", name: "MDR", url: "https://mdrtvsnhls.akamaized.net/hls/live/2016928/mdrtvsn/master.m3u8", logo: "tv-icons/mdr-de.png" },
+            { id: "hr", name: "HR", url: "https://hrhlsde.akamaized.net/hls/live/2024526/hrhlsde/index.m3u8", logo: "tv-icons/hr-de.png" },
+            { id: "rbb", name: "RBB", url: "https://rbb-hls-berlin.akamaized.net/hls/live/2017824/rbb_berlin/index.m3u8", logo: "tv-icons/rbb-de.png" },
+            { id: "tagesschau24", name: "Tagesschau24", url: "https://tagesschau.akamaized.net/hls/live/2020115/tagesschau/tagesschau_1/master.m3u8", logo: "tv-icons/tagesschau24-de.png" }
         ];
 
         const grid = document.getElementById('channelsGrid');
@@ -159,7 +159,8 @@
             card.innerHTML = `
                 <div class="live-badge">LIVE</div>
                 <div class="radio-state-overlay">${stopSvgHTML}</div>
-                <b>${c.name}</b><br><small>${c.country}</small>
+                <img src="${c.logo}" alt="${c.name}">
+                <b>${c.name}</b>
             `;
             card.onclick = () => handleCardClick(c);
             grid.appendChild(card);
@@ -185,6 +186,19 @@
             playStream(channel.url);
         }
 
+        // Automatisches Abfangen aller Untertitelspuren (auch nachträglich hinzugefügter)
+        if (video.textTracks) {
+            video.textTracks.addEventListener('addtrack', function(e) {
+                e.track.mode = 'disabled';
+            });
+        }
+
+        function disableSubtitles() {
+            for (let i = 0; i < video.textTracks.length; i++) {
+                video.textTracks[i].mode = 'disabled';
+            }
+        }
+
         function playStream(url) {
             if (hls) { hls.destroy(); }
             if (Hls.isSupported()) {
@@ -198,6 +212,7 @@
                 hls.loadSource(url);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, function() { 
+                    disableSubtitles();
                     video.play().catch(err => console.log("Autoplay blocked:", err));
                     setPlayState(true);
                 });
@@ -213,6 +228,7 @@
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = url;
                 video.addEventListener('loadedmetadata', function() { 
+                    disableSubtitles();
                     video.play().catch(err => console.log("Autoplay blocked:", err));
                     setPlayState(true);
                 });
