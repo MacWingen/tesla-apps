@@ -19,14 +19,14 @@
     </style>
 </head>
 <body>
-    <h2>Tesla Live TV</h2>
+    <h2>📺 Tesla Live TV</h2>
     <div class="player-box">
-        <video id="videoPlayer" controls autoplay></video>
+        <video id="videoPlayer" controls autoplay muted playsinline></video>
     </div>
     <div class="grid" id="channelsGrid"></div>
     <script>
-const channels = [
-    { name: "Test Stream (Sintel)", url: "https://bitmovin-a.akamaihd.net/content/sintel/hls/playlist.m3u8", country: "TEST" }
+        const channels = [
+            { name: "Test Stream (Sintel)", url: "https://bitmovin-a.akamaihd.net/content/sintel/hls/playlist.m3u8", country: "TEST" }
         ];
         const grid = document.getElementById('channelsGrid');
         const video = document.getElementById('videoPlayer');
@@ -41,13 +41,38 @@ const channels = [
         function playStream(url) {
             if (hls) { hls.destroy(); }
             if (Hls.isSupported()) {
-                hls = new Hls();
+                hls = new Hls({
+                    maxBufferLength: 30,
+                    maxMaxBufferLength: 60,
+                    startLevel: -1,
+                    enableWorker: true,
+                    lowLatencyMode: false
+                });
                 hls.loadSource(url);
                 hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function() { video.play(); });
+                hls.on(Hls.Events.MANIFEST_PARSED, function() { 
+                    video.play().catch(err => console.log("Autoplay blocked:", err)); 
+                });
+                hls.on(Hls.Events.ERROR, function(event, data) {
+                    if (data.fatal) {
+                        switch(data.type) {
+                            case Hls.ErrorTypes.NETWORK_ERROR:
+                                hls.startLoad();
+                                break;
+                            case Hls.ErrorTypes.MEDIA_ERROR:
+                                hls.recoverMediaError();
+                                break;
+                            default:
+                                hls.destroy();
+                                break;
+                        }
+                    }
+                });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = url;
-                video.addEventListener('loadedmetadata', function() { video.play(); });
+                video.addEventListener('loadedmetadata', function() { 
+                    video.play().catch(err => console.log("Autoplay blocked:", err)); 
+                });
             }
         }
         if(channels.length > 0) { playStream(channels[0].url); }
