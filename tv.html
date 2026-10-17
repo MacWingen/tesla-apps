@@ -21,16 +21,20 @@
 <body>
     <h2>📺 Tesla Live TV</h2>
     <div class="player-box">
-        <video id="videoPlayer" controls autoplay muted playsinline></video>
+        <video id="videoPlayer" controls muted playsinline></video>
     </div>
     <div class="grid" id="channelsGrid"></div>
     <script>
+        // Hier kannst du nach und nach deine Sender eintragen
         const channels = [
-            { name: "Test Stream (Mux)", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", country: "TEST" }
+            { name: "Test Stream (Mux)", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", country: "TEST" },
+            { name: "Test Stream 2", url: "https://bitmovin-a.akamaihd.net/content/sintel/hls/playlist.m3u8", country: "TEST" }
         ];
+
         const grid = document.getElementById('channelsGrid');
         const video = document.getElementById('videoPlayer');
         let hls = null;
+
         channels.forEach(c => {
             let card = document.createElement('div');
             card.className = 'card';
@@ -38,6 +42,7 @@
             card.onclick = () => playStream(c.url);
             grid.appendChild(card);
         });
+
         function playStream(url) {
             if (hls) { hls.destroy(); }
             if (Hls.isSupported()) {
@@ -75,7 +80,7 @@
                 });
             }
         }
-        if(channels.length > 0) { playStream(channels[0].url); }
+        // Kein automatisches playStream(...) mehr am Ende -> Player bleibt leer, bis du klickst!
     </script>
 </body>
 </html>
