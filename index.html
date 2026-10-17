@@ -443,13 +443,13 @@
             transition: transform 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease;
         }
 
-        /* Favoriten Schimmer-Effekt */
-        .app-item.is-favorite-tile .app-icon, .app-list-item.is-favorite-tile .app-list-icon {
+        /* Favoriten & Zuletzt gehört Schimmer-Effekt */
+        .app-item.is-favorite-tile .app-icon, .app-list-item.is-favorite-tile .app-list-icon,
+        .app-item.is-recent-tile .app-icon, .app-list-item.is-recent-tile .app-list-icon {
             background-color: var(--fav-glow);
             box-shadow: 0 0 12px var(--fav-glow);
         }
 
-        /* KEIN weißer/heller Rand beim Hovern über Kacheln */
         .app-item:hover .app-icon {
             transform: translateY(-2px);
             border-color: var(--tile-border);
@@ -508,7 +508,6 @@
             color: var(--text-color);
         }
 
-        /* Live Badge in Rot */
         .app-item .live-badge {
             position: absolute;
             top: 6px;
@@ -545,7 +544,6 @@
             display: block;
         }
 
-        /* KEIN roter Rahmen im aktiven Zustand, nur Tesla-Blau beim Halten */
         .app-item.is-holding .app-icon, .app-list-item.is-holding .app-list-icon {
             border-color: var(--accent-blue);
         }
@@ -573,7 +571,6 @@
             height: 28px;
         }
 
-        /* Favoriten-Stern in Goldgelb */
         .fav-btn {
             position: absolute;
             bottom: 6px;
@@ -1239,8 +1236,8 @@
                     <ul>
                         <li><strong>Webradio & Streams:</strong> 100+ Sender mit Live-Anzeige und Kachel-Stopp.</li>
                         <li><strong>Favoriten:</strong> Kachel ca. 0,7 Sek. gedrückt halten (★).</li>
+                        <li><strong>Zuletzt gehört:</strong> Automatische Historie (max. 6 Sender) ohne Duplikate.</li>
                         <li><strong>Wetter & Eilmeldungen:</strong> Direkte Stichworte & Teaser in der Übersicht.</li>
-                        <li><strong>Gaming & Cloud:</strong> Direkter Vollbildstart für GeForce NOW & Xbox.</li>
                     </ul>
                 </div>
 
@@ -1248,17 +1245,17 @@
 
                 <div class="modal-section">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                        <h4 style="margin: 0;">Release v1.2.9</h4>
-                        <span style="background-color: var(--hover-bg); padding: 2px 6px; border-radius: 6px; font-weight: 600; font-size: 10px; color: var(--text-color);">v1.2.9</span>
+                        <h4 style="margin: 0;">Release v1.3.0</h4>
+                        <span style="background-color: var(--hover-bg); padding: 2px 6px; border-radius: 6px; font-weight: 600; font-size: 10px; color: var(--text-color);">v1.3.0</span>
                     </div>
                     <ul>
+                        <li><strong>v1.3.0:</strong> "Zuletzt gehört"-Sektion (max. 6 Stationen) integriert.</li>
                         <li><strong>v1.2.9:</strong> YouTube-Trick bei GeForce NOW entfernt (nativ optimiert).</li>
-                        <li><strong>v1.2.8:</strong> Apple Music & Spotify URLs für native App-Ausführung angepasst.</li>
                     </ul>
                 </div>
             </div>
             <div class="modal-footer">
-                Tesla Apps Dashboard v1.2.9 &copy; 2026 McWingen
+                Tesla Apps Dashboard v1.3.0 &copy; 2026 McWingen
             </div>
         </div>
     </div>
@@ -1299,13 +1296,13 @@
     </div>
 
     <footer style="margin-top: 40px; margin-bottom: 20px; font-size: 11px; color: var(--section-color); text-align: center; opacity: 0.7;">
-        Tesla Apps Dashboard v1.2.9 &copy; 2026 McWingen
+        Tesla Apps Dashboard v1.3.0 &copy; 2026 McWingen
     </footer>
 
     <audio id="globalAudioStream" preload="none"></audio>
 
     <script>
-        const CURRENT_VERSION = 'v1.2.9';
+        const CURRENT_VERSION = 'v1.3.0';
 
         const categories = [
             {
@@ -1543,6 +1540,7 @@
         let selectedLetter = null;
         
         let favorites = JSON.parse(localStorage.getItem('tesla_dashboard_favs') || '[]');
+        let recentStations = JSON.parse(localStorage.getItem('tesla_dashboard_recent') || '[]');
 
         const globalAudio = document.getElementById('globalAudioStream');
         let currentPlayingId = '';
@@ -1673,9 +1671,25 @@
             return favorites.includes(appUrl);
         }
 
+        function addRecentStation(stationObj) {
+            if (!stationObj.isRadio) return;
+            recentStations = recentStations.filter(s => s.id !== stationObj.id);
+            recentStations.unshift(stationObj);
+            if (recentStations.length > 6) {
+                recentStations = recentStations.slice(0, 6);
+            }
+            localStorage.setItem('tesla_dashboard_recent', JSON.stringify(recentStations));
+        }
+
+        function isRecent(appId) {
+            return recentStations.some(s => s.id === appId);
+        }
+
         function handleItemClick(uniqueId, url, isRadio, name, image) {
             if (isRadio) {
-                playRadioStream({ id: uniqueId, name: name, url: url, image: image, isRadio: true });
+                let stationObj = { id: uniqueId, name: name, url: url, image: image, isRadio: true };
+                addRecentStation(stationObj);
+                playRadioStream(stationObj);
             } else {
                 window.open(url, '_top');
             }
@@ -2307,6 +2321,43 @@
                     container.innerHTML += favHTML;
                 }
 
+                if (activeCategory === 'radio' && recentStations.length > 0 && !selectedLetter && activeGenre === 'all') {
+                    let recentHTML = `
+                        <div class="category-section">
+                            <h2 class="category-title">⏱ Zuletzt gehört</h2>
+                            <div class="app-list">
+                    `;
+                    recentStations.forEach(app => {
+                        let isPlaying = (currentPlayingId === app.id && !globalAudio.paused);
+                        let isPlayingClass = isPlaying && app.isRadio ? ' app-list-item playing' : 'app-list-item';
+                        isPlayingClass += ' is-recent-tile';
+                        let isFav = isFavorite(app.url);
+                        let favClass = isFav ? 'list-fav-btn is-fav' : 'list-fav-btn';
+                        let iconContent = app.image 
+                            ? `<img src="${app.image}" alt="${app.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="placeholder" style="display:none; font-size:16px;">${app.name[0]}</span>` 
+                            : `<span class="placeholder" style="display:none; font-size:16px;">${app.name[0]}</span>`;
+
+                        recentHTML += `
+                            <div class="${isPlayingClass}" data-url="${app.url}" data-instance-id="${app.id}" 
+                                 onpointerdown="handlePointerDown(this, '${app.id}', '${app.url}', event)" 
+                                 onpointermove="handlePointerMove(this, event)"
+                                 onpointerup="handlePointerUp(this, '${app.id}', '${app.url}', ${app.isRadio}, '${app.name}', '${app.image}', event)"
+                                 onpointercancel="handlePointerCancel(this)"
+                                 onpointerleave="handlePointerCancel(this)">
+                                <div class="app-list-icon">
+                                    ${iconContent}
+                                    ${app.isRadio ? '<div class="live-badge">LIVE</div>' : ''}
+                                    ${app.isRadio ? `<div class="radio-state-overlay">${stopSvgHTML}</div>` : ''}
+                                </div>
+                                <span class="app-list-name">${app.name}</span>
+                                <span class="${favClass}">★</span>
+                            </div>
+                        `;
+                    });
+                    recentHTML += `</div></div>`;
+                    container.innerHTML += recentHTML;
+                }
+
                 azSidebar.innerHTML = '';
                 let sidebarKeys = ['#', ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")];
                 sidebarKeys.forEach(key => {
@@ -2466,6 +2517,43 @@
                         container.innerHTML += favSectionHTML;
                     }
 
+                    if (activeCategory === 'radio' && recentStations.length > 0 && !selectedLetter && activeGenre === 'all') {
+                        let recentSectionHTML = `
+                            <div class="category-section is-category">
+                                <h2 class="category-title">⏱ Zuletzt gehört</h2>
+                                <div class="app-grid">
+                        `;
+                        recentStations.forEach(app => {
+                            let isPlaying = (currentPlayingId === app.id && !globalAudio.paused);
+                            let isPlayingClass = isPlaying && app.isRadio ? ' app-item playing' : 'app-item';
+                            isPlayingClass += ' is-recent-tile';
+                            let isFav = isFavorite(app.url);
+                            let favClass = isFav ? 'fav-btn is-fav' : 'fav-btn';
+                            let iconContent = app.image 
+                                ? `<img src="${app.image}" alt="${app.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="placeholder" style="display:none; font-size:28px;">${app.name[0]}</span>` 
+                                : `<span class="placeholder" style="display:none; font-size:28px;">${app.name[0]}</span>`;
+
+                            recentSectionHTML += `
+                                <div class="${isPlayingClass}" data-url="${app.url}" data-instance-id="${app.id}" 
+                                     onpointerdown="handlePointerDown(this, '${app.id}', '${app.url}', event)" 
+                                     onpointermove="handlePointerMove(this, event)"
+                                     onpointerup="handlePointerUp(this, '${app.id}', '${app.url}', ${app.isRadio}, '${app.name}', '${app.image}', event)"
+                                     onpointercancel="handlePointerCancel(this)"
+                                     onpointerleave="handlePointerCancel(this)">
+                                    <div class="app-icon">
+                                        ${iconContent}
+                                        ${app.isRadio ? '<div class="live-badge">LIVE</div>' : ''}
+                                        ${app.isRadio ? `<div class="radio-state-overlay">${stopSvgHTML}</div>` : ''}
+                                        <span class="${favClass}">★</span>
+                                    </div>
+                                    <span class="app-name">${app.name}</span>
+                                </div>
+                            `;
+                        });
+                        recentSectionHTML += `</div></div>`;
+                        container.innerHTML += recentSectionHTML;
+                    }
+
                     if (category.subcategories) {
                         let sectionHTML = `<div class="category-section is-category">`;
 
@@ -2476,7 +2564,10 @@
                                         return false;
                                     }
                                     if (favorites.includes(app.url)) {
-                                        return false; // Ausgeblendet in der Originalkategorie, da Favorit
+                                        return false; 
+                                    }
+                                    if (activeCategory === 'radio' && isRecent(app.id)) {
+                                        return false; // Verhindert Duplikate, wenn in "Zuletzt gehört"
                                     }
                                     let firstChar = app.name.trim()[0].toUpperCase();
                                     let sortKey = /^[0-9]$/.test(firstChar) ? '#' : firstChar;
@@ -2528,7 +2619,7 @@
                         const filteredApps = category.apps
                             .filter(app => {
                                 if (favorites.includes(app.url)) {
-                                    return false; // Ausgeblendet in der Originalkategorie, da Favorit
+                                    return false; 
                                 }
                                 let firstChar = app.name.trim()[0].toUpperCase();
                                 let sortKey = /^[0-9]$/.test(firstChar) ? '#' : firstChar;
