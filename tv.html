@@ -4,78 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tesla Live TV</title>
-    <!-- Clappr Player für die HLS-Wiedergabe -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@clappr/player@latest/dist/clappr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
-        :root {
-            --bg-color: #161616;
-            --card-bg: #2a2a2a;
-            --text-color: #ffffff;
-            --border-color: rgba(255, 255, 255, 0.1);
-            --accent-blue: #007AFF;
-        }
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        :root { --bg-color: #161616; --card-bg: #2a2a2a; --text-color: #ffffff; --border-color: rgba(255, 255, 255, 0.1); --accent-blue: #007AFF; }
+        body { background-color: var(--bg-color); color: var(--text-color); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         h2 { margin-bottom: 15px; font-weight: 500; }
-        .player-box {
-            width: 100%;
-            max-width: 900px;
-            background: #000;
-            aspect-ratio: 16/9;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            margin-bottom: 20px;
-        }
-        #player { width: 100%; height: 100%; }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 12px;
-            width: 100%;
-            max-width: 900px;
-        }
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: border-color 0.2s;
-        }
+        .player-box { width: 100%; max-width: 900px; background: #000; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); margin-bottom: 20px; }
+        video { width: 100%; height: 100%; object-fit: contain; background: #000; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; width: 100%; max-width: 900px; }
+        .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: border-color 0.2s; }
         .card:hover { border-color: var(--accent-blue); }
         .card b { font-size: 14px; }
         .card small { color: #aaa; font-size: 11px; }
     </style>
 </head>
 <body>
-
-    <h2>📺 Tesla Live TV</h2>
-    
+    <h2>Tesla Live TV</h2>
     <div class="player-box">
-        <div id="player"></div>
+        <video id="videoPlayer" controls autoplay></video>
     </div>
-
     <div class="grid" id="channelsGrid"></div>
-
     <script>
-        let player = null;
-
-        // Getesteter, stabiler Test-Stream
-        const channels = [
-            { name: "Test Stream (Big Bunny)", url: "https://test-streams.mux.dev/bigbuckbunny/bbb.m3u8", country: "TEST" }
+const channels = [
+    { name: "Test Stream (Sintel)", url: "https://bitmovin-a.akamaihd.net/content/sintel/hls/playlist.m3u8", country: "TEST" }
         ];
-
         const grid = document.getElementById('channelsGrid');
+        const video = document.getElementById('videoPlayer');
+        let hls = null;
         channels.forEach(c => {
             let card = document.createElement('div');
             card.className = 'card';
@@ -83,19 +38,19 @@
             card.onclick = () => playStream(c.url);
             grid.appendChild(card);
         });
-
         function playStream(url) {
-            if (player) {
-                player.destroy();
+            if (hls) { hls.destroy(); }
+            if (Hls.isSupported()) {
+                hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() { video.play(); });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = url;
+                video.addEventListener('loadedmetadata', function() { video.play(); });
             }
-            player = new Clappr.Player({
-                source: url,
-                parentId: "#player",
-                autoPlay: true,
-                width: "100%",
-                height: "100%"
-            });
         }
+        if(channels.length > 0) { playStream(channels[0].url); }
     </script>
 </body>
 </html>
