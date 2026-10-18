@@ -451,7 +451,7 @@
             box-shadow: 0 0 12px var(--fav-glow);
         }
 
-        /* Zuletzt gehört-Schimmer (Blau) */
+        /* Zuletzt genutzt / gehört-Schimmer (Blau) */
         .app-item.is-recent-tile .app-icon, .app-list-item.is-recent-tile .app-list-icon {
             background-color: var(--recent-glow);
             box-shadow: 0 0 12px var(--recent-glow);
@@ -1243,7 +1243,7 @@
                     <ul>
                         <li><strong>Webradio & Streams:</strong> 100+ Sender mit Live-Anzeige und Kachel-Stopp.</li>
                         <li><strong>Favoriten:</strong> Kachel ca. 0,7 Sek. gedrückt halten (★).</li>
-                        <li><strong>Zuletzt gehört:</strong> Automatische Historie für Apps & Radio (max. 6 Einträge, blauer Schimmer).</li>
+                        <li><strong>Zuletzt genutzt / gehört:</strong> Automatische Historie für Apps & Radio (max. 6 Einträge, blauer Schimmer).</li>
                         <li><strong>Wetter & Eilmeldungen:</strong> Direkte Stichworte & Teaser in der Übersicht.</li>
                     </ul>
                 </div>
@@ -1256,8 +1256,8 @@
                         <span style="background-color: var(--hover-bg); padding: 2px 6px; border-radius: 6px; font-weight: 600; font-size: 10px; color: var(--text-color);">v1.3.2</span>
                     </div>
                     <ul>
-                        <li><strong>v1.3.2:</strong> "Zuletzt gehört"-Sektion universell für Apps & Radio (max. 6) mit blauem Schimmer.</li>
-                        <li><strong>v1.3.0:</strong> "Zuletzt gehört"-Sektion integriert.</li>
+                        <li><strong>v1.3.2:</strong> "Zuletzt genutzt"-Sektion für Apps und "Zuletzt gehört" für Radio (max. 6) mit blauem Schimmer.</li>
+                        <li><strong>v1.3.0:</strong> Historien-Sektion integriert.</li>
                     </ul>
                 </div>
             </div>
@@ -1372,7 +1372,8 @@
                     { id: "chargemap", name: "Chargemap", url: "https://chargemap.com", image: "icons/chargemap.png", isRadio: false },
                     { id: "googlemaps", name: "Google Maps", url: "https://www.google.com/maps", image: "icons/googlemaps.png", isRadio: false },
                     { id: "speedtest", name: "Speedtest", url: "https://speed.cloudflare.com/", image: "icons/speedtest.png", isRadio: false },
-                    { id: "teslacar", name: "Tesla Charger Map", url: "https://www.tesla.com/de_de/findus", image: "icons/tesla.png", isRadio: false }
+                    { id: "teslacar", name: "Tesla Charger Map", url: "https://www.tesla.com/de_de/findus", image: "icons/tesla.png", isRadio: false },
+                    { id: "waze", name: "Waze", url: "https://www.waze.com/live-map", image: "icons/waze.png", isRadio: false }
                 ]
             },
             {
@@ -2383,7 +2384,7 @@
                 } else if (activeCategory !== 'radio' && recentApps.length > 0 && !selectedLetter) {
                     let recentAppsHTML = `
                         <div class="category-section">
-                            <h2 class="category-title">⏱ Zuletzt gehört</h2>
+                            <h2 class="category-title">⏱ Zuletzt genutzt</h2>
                             <div class="app-list">
                     `;
                     recentApps.forEach(app => {
@@ -2609,7 +2610,7 @@
                     } else if (activeCategory !== 'radio' && recentApps.length > 0 && !selectedLetter) {
                         let recentAppsSectionHTML = `
                             <div class="category-section is-category">
-                                <h2 class="category-title">⏱ Zuletzt gehört</h2>
+                                <h2 class="category-title">⏱ Zuletzt genutzt</h2>
                                 <div class="app-grid">
                         `;
                         recentApps.forEach(app => {
