@@ -3,114 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Profi Wetter-Zentrale - Tesla Apps Dashboard</title>
-    <link rel="icon" type="image/png" href="icons/hedgehog.png">
+    <title>Wetter</title>
     
-    <!-- PWA & Mobile / Tesla Browser Leisten-Farben -->
     <meta name="theme-color" content="#161616" media="(prefers-color-scheme: dark)">
     <meta name="theme-color" content="#F1F1F1" media="(prefers-color-scheme: light)">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    
+
     <style>
         :root {
-            /* TESLA LIGHT MODE (Original-Farbwerte) */
             --bg-color: #F1F1F1;
+            --card-bg: #FFFFFF;
+            --card-inner: #FFFFFF;
             --text-color: #111111;
             --title-color: #111111;
             --tile-bg: #FFFFFF;
             --tile-border: rgba(0, 0, 0, 0.08);
-            --name-color: #888888;
-            --section-color: #888888;
+            --subtext-color: #888888;
             --hover-bg: rgba(0, 0, 0, 0.05);
+            --accent-blue: #007AFF;
+            --accent-red: #E82127;
             --accent-green: #3CC13F;
         }
 
         @media (prefers-color-scheme: dark) {
             :root {
-                /* TESLA DARK MODE (Original-Farbwerte) */
                 --bg-color: #161616;
+                --card-bg: #2A2A2A;
+                --card-inner: #2A2A2A;
                 --text-color: #FFFFFF;
                 --title-color: #FFFFFF;
                 --tile-bg: #2A2A2A;
                 --tile-border: rgba(255, 255, 255, 0.08);
-                --name-color: #AAAAAA;
-                --section-color: #AAAAAA;
+                --subtext-color: #AAAAAA;
                 --hover-bg: rgba(255, 255, 255, 0.07);
+                --accent-blue: #007AFF;
+                --accent-red: #E82127;
                 --accent-green: #3CC13F;
             }
         }
 
-        body {
-            background-color: var(--bg-color);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            color: var(--text-color);
-            margin: 0;
-            padding: 12px 16px 40px 16px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            min-height: 100dvh;
+        * {
             box-sizing: border-box;
             user-select: none;
             -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* 1-ZEILEN KOPFLEISTE (Dashboard, Standort & Suche perfekt vereint) */
-        .top-bar {
+        body {
+            background-color: var(--bg-color);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text-color);
+            margin: 0;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100dvh;
             width: 100%;
-            max-width: 900px;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Hauptkarte im MSN-Stil, passend zum Kalender */
+        .weather-card {
+            width: 100%;
+            max-width: 680px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--tile-border);
+            border-radius: 20px;
+            padding: 18px 20px;
+            box-sizing: border-box;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        /* Kopfleiste / Top-Bar */
+        .top-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 14px;
-            position: sticky;
-            top: 0;
-            background-color: var(--bg-color);
-            z-index: 100;
-            padding-top: 4px;
-            padding-bottom: 8px;
-            gap: 10px;
+            gap: 8px;
+            margin-bottom: 2px;
         }
 
-        .back-btn {
-            background: var(--tile-bg);
+        .back-btn, .city-btn {
+            background: var(--card-inner);
             border: 1px solid var(--tile-border);
             color: var(--text-color);
-            font-size: 13px;
-            font-weight: 500;
+            font-size: 11px;
+            font-weight: 600;
             padding: 6px 12px;
             border-radius: 10px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            transition: background 0.2s;
+            transition: all 0.15s ease;
             text-decoration: none;
+            height: 32px;
             flex-shrink: 0;
         }
 
-        .back-btn:hover {
-            background-color: var(--hover-bg);
+        .back-btn:hover, .city-btn:hover {
+            background: var(--hover-bg);
+            border-color: var(--subtext-color);
         }
 
         .location-title {
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-color);
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 6px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            background: var(--tile-bg);
+            background: var(--card-inner);
             border: 1px solid var(--tile-border);
             padding: 6px 14px;
             border-radius: 10px;
             flex-grow: 1;
-            justify-content: center;
+            height: 32px;
         }
 
         .search-box {
@@ -120,159 +139,139 @@
         }
 
         .city-input {
-            background: var(--tile-bg);
-            border: 1px solid var(--tile-border);
-            color: var(--text-color);
-            font-size: 13px;
-            padding: 6px 10px;
-            border-radius: 10px;
-            outline: none;
-            width: 130px;
-        }
-
-        .city-btn {
-            background: var(--hover-bg);
+            background: var(--card-inner);
             border: 1px solid var(--tile-border);
             color: var(--text-color);
             font-size: 12px;
-            font-weight: 600;
             padding: 6px 10px;
             border-radius: 10px;
-            cursor: pointer;
+            outline: none;
+            width: 110px;
+            height: 32px;
         }
 
-        .weather-container {
-            width: 100%;
-            max-width: 900px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
+        .city-input:focus {
+            border-color: var(--accent-blue);
         }
 
-        /* HERO BEREICH */
+        /* Hero / Aktuelles Wetter (Ruhig, MSN-Art) */
         .weather-hero {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 24px 20px;
-            border-radius: 18px;
-            background: var(--tile-bg);
+            background: var(--card-inner);
             border: 1px solid var(--tile-border);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-            position: relative;
-            overflow: hidden;
+            border-radius: 14px;
+            padding: 20px;
         }
 
-        @keyframes pulseGlow { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 1; } }
-        
-        .hero-animation-bg {
-            position: absolute;
-            top: -20px;
-            right: -20px;
-            width: 140px;
-            height: 140px;
-            background: radial-gradient(circle, rgba(60, 193, 63, 0.1) 0%, transparent 70%);
-            border-radius: 50%;
-            animation: pulseGlow 6s ease-in-out infinite;
-            pointer-events: none;
+        .hero-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
         .hero-temp {
-            font-size: 50px;
-            font-weight: 700;
-            letter-spacing: -2px;
+            font-size: 44px;
+            font-weight: 800;
+            letter-spacing: -1.5px;
             line-height: 1;
-            margin: 4px 0;
             color: var(--text-color);
         }
 
         .hero-desc {
-            font-size: 18px;
+            font-size: 15px;
             font-weight: 600;
-            color: var(--title-color);
+            color: var(--text-color);
         }
 
         .hero-sub {
-            font-size: 12px;
-            color: var(--name-color);
-            margin-top: 4px;
+            font-size: 11.5px;
+            color: var(--subtext-color);
+            margin-top: 2px;
+            font-weight: 500;
         }
 
-        /* GRID & BOXEN */
+        .hero-right {
+            font-size: 50px;
+            line-height: 1;
+        }
+
+        /* Details Grid (MSN Kacheln) */
         .details-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
         }
 
         .detail-card {
-            background: var(--tile-bg);
+            background: var(--card-inner);
             border: 1px solid var(--tile-border);
             border-radius: 12px;
-            padding: 14px;
+            padding: 12px 14px;
             display: flex;
             flex-direction: column;
             gap: 4px;
         }
 
         .detail-label {
-            font-size: 11px;
-            color: var(--section-color);
-            font-weight: 600;
+            font-size: 10.5px;
+            color: var(--subtext-color);
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .detail-value {
-            font-size: 17px;
-            font-weight: 600;
+            font-size: 15px;
+            font-weight: 700;
             color: var(--text-color);
         }
 
         .detail-desc {
-            font-size: 11px;
-            color: var(--name-color);
+            font-size: 10.5px;
+            color: var(--subtext-color);
         }
 
+        /* Sektionen */
         .section-box {
-            background: var(--tile-bg);
+            background: var(--card-inner);
             border: 1px solid var(--tile-border);
-            border-radius: 16px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .section-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-color);
-            border-bottom: 1px solid var(--tile-border);
-            padding-bottom: 6px;
-        }
-
-        /* DWD WARNUNGS-BLOCK */
-        .dwd-warning-box {
-            background: var(--tile-bg);
-            border: 1px solid var(--tile-border);
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 14px 16px;
             display: flex;
             flex-direction: column;
+            gap: 10px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--subtext-color);
+            margin-bottom: 2px;
+        }
+
+        /* DWD Warnungs-Block */
+        .dwd-warning-box {
+            background: var(--card-inner);
+            border: 1px solid var(--tile-border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
             gap: 4px;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
         .dwd-warning-box.has-warning {
-            background: linear-gradient(135deg, rgba(225, 29, 72, 0.25) 0%, var(--tile-bg) 100%);
-            border-color: #e11d48;
+            background: rgba(232, 33, 39, 0.08);
+            border-color: rgba(232, 33, 39, 0.3);
         }
 
         .dwd-warning-title {
-            font-size: 13px;
+            font-size: 12.5px;
             font-weight: 700;
             color: var(--text-color);
             display: flex;
@@ -281,23 +280,23 @@
         }
 
         .dwd-warning-box.has-warning .dwd-warning-title {
-            color: #f43f5e;
+            color: var(--accent-red);
         }
 
         .dwd-warning-text {
-            font-size: 12px;
-            color: var(--section-color);
-            line-height: 1.35;
+            font-size: 11.5px;
+            color: var(--subtext-color);
+            line-height: 1.4;
         }
 
         .dwd-warning-box.has-warning .dwd-warning-text {
             color: var(--text-color);
         }
 
-        /* RADAR MAP CONTAINER */
+        /* Radar Map Container */
         .radar-container {
             width: 100%;
-            height: 350px;
+            height: 280px;
             border-radius: 10px;
             overflow: hidden;
             border: 1px solid var(--tile-border);
@@ -311,13 +310,13 @@
             filter: contrast(1.1) brightness(0.9);
         }
 
-        /* STÜNDLICHER VERLAUF */
+        /* Stündlicher Verlauf (Horizontaler Scroll) */
         .hourly-scroll {
             display: flex;
-            gap: 14px;
+            gap: 8px;
             overflow-x: auto;
             scrollbar-width: none;
-            padding-bottom: 4px;
+            padding-bottom: 2px;
         }
 
         .hourly-scroll::-webkit-scrollbar {
@@ -328,62 +327,63 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             flex-shrink: 0;
-            width: 54px;
+            width: 56px;
             text-align: center;
             background: var(--hover-bg);
             padding: 8px 4px;
-            border-radius: 8px;
+            border-radius: 10px;
             border: 1px solid var(--tile-border);
         }
 
         .hourly-time {
-            font-size: 11px;
-            color: var(--section-color);
+            font-size: 10.5px;
+            color: var(--subtext-color);
+            font-weight: 600;
         }
 
         .hourly-temp {
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 13.5px;
+            font-weight: 700;
             color: var(--text-color);
         }
 
         .hourly-rain {
             font-size: 10px;
-            color: var(--accent-green);
-            font-weight: 500;
+            color: var(--accent-blue);
+            font-weight: 600;
         }
 
-        /* 7-TAGE TREND */
+        /* 7-Tage-Trend (MSN Zeilenstil) */
         .daily-list {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
         .daily-row {
-            display: grid;
-            grid-template-columns: 90px 28px 1fr 80px 70px;
+            display: flex;
             align-items: center;
-            padding: 6px 2px;
-            border-bottom: 1px solid var(--tile-border);
+            justify-content: space-between;
+            background: var(--hover-bg);
+            border: 1px solid var(--tile-border);
+            border-radius: 10px;
+            padding: 8px 12px;
             font-size: 12px;
         }
 
-        .daily-row:last-child {
-            border-bottom: none;
-        }
-
         .daily-day {
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-color);
+            width: 70px;
         }
 
         .daily-desc {
-            color: var(--section-color);
+            color: var(--subtext-color);
             font-size: 11px;
-            padding-left: 6px;
+            flex-grow: 1;
+            padding: 0 10px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -391,50 +391,69 @@
 
         .daily-rain {
             font-size: 11px;
-            color: var(--accent-green);
+            color: var(--accent-blue);
+            font-weight: 600;
+            width: 50px;
             text-align: right;
-            font-weight: 500;
         }
 
         .daily-temps {
-            font-weight: 600;
+            font-weight: 700;
             text-align: right;
             color: var(--text-color);
+            width: 70px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
         }
 
+        .temp-max { color: var(--text-color); }
+        .temp-min { color: var(--subtext-color); font-weight: 500; }
+
         .footer-info {
-            width: 100%;
-            max-width: 900px;
             text-align: center;
-            font-size: 11px;
-            color: var(--name-color);
-            margin-top: 10px;
-            padding-top: 10px;
+            font-size: 10.5px;
+            color: var(--subtext-color);
+            margin-top: 4px;
+            padding-top: 8px;
             border-top: 1px solid var(--tile-border);
+        }
+
+        @media (max-width: 720px) {
+            body { padding: 8px; }
+            .weather-card { padding: 12px; border-radius: 14px; }
+            .details-grid { grid-template-columns: repeat(1, 1fr); }
+            .city-input { width: 90px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- KOPFLEISTE: Dashboard, Standort & Suche in einer einzigen Zeile -->
-    <div class="top-bar">
-        <a href="index.html" class="back-btn">‹ Dashboard</a>
-        <div class="location-title" id="locationTitle">📍 Lade Standort...</div>
-        <div class="search-box">
-            <input type="text" id="cityInput" class="city-input" placeholder="Ort eingeben..." onkeydown="if(event.key==='Enter') searchCity()">
-            <button class="city-btn" onclick="searchCity()">Suchen</button>
+    <div class="weather-card">
+        <!-- Kopfleiste -->
+        <div class="top-bar">
+            <a href="index.html" class="back-btn">‹ Dashboard</a>
+            <div class="location-title" id="locationTitle">📍 Lade Standort...</div>
+            <div class="search-box">
+                <input type="text" id="cityInput" class="city-input" placeholder="Ort..." onkeydown="if(event.key==='Enter') searchCity()">
+                <button class="city-btn" onclick="searchCity()">Suchen</button>
+            </div>
         </div>
-    </div>
 
-    <div class="weather-container">
+        <!-- Hero / Aktuelles Wetter -->
         <div class="weather-hero" id="weatherHero">
-            <div class="hero-animation-bg"></div>
-            <div style="color: var(--section-color);">Lade Live-Wetterdaten...</div>
+            <div class="hero-left">
+                <div class="hero-temp">--°C</div>
+                <div class="hero-desc">Lade Live-Wetterdaten...</div>
+                <div class="hero-sub">Bitte warten</div>
+            </div>
+            <div class="hero-right">🌤️</div>
         </div>
 
+        <!-- Details Grid -->
         <div class="details-grid" id="detailsGrid"></div>
 
-        <!-- LOKALER WETTER- & UNWETTER-WARNUNGS-BLOCK -->
+        <!-- Lokaler Unwetterwarnungs-Block -->
         <div class="dwd-warning-box" id="dwdWarningBox">
             <div class="dwd-warning-title" id="dwdWarningTitle">
                 🛡️ Lokale Wetterwarnungen
@@ -442,7 +461,7 @@
             <div class="dwd-warning-text" id="dwdWarningText">Keine aktuellen Unwetterwarnungen für diesen Standort. Alles ruhig!</div>
         </div>
 
-        <!-- LIVE REGEN- & UNWETTERRADAR -->
+        <!-- Live Radar -->
         <div class="section-box">
             <div class="section-title">Live Regen- & Unwetterradar</div>
             <div class="radar-container">
@@ -450,11 +469,13 @@
             </div>
         </div>
 
+        <!-- Stündlicher Verlauf -->
         <div class="section-box">
             <div class="section-title">Stündlicher Verlauf (24h)</div>
             <div class="hourly-scroll" id="hourlyScroll"></div>
         </div>
 
+        <!-- 7-Tage-Trend -->
         <div class="section-box">
             <div class="section-title">7-Tage-Trend & Prognose</div>
             <div class="daily-list" id="dailyList"></div>
@@ -574,7 +595,7 @@
                     return fetch(url).then(r => r.json()).then(data => renderWeather(data));
                 })
                 .catch(err => {
-                    document.getElementById('weatherHero').innerHTML = `<div style="color: #ef4444;">Fehler beim Laden der Wetterdaten.</div>`;
+                    document.getElementById('weatherHero').innerHTML = `<div style="color: var(--accent-red); padding: 10px;">Fehler beim Laden der Wetterdaten.</div>`;
                 });
         }
 
@@ -590,11 +611,12 @@
             let dewPoint = Math.round(cur.temperature_2m - ((100 - cur.relative_humidity_2m) / 5));
 
             document.getElementById('weatherHero').innerHTML = `
-                <div class="hero-animation-bg"></div>
-                <div style="font-size: 50px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.4));">${condition.icon}</div>
-                <div class="hero-temp">${Math.round(cur.temperature_2m)}°C</div>
-                <div class="hero-desc">${condition.text}</div>
-                <div class="hero-sub">Gefühlte Temperatur: ${Math.round(cur.apparent_temperature)}°C &bull; Luftdruck: ${cur.pressure_msl} hPa</div>
+                <div class="hero-left">
+                    <div class="hero-temp">${Math.round(cur.temperature_2m)}°C</div>
+                    <div class="hero-desc">${condition.text}</div>
+                    <div class="hero-sub">Gefühlt ${Math.round(cur.apparent_temperature)}°C &bull; Luftdruck ${cur.pressure_msl} hPa</div>
+                </div>
+                <div class="hero-right">${condition.icon}</div>
             `;
 
             let sunriseTime = daily.sunrise && daily.sunrise[0] ? daily.sunrise[0].split('T')[1] : '--:--';
@@ -602,34 +624,34 @@
 
             document.getElementById('detailsGrid').innerHTML = `
                 <div class="detail-card">
-                    <span class="detail-label">💧 Luftfeuchtigkeit</span>
+                    <span class="detail-label">Luftfeuchtigkeit</span>
                     <span class="detail-value">${cur.relative_humidity_2m}%</span>
-                    <span class="detail-desc">Taupunkt bei ${dewPoint}°C</span>
+                    <span class="detail-desc">Taupunkt ${dewPoint}°C</span>
                 </div>
                 <div class="detail-card">
-                    <span class="detail-label">💨 Wind & Böen</span>
-                    <span class="detail-value">${Math.round(cur.wind_speed_10m)} km/h (${windDirText})</span>
-                    <span class="detail-desc">Böen bis zu ${Math.round(cur.wind_gusts_10m || 0)} km/h</span>
+                    <span class="detail-label">Wind & Böen</span>
+                    <span class="detail-value">${Math.round(cur.wind_speed_10m)} km/h ${windDirText}</span>
+                    <span class="detail-desc">Böen bis ${Math.round(cur.wind_gusts_10m || 0)} km/h</span>
                 </div>
                 <div class="detail-card">
-                    <span class="detail-label">☁️ Wolkenbedeckung</span>
+                    <span class="detail-label">Wolkenbedeckung</span>
                     <span class="detail-value">${cur.cloud_cover}%</span>
-                    <span class="detail-desc">Aktueller Bedeckungsgrad</span>
+                    <span class="detail-desc">Bedeckungsgrad</span>
                 </div>
                 <div class="detail-card">
-                    <span class="detail-label">☀️ Max. UV-Index</span>
+                    <span class="detail-label">Max. UV-Index</span>
                     <span class="detail-value">${daily.uv_index_max ? daily.uv_index_max[0] : '--'}</span>
-                    <span class="detail-desc">Strahlungsintensität heute</span>
+                    <span class="detail-desc">Strahlungsintensität</span>
                 </div>
                 <div class="detail-card">
-                    <span class="detail-label">🌧️ Niederschlag</span>
+                    <span class="detail-label">Niederschlag</span>
                     <span class="detail-value">${cur.precipitation} mm</span>
                     <span class="detail-desc">Aktuelle Rate</span>
                 </div>
                 <div class="detail-card">
-                    <span class="detail-label">🌅 Astronomie</span>
+                    <span class="detail-label">Astronomie</span>
                     <span class="detail-value">${sunriseTime} / ${sunsetTime}</span>
-                    <span class="detail-desc">Sonnenauf- und untergang</span>
+                    <span class="detail-desc">Auf- / Untergang</span>
                 </div>
             `;
 
@@ -643,15 +665,13 @@
                 let timeStr = hourly.time[i].split('T')[1].substring(0, 5);
                 let hCond = getWeatherDetails(hourly.weather_code[i], hourly.is_day[i]);
                 let hRainProb = hourly.precipitation_probability[i];
-                let hRainSum = hourly.precipitation[i];
 
                 hourlyHtml += `
                     <div class="hourly-item">
                         <span class="hourly-time">${timeStr}</span>
-                        <div style="font-size: 22px;">${hCond.icon}</div>
+                        <div style="font-size: 20px;">${hCond.icon}</div>
                         <span class="hourly-temp">${Math.round(hourly.temperature_2m[i])}°</span>
-                        <span class="hourly-rain">💧 ${hRainProb}%</span>
-                        <span style="font-size: 9px; color: var(--name-color);">${hRainSum > 0 ? hRainSum + ' mm' : ''}</span>
+                        <span class="hourly-rain">${hRainProb}%</span>
                     </div>
                 `;
             }
@@ -665,16 +685,18 @@
                 let maxT = Math.round(daily.temperature_2m_max[i]);
                 let minT = Math.round(daily.temperature_2m_min[i]);
                 let rainProb = daily.precipitation_probability_max ? daily.precipitation_probability_max[i] : 0;
-                let rainSum = daily.precipitation_sum ? daily.precipitation_sum[i] : 0;
                 let dCond = getWeatherDetails(daily.weather_code[i], 1);
 
                 dailyHtml += `
                     <div class="daily-row">
                         <span class="daily-day">${dayName}</span>
-                        <div style="font-size: 20px;">${dCond.icon}</div>
-                        <span class="daily-desc">${dCond.text} (${rainSum > 0 ? rainSum + ' mm' : 'trocken'})</span>
-                        <span class="daily-rain">💧 ${rainProb}%</span>
-                        <span class="daily-temps">${minT}° / ${maxT}°</span>
+                        <div style="font-size: 18px;">${dCond.icon}</div>
+                        <span class="daily-desc">${dCond.text}</span>
+                        <span class="daily-rain">${rainProb}%</span>
+                        <div class="daily-temps">
+                            <span class="temp-min">${minT}°</span>
+                            <span class="temp-max">${maxT}°</span>
+                        </div>
                     </div>
                 `;
             }
