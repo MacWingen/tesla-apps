@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Kalender, Feiertage & Brückentage</title>
     
-    <!-- PWA & Mobile / Tesla Browser Leisten-Farben -->
     <meta name="theme-color" content="#161616" media="(prefers-color-scheme: dark)">
     <meta name="theme-color" content="#F1F1F1" media="(prefers-color-scheme: light)">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,7 +12,6 @@
 
     <style>
         :root {
-            /* TESLA LIGHT MODE (Ohne Grün - Alles in Tesla-Blau & Neutral) */
             --bg-color: #F1F1F1;
             --card-bg: #FFFFFF;
             --card-inner: #FFFFFF;
@@ -26,12 +24,10 @@
             --accent-blue: #007AFF;
             --accent-red: #E82127;
             --fav-gold: #FFC700;
-            --slider-track: #E2E2E2;
         }
 
         @media (prefers-color-scheme: dark) {
             :root {
-                /* TESLA DARK MODE (Ohne Grün) */
                 --bg-color: #161616;
                 --card-bg: #2A2A2A;
                 --card-inner: #2A2A2A;
@@ -44,7 +40,6 @@
                 --accent-blue: #007AFF;
                 --accent-red: #E82127;
                 --fav-gold: #FFC700;
-                --slider-track: #1C1C1C;
             }
         }
 
@@ -57,12 +52,10 @@
 
         body {
             background-color: var(--bg-color);
-            background-image: none;
-            background-attachment: fixed;
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             color: var(--text-color);
             margin: 0;
-            padding: 12px 16px 60px 16px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -73,96 +66,56 @@
             transition: background-color 0.3s ease;
         }
 
-        .top-bar {
+        /* Hauptkarte */
+        .calendar-card {
             width: 100%;
             max-width: 680px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--tile-border);
+            border-radius: 20px;
+            padding: 18px 20px;
+            box-sizing: border-box;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 14px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--tile-border);
+            flex-direction: column;
             gap: 12px;
-            box-sizing: border-box;
         }
 
-        .back-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--tile-border);
-            color: var(--text-color);
-            font-size: 13px;
-            font-weight: 600;
-            padding: 7px 12px;
-            border-radius: 10px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s ease;
-            flex-shrink: 0;
-        }
-
-        .back-btn:hover {
-            background-color: var(--hover-bg);
-            border-color: var(--subtext-color);
-            transform: translateX(-2px);
-        }
-
-        .state-select {
-            background: var(--card-inner);
-            border: 1px solid var(--tile-border);
-            color: var(--text-color);
-            font-size: 13px;
-            font-weight: 500;
-            padding: 9px 12px;
-            border-radius: 11px;
-            outline: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            width: 100%;
-        }
-
-        .state-select:focus {
-            border-color: var(--accent-blue);
-        }
-
+        /* Optionen-Leiste oben mit minimalistischen SVG-Icons */
         .options-row {
-            width: 100%;
-            max-width: 680px;
             display: flex;
-            gap: 8px;
-            margin-bottom: 14px;
-            box-sizing: border-box;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 2px;
         }
 
-        .option-chip {
+        .option-chip, .state-select-chip {
             background: var(--card-inner);
             border: 1px solid var(--tile-border);
             color: var(--subtext-color);
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: 600;
-            padding: 8px 12px;
-            border-radius: 10px;
+            padding: 5px 10px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.15s ease;
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            flex: 1;
-            justify-content: center;
-            text-align: center;
+            height: 28px;
+            outline: none;
         }
 
-        .option-chip:hover {
+        .option-chip svg, .state-select-chip svg {
+            stroke: currentColor;
+            opacity: 0.85;
+        }
+
+        .option-chip:hover, .state-select-chip:hover, .state-select-chip:focus {
             color: var(--text-color);
             background: var(--hover-bg);
             border-color: var(--subtext-color);
-            transform: translateY(-1px);
-        }
-
-        .option-chip:active {
-            transform: translateY(0) scale(0.96);
         }
 
         .option-chip.active {
@@ -172,35 +125,45 @@
             font-weight: 700;
         }
 
-        .calendar-card {
-            width: 100%;
-            max-width: 680px;
-            background-color: var(--card-bg);
-            border: 1px solid var(--tile-border);
-            border-radius: 18px;
-            padding: 20px 22px;
-            box-sizing: border-box;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
+        .option-chip.active svg {
+            stroke: var(--accent-blue);
+            opacity: 1;
         }
 
+        /* Bundesland Dropdown im Chip-Stil mit SVG-Icon */
+        .state-select-chip {
+            color: var(--text-color);
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg fill='%23888888' height='10' viewBox='0 0 24 24' width='10' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            padding-right: 24px;
+        }
+
+        .state-select-chip option {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            padding: 6px;
+        }
+
+        /* Kalender-Header: Symmetrisch mit Pfeilen links/rechts und Titel in der Mitte */
         .calendar-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 18px;
-            border-bottom: 1px solid var(--tile-border);
-            padding-bottom: 12px;
+            gap: 12px;
+            margin-top: 4px;
+            margin-bottom: 2px;
         }
 
         .nav-btn {
             background: var(--card-inner);
             border: 1px solid var(--tile-border);
             color: var(--text-color);
-            width: 34px;
-            height: 34px;
+            width: 36px;
+            height: 36px;
             border-radius: 10px;
             cursor: pointer;
             display: flex;
@@ -217,8 +180,14 @@
             transform: translateY(-1px);
         }
 
-        .nav-btn:active {
-            transform: scale(0.94);
+        .calendar-title {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--text-color);
+            letter-spacing: -0.4px;
+            margin: 0;
+            text-align: center;
+            flex: 1;
         }
 
         .weekdays-grid {
@@ -230,7 +199,7 @@
             text-transform: uppercase;
             letter-spacing: 0.6px;
             color: var(--subtext-color);
-            margin-bottom: 10px;
+            margin-bottom: 6px;
         }
 
         .days-grid {
@@ -252,7 +221,7 @@
             border: 1px solid var(--tile-border);
             color: var(--text-color);
             position: relative;
-            cursor: default;
+            cursor: pointer;
             transition: transform 0.15s ease, border-color 0.15s ease;
             min-width: 0;
             overflow: hidden;
@@ -269,13 +238,15 @@
             background-color: transparent;
             border-color: transparent;
             box-shadow: none;
+            cursor: default;
         }
 
         .day-cell.today {
-            background: rgba(0, 122, 255, 0.15);
-            color: var(--accent-blue);
-            font-weight: 700;
-            border: 1.5px solid var(--accent-blue);
+            background: rgba(0, 122, 255, 0.2) !important;
+            color: var(--accent-blue) !important;
+            font-weight: 800 !important;
+            border: 2px solid var(--accent-blue) !important;
+            z-index: 2;
         }
 
         .day-cell.holiday {
@@ -303,6 +274,16 @@
             color: var(--accent-red);
         }
 
+        /* Notiz-Indikator Punkt auf der Kachel */
+        .note-indicator {
+            position: absolute;
+            bottom: 4px;
+            width: 4px;
+            height: 4px;
+            background-color: var(--accent-blue);
+            border-radius: 50%;
+        }
+
         .tooltip-text {
             font-size: 7px;
             text-align: center;
@@ -320,9 +301,9 @@
         .vacation-tooltip { color: var(--accent-blue); }
 
         .info-section {
-            margin-top: 20px;
+            margin-top: 10px;
             border-top: 1px solid var(--tile-border);
-            padding-top: 16px;
+            padding-top: 14px;
             display: flex;
             flex-direction: column;
             gap: 8px;
@@ -370,6 +351,7 @@
         .info-item.holiday-bar::before { background: var(--accent-red); }
         .info-item.bridge-bar::before { background: var(--fav-gold); }
         .info-item.vacation-bar::before { background: var(--accent-blue); }
+        .info-item.note-bar::before { background: var(--accent-blue); }
 
         .info-date {
             font-weight: 600;
@@ -378,6 +360,11 @@
             align-items: center;
             gap: 8px;
             white-space: nowrap;
+        }
+
+        .info-date svg {
+            stroke: currentColor;
+            opacity: 0.85;
         }
 
         .info-name {
@@ -420,7 +407,7 @@
 
         .mini-weekdays {
             display: grid;
-            grid-template-columns: repeat(7, 1fr);
+            grid-template-columns: repeat(7, 1fr) 18px;
             text-align: center;
             font-size: 8px;
             font-weight: 700;
@@ -430,7 +417,7 @@
 
         .mini-days {
             display: grid;
-            grid-template-columns: repeat(7, 1fr);
+            grid-template-columns: repeat(7, 1fr) 18px;
             gap: 2px;
         }
 
@@ -449,16 +436,28 @@
             min-width: 0;
         }
 
+        .mini-kw {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7px;
+            font-weight: 600;
+            color: var(--subtext-color);
+            opacity: 0.75;
+            background: transparent;
+            min-width: 0;
+        }
+
         .mini-day.other {
             color: var(--subtext-color);
             opacity: 0.15;
         }
 
         .mini-day.today {
-            background: rgba(0, 122, 255, 0.25);
-            color: var(--accent-blue);
-            font-weight: 700;
-            border-color: var(--accent-blue);
+            background: rgba(0, 122, 255, 0.3) !important;
+            color: var(--accent-blue) !important;
+            font-weight: 800 !important;
+            border: 1px solid var(--accent-blue) !important;
         }
 
         .mini-day.holiday {
@@ -485,38 +484,7 @@
             color: var(--accent-red);
         }
 
-        .page-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--title-color);
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            letter-spacing: -0.3px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .title-icon-wrap {
-            width: 28px;
-            height: 28px;
-            border-radius: 8px;
-            background: rgba(0, 122, 255, 0.12);
-            border: 1px solid rgba(0, 122, 255, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            color: var(--accent-blue);
-        }
-
-        .top-spacer { width: 160px; flex-shrink: 0; }
-
         .legend-bar {
-            width: 100%;
-            max-width: 680px;
             background: var(--card-inner);
             border: 1px solid var(--tile-border);
             border-radius: 12px;
@@ -525,8 +493,9 @@
             align-items: center;
             gap: 14px;
             flex-wrap: wrap;
-            margin-bottom: 10px;
+            margin-top: 6px;
             box-sizing: border-box;
+            width: 100%;
         }
 
         .legend-dot {
@@ -571,18 +540,6 @@
             flex-shrink: 0;
         }
 
-        .calendar-title {
-            font-size: 17px;
-            font-weight: 800;
-            color: var(--text-color);
-            letter-spacing: -0.5px;
-            margin: 0;
-            line-height: 1.2;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
         @media (max-width: 768px) {
             .year-grid-container {
                 grid-template-columns: repeat(2, 1fr);
@@ -590,19 +547,12 @@
         }
 
         @media (max-width: 720px) {
-            body { padding: 8px 8px 24px 8px; }
-            .top-bar { margin-bottom: 10px; padding-bottom: 8px; gap: 8px; }
-            .page-title { font-size: 13px; gap: 5px; }
-            .title-icon-wrap { width: 22px; height: 22px; }
-            .top-spacer { width: 5px; }
-            .back-btn { padding: 5px 8px; font-size: 11px; }
-            .state-select { font-size: 11px; padding: 6px 8px; }
-            .options-row { gap: 4px; }
-            .option-chip { font-size: 9.5px; padding: 6px 4px; border-radius: 8px; }
+            body { padding: 8px; }
             .calendar-card { padding: 12px; border-radius: 14px; }
-            .calendar-header { margin-bottom: 12px; padding-bottom: 8px; }
-            .calendar-title { font-size: 13px; }
-            .nav-btn { width: 28px; height: 28px; font-size: 15px; border-radius: 8px; }
+            .calendar-title { font-size: 15px; }
+            .nav-btn { width: 32px; height: 32px; font-size: 16px; border-radius: 8px; }
+            .state-select-chip { height: 26px; font-size: 9.5px; padding: 0 20px 0 6px; }
+            .option-chip { font-size: 9.5px; padding: 4px 8px; height: 26px; }
             .day-cell { border-radius: 7px; font-size: 11px; }
             .info-item { padding: 8px 10px; font-size: 11px; }
             .legend-bar { gap: 6px; padding: 6px 8px; }
@@ -613,80 +563,47 @@
             .year-grid-container {
                 grid-template-columns: 1fr;
             }
-            .top-spacer { display: none; }
         }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">
-        <a href="index.html" class="back-btn">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
-            Dashboard
-        </a>
-        <h1 class="page-title">
-            <div class="title-icon-wrap">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            </div>
-            Feiertage &amp; Brückentage
-        </h1>
-        <div class="top-spacer">
-            <select id="stateSelect" class="state-select" onchange="changeState()" style="width:100%">
-                <option value="NW">NRW</option>
-                <option value="BW">Baden-Württ.</option>
-                <option value="BY">Bayern</option>
-                <option value="BE">Berlin</option>
-                <option value="BB">Brandenburg</option>
-                <option value="HB">Bremen</option>
-                <option value="HH">Hamburg</option>
-                <option value="HE">Hessen</option>
-                <option value="MV">Meckl.-Vorp.</option>
-                <option value="NI">Niedersachsen</option>
-                <option value="RP">Rheinl.-Pfalz</option>
-                <option value="SL">Saarland</option>
-                <option value="SN">Sachsen</option>
-                <option value="ST">Sachsen-Anh.</option>
-                <option value="SH">Schlesw.-Holst.</option>
-                <option value="TH">Thüringen</option>
+    <div class="calendar-card">
+        <!-- Optionen-Leiste oben: Mit minimalistischen SVG-Icons -->
+        <div class="options-row">
+            <button class="option-chip" id="toggleVacation" onclick="toggleVacationMode()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                Schulferien
+            </button>
+            <button class="option-chip" id="toggleBridge" onclick="toggleBridgeMode()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.5 1.2c-.2.5 0 1.1.5 1.3l9 4.7-3 3-3.8-1.2c-.5-.2-1.1.1-1.3.6l-.3 1c-.2.5.1 1.1.6 1.3l4.8 1.8c1.1.4 2.3.6 3.5.6h2.2c1.3 0 2.6-.4 3.7-1.2z"/></svg>
+                Brückentage
+            </button>
+            <button class="option-chip" id="toggleYearView" onclick="toggleYearViewMode()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                Jahresansicht
+            </button>
+            <select id="stateSelect" class="state-select-chip" onchange="changeState()">
+                <option value="NW">Nordrhein-Westfalen (NW)</option>
+                <option value="BW">Baden-Württemberg (BW)</option>
+                <option value="BY">Bayern (BY)</option>
+                <option value="BE">Berlin (BE)</option>
+                <option value="BB">Brandenburg (BB)</option>
+                <option value="HB">Bremen (HB)</option>
+                <option value="HH">Hamburg (HH)</option>
+                <option value="HE">Hessen (HE)</option>
+                <option value="MV">Mecklenburg-Vorpommern (MV)</option>
+                <option value="NI">Niedersachsen (NI)</option>
+                <option value="RP">Rheinland-Pfalz (RP)</option>
+                <option value="SL">Saarland (SL)</option>
+                <option value="SN">Sachsen (SN)</option>
+                <option value="ST">Sachsen-Anhalt (ST)</option>
+                <option value="SH">Schleswig-Holstein (SH)</option>
+                <option value="TH">Thüringen (TH)</option>
             </select>
         </div>
-    </div>
 
-    <div class="options-row">
-        <button class="option-chip" id="toggleVacation" onclick="toggleVacationMode()">
-            🎓 Schulferien
-        </button>
-        <button class="option-chip" id="toggleBridge" onclick="toggleBridgeMode()">
-            ✈️ Brückentage
-        </button>
-        <button class="option-chip" id="toggleYearView" onclick="toggleYearViewMode()">
-            📋 Jahreskalender
-        </button>
-    </div>
-
-    <div class="legend-bar" id="legendBar">
-        <div class="legend-dot">
-            <span class="live-beacon"></span>
-            Heute
-        </div>
-        <div class="legend-dot">
-            <span class="legend-swatch" style="background:#E82127;"></span>
-            Feiertag
-        </div>
-        <div class="legend-dot">
-            <span class="legend-swatch" style="background:rgba(255,199,0,0.3);border:1px dashed #FFC700;"></span>
-            Brückentag
-        </div>
-        <div class="legend-dot">
-            <span class="legend-swatch" style="background:#007AFF;"></span>
-            Schulferien
-        </div>
-        <div class="legend-dot" style="margin-left:auto;">
-            <span class="today-pill" id="todayPill"></span>
-        </div>
-    </div>
-
-    <div class="calendar-card" id="calendarCard">
+        <!-- Symmetrischer Kalender-Header mit Pfeilen links/rechts und Titel in der Mitte -->
         <div class="calendar-header">
             <button class="nav-btn" onclick="changeMonth(-1)">‹</button>
             <h2 class="calendar-title" id="calendarTitle">Kalender</h2>
@@ -704,6 +621,28 @@
             <div class="year-grid-container" id="yearGridContainer"></div>
         </div>
 
+        <div class="legend-bar" id="legendBar">
+            <div class="legend-dot">
+                <span class="live-beacon"></span>
+                Heute
+            </div>
+            <div class="legend-dot">
+                <span class="legend-swatch" style="background:#E82127;"></span>
+                Feiertag
+            </div>
+            <div class="legend-dot">
+                <span class="legend-swatch" style="background:rgba(255,199,0,0.3);border:1px dashed #FFC700;"></span>
+                Brückentag
+            </div>
+            <div class="legend-dot">
+                <span class="legend-swatch" style="background:#007AFF;"></span>
+                Schulferien
+            </div>
+            <div class="legend-dot" style="margin-left:auto;">
+                <span class="today-pill" id="todayPill"></span>
+            </div>
+        </div>
+
         <div class="info-section" id="infoSectionWrapper">
             <div class="info-title" id="infoListTitle">Monatsdetails</div>
             <div id="infoListContainer"></div>
@@ -717,10 +656,20 @@
         let showBridgeDays = false;
         let showYearView = false;
         let vacationsCache = {};
+        
+        // Notizen aus dem localStorage laden
+        let calendarNotes = JSON.parse(localStorage.getItem('tesla_calendar_notes') || '{}');
 
         const monthNames = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
 
         document.getElementById('stateSelect').value = currentState;
+
+        const svgs = {
+            holiday: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>',
+            bridge: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.5 1.2c-.2.5 0 1.1.5 1.3l9 4.7-3 3-3.8-1.2c-.5-.2-1.1.1-1.3.6l-.3 1c-.2.5.1 1.1.6 1.3l4.8 1.8c1.1.4 2.3.6 3.5.6h2.2c1.3 0 2.6-.4 3.7-1.2z"/></svg>',
+            vacation: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>',
+            note: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>'
+        };
 
         function toDateKey(date) {
             let y = date.getFullYear();
@@ -733,6 +682,14 @@
             let res = new Date(date);
             res.setDate(res.getDate() + days);
             return res;
+        }
+
+        function getWeekNumber(d) {
+            let date = new Date(d);
+            date.setHours(0,0,0,0);
+            date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+            let week1 = new Date(date.getFullYear(), 0, 4);
+            return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
         }
 
         function getEasterSunday(year) {
@@ -790,6 +747,7 @@
             if (saved) {
                 try {
                     vacationsCache[`${year}_${state}`] = JSON.parse(saved);
+                    renderCalendar();
                     return;
                 } catch(e) {}
             }
@@ -817,13 +775,11 @@
                             localStorage.setItem(cacheKey, JSON.stringify(vacMap));
                         } catch(e) {}
                         
-                        if (showVacations) {
-                            renderCalendar();
-                        }
+                        renderCalendar();
                     }
                 })
                 .catch(err => {
-                    console.warn("OpenHolidays API nicht erreichbar, nutze Fallback-Daten:", err);
+                    renderCalendar();
                 });
         }
 
@@ -964,20 +920,29 @@
             return `${parseInt(parts[2])}. ${monthNames[parseInt(parts[1]) - 1]}`;
         }
 
+        // Klick auf einen Tag in der Monatsansicht zum Bearbeiten/Erstellen einer Notiz
+        function handleDayClick(dateKey) {
+            let currentNote = calendarNotes[dateKey] || "";
+            let newNote = prompt(`Notiz für ${formatDateReadable(dateKey)}:\n(Leer lassen zum Löschen)`, currentNote);
+            
+            if (newNote !== null) {
+                newNote = newNote.trim();
+                if (newNote === "") {
+                    delete calendarNotes[dateKey];
+                } else {
+                    calendarNotes[dateKey] = newNote;
+                }
+                localStorage.setItem('tesla_calendar_notes', JSON.stringify(calendarNotes));
+                renderCalendar();
+            }
+        }
+
         function renderCalendar() {
             let year = currentDate.getFullYear();
             let month = currentDate.getMonth();
 
             let selectElem = document.getElementById('stateSelect');
             let stateName = selectElem.options[selectElem.selectedIndex].text;
-
-            function getWeekNumber(d) {
-                let date = new Date(d);
-                date.setHours(0,0,0,0);
-                date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
-                let week1 = new Date(date.getFullYear(), 0, 4);
-                return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
-            }
 
             let titleText = showYearView ? `Jahreskalender ${year}` : `${monthNames[month]} ${year}`;
             document.getElementById('calendarTitle').innerText = titleText;
@@ -1008,39 +973,74 @@
                     firstDayIndex = (firstDayIndex === 0) ? 6 : firstDayIndex - 1;
                     let totalDays = new Date(year, m + 1, 0).getDate();
 
-                    let miniDaysHTML = '';
+                    let prevMonthDays = new Date(year, m, 0).getDate();
+                    let leadingDays = [];
                     for (let i = firstDayIndex; i > 0; i--) {
-                        miniDaysHTML += `<div class="mini-day other"><span></span></div>`;
+                        let dNum = prevMonthDays - i + 1;
+                        let dObj = new Date(year, m - 1, dNum);
+                        leadingDays.push({ day: dNum, date: dObj, other: true });
                     }
+
+                    let monthDays = [];
                     for (let d = 1; d <= totalDays; d++) {
+                        let dObj = new Date(year, m, d);
                         let mStr = String(m + 1).padStart(2, '0');
                         let dStr = String(d).padStart(2, '0');
                         let dateKey = `${year}-${mStr}-${dStr}`;
+                        monthDays.push({ day: d, date: dObj, dateKey: dateKey, other: false });
+                    }
 
-                        let isToday = (dateKey === todayStr);
-                        let h = holidays[dateKey];
-                        let v = showVacations ? vacations[dateKey] : null;
-                        let b = showBridgeDays ? bridgeDays[dateKey] : null;
-                        let isSun = (new Date(year, m, d).getDay() === 0);
+                    let allCells = [...leadingDays, ...monthDays];
+                    let remainder = allCells.length % 7;
+                    if (remainder !== 0) {
+                        let trailingCount = 7 - remainder;
+                        for (let n = 1; n <= trailingCount; n++) {
+                            let dObj = new Date(year, m + 1, n);
+                            allCells.push({ day: n, date: dObj, other: true });
+                        }
+                    }
 
-                        let cName = "mini-day";
-                        if (isToday) cName += " today";
-                        if (h) cName += " holiday";
-                        else if (b) cName += " bridge-day";
-                        else if (v) cName += " school-vacation";
-                        else if (isSun) cName += " sunday";
+                    let rowsHTML = '';
+                    for (let i = 0; i < allCells.length; i += 7) {
+                        let weekChunk = allCells.slice(i, i + 7);
+                        let middleDay = weekChunk[3] ? weekChunk[3].date : weekChunk[0].date;
+                        let weekNum = getWeekNumber(middleDay);
 
-                        miniDaysHTML += `<div class="${cName}"><span>${d}</span></div>`;
+                        let rowCellsHTML = '';
+                        weekChunk.forEach(item => {
+                            if (item.other) {
+                                rowCellsHTML += `<div class="mini-day other"><span></span></div>`;
+                            } else {
+                                let isToday = (item.dateKey === todayStr);
+                                let h = holidays[item.dateKey];
+                                let v = vacations[item.dateKey];
+                                let b = showBridgeDays ? bridgeDays[item.dateKey] : null;
+                                let note = calendarNotes[item.dateKey];
+                                let isSun = (item.date.getDay() === 0);
+
+                                let cName = "mini-day";
+                                if (isToday) cName += " today";
+                                if (h) cName += " holiday";
+                                else if (b) cName += " bridge-day";
+                                else if (v && showVacations) cName += " school-vacation";
+                                else if (isSun) cName += " sunday";
+
+                                rowCellsHTML += `<div class="${cName}" title="${note ? 'Notiz: ' + note : ''}"><span>${item.day}</span></div>`;
+                            }
+                        });
+
+                        rowCellsHTML += `<div class="mini-kw">${weekNum}</div>`;
+                        rowsHTML += rowCellsHTML;
                     }
 
                     yearGridHTML += `
                         <div class="mini-month">
                             <div class="mini-month-title">${monthNames[m]}</div>
                             <div class="mini-weekdays">
-                                <div>M</div><div>D</div><div>M</div><div>D</div><div>F</div><div>S</div><div>S</div>
+                                <div>M</div><div>D</div><div>M</div><div>D</div><div>F</div><div>S</div><div>S</div><div></div>
                             </div>
                             <div class="mini-days">
-                                ${miniDaysHTML}
+                                ${rowsHTML}
                             </div>
                         </div>
                     `;
@@ -1064,6 +1064,7 @@
                 let monthHolidays = [];
                 let monthVacationsDays = [];
                 let monthBridgeDays = [];
+                let monthNotes = [];
 
                 for (let d = 1; d <= totalDays; d++) {
                     let monthStr = String(month + 1).padStart(2, '0');
@@ -1072,37 +1073,54 @@
 
                     let isToday = (dateKey === todayStr);
                     let holidayName = holidays[dateKey];
-                    let vacationName = showVacations ? vacations[dateKey] : null;
-                    let isBridge = showBridgeDays ? bridgeDays[dateKey] : null;
+                    let vacationName = vacations[dateKey];
+                    let isBridge = bridgeDays[dateKey];
+                    let noteText = calendarNotes[dateKey];
                     
                     let dayOfWeek = new Date(year, month, d).getDay();
                     let isSunday = (dayOfWeek === 0);
 
+                    if (holidayName) {
+                        monthHolidays.push({ date: dateKey, name: holidayName });
+                    }
+                    if (isBridge) {
+                        monthBridgeDays.push({ date: dateKey, name: isBridge });
+                    }
+                    if (vacationName) {
+                        monthVacationsDays.push({ date: dateKey, name: vacationName });
+                    }
+                    if (noteText) {
+                        monthNotes.push({ date: dateKey, name: noteText });
+                    }
+
                     let classList = "day-cell";
-                    if (isToday) classList += " today";
                     
                     if (holidayName) {
                         classList += " holiday";
-                        monthHolidays.push({ date: dateKey, name: holidayName });
-                    } else if (isBridge) {
+                    } else if (showBridgeDays && isBridge) {
                         classList += " bridge-day";
-                        monthBridgeDays.push({ date: dateKey, name: isBridge });
-                    } else if (vacationName) {
+                    } else if (showVacations && vacationName) {
                         classList += " school-vacation";
-                        monthVacationsDays.push({ date: dateKey, name: vacationName });
                     } else if (isSunday) {
                         classList += " sunday";
                     }
 
+                    if (isToday) {
+                        classList += " today";
+                    }
+
                     let tooltipHTML = '';
                     if (holidayName) tooltipHTML = `<span class="tooltip-text holiday-tooltip">${holidayName}</span>`;
-                    else if (isBridge) tooltipHTML = `<span class="tooltip-text bridge-tooltip">Brücke</span>`;
-                    else if (vacationName) tooltipHTML = `<span class="tooltip-text vacation-tooltip">${vacationName.replace('ferien', '')}</span>`;
+                    else if (showBridgeDays && isBridge) tooltipHTML = `<span class="tooltip-text bridge-tooltip">Brücke</span>`;
+                    else if (showVacations && vacationName) tooltipHTML = `<span class="tooltip-text vacation-tooltip">${vacationName.replace('ferien', '')}</span>`;
+
+                    let noteIndicatorHTML = noteText ? `<span class="note-indicator" title="${noteText}"></span>` : '';
 
                     gridHTML += `
-                        <div class="${classList}">
+                        <div class="${classList}" onclick="handleDayClick('${dateKey}')">
                             <span>${d}</span>
                             ${tooltipHTML}
+                            ${noteIndicatorHTML}
                         </div>
                     `;
                 }
@@ -1116,10 +1134,21 @@
                 document.getElementById('daysGrid').innerHTML = gridHTML;
 
                 let monthInfoHTML = '';
+                
+                // Notizen im Monat zuerst anzeigen
+                monthNotes.forEach(n => {
+                    monthInfoHTML += `
+                        <div class="info-item note-bar" onclick="handleDayClick('${n.date}')" style="cursor: pointer;">
+                            <span class="info-date">${svgs.note} ${formatDateReadable(n.date)}</span>
+                            <span class="info-name">${n.name}</span>
+                        </div>
+                    `;
+                });
+
                 monthHolidays.forEach(h => {
                     monthInfoHTML += `
                         <div class="info-item holiday-bar">
-                            <span class="info-date">🎈 ${formatDateReadable(h.date)}</span>
+                            <span class="info-date">${svgs.holiday} ${formatDateReadable(h.date)}</span>
                             <span class="info-name">${h.name}</span>
                         </div>
                     `;
@@ -1131,27 +1160,27 @@
                         let text = r.start === r.end ? formatDateReadable(r.start) : `${formatDateReadable(r.start)} – ${formatDateReadable(r.end)}`;
                         monthInfoHTML += `
                             <div class="info-item bridge-bar">
-                                <span class="info-date">✈️ ${text}</span>
+                                <span class="info-date">${svgs.bridge} ${text}</span>
                                 <span class="info-name">${r.name}</span>
                             </div>
                         `;
                     });
                 }
 
-                if (showVacations && monthVacationsDays.length > 0) {
+                if (monthVacationsDays.length > 0) {
                     let vRanges = consolidateNamedRanges(monthVacationsDays);
                     vRanges.forEach(r => {
                         let text = r.start === r.end ? formatDateReadable(r.start) : `${formatDateReadable(r.start)} – ${formatDateReadable(r.end)}`;
                         monthInfoHTML += `
                             <div class="info-item vacation-bar">
-                                <span class="info-date">🎓 ${text}</span>
+                                <span class="info-date">${svgs.vacation} ${text}</span>
                                 <span class="info-name">${r.name}</span>
                             </div>
                         `;
                     });
                 }
 
-                document.getElementById('infoListContainer').innerHTML = monthInfoHTML || `<div style="font-size:13px; color:var(--subtext-color); padding: 4px 0;">Keine Einträge in diesem Monat.</div>`;
+                document.getElementById('infoListContainer').innerHTML = monthInfoHTML || `<div style="font-size:13px; color:var(--subtext-color); padding: 4px 0;">Keine Einträge oder Notizen in diesem Monat.</div>`;
             }
         }
 
@@ -1159,15 +1188,11 @@
             currentState = document.getElementById('stateSelect').value;
             localStorage.setItem('tesla_dashboard_state', currentState);
             fetchVacations(currentDate.getFullYear(), currentState);
-            renderCalendar();
         }
 
         function toggleVacationMode() {
             showVacations = !showVacations;
             document.getElementById('toggleVacation').classList.toggle('active', showVacations);
-            if (showVacations) {
-                fetchVacations(currentDate.getFullYear(), currentState);
-            }
             renderCalendar();
         }
 
@@ -1194,12 +1219,12 @@
             let newYear = currentDate.getFullYear();
             if (newYear !== oldYear) {
                 fetchVacations(newYear, currentState);
+            } else {
+                renderCalendar();
             }
-            renderCalendar();
         }
 
         fetchVacations(currentDate.getFullYear(), currentState);
-        renderCalendar();
     </script>
 </body>
 </html>
