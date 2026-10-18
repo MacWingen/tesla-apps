@@ -274,7 +274,6 @@
             color: var(--accent-red);
         }
 
-        /* Notiz-Indikator Punkt auf der Kachel */
         .note-indicator {
             position: absolute;
             bottom: 4px;
@@ -540,10 +539,117 @@
             flex-shrink: 0;
         }
 
-        @media (max-width: 768px) {
-            .year-grid-container {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        /* Tesla-Design Modal Dialog */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: var(--card-bg);
+            border: 1px solid var(--tile-border);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 380px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            transform: scale(0.95);
+            transition: transform 0.2s ease;
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-header-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        .modal-textarea {
+            width: 100%;
+            height: 90px;
+            background: var(--card-inner);
+            border: 1px solid var(--tile-border);
+            border-radius: 10px;
+            padding: 10px;
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--text-color);
+            resize: none;
+            outline: none;
+            transition: border-color 0.15s ease;
+        }
+
+        .modal-textarea:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid var(--tile-border);
+            background: var(--card-inner);
+            color: var(--text-color);
+            transition: all 0.15s ease;
+            outline: none;
+        }
+
+        .modal-btn:hover {
+            background: var(--hover-bg);
+        }
+
+        .modal-btn.primary {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: #FFFFFF;
+        }
+
+        .modal-btn.primary:hover {
+            opacity: 0.9;
+        }
+
+        .modal-btn.danger {
+            background: rgba(232, 33, 39, 0.15);
+            border-color: rgba(232, 33, 39, 0.3);
+            color: var(--accent-red);
+            margin-right: auto;
+        }
+
+        .modal-btn.danger:hover {
+            background: rgba(232, 33, 39, 0.25);
         }
 
         @media (max-width: 720px) {
@@ -649,6 +755,19 @@
         </div>
     </div>
 
+    <!-- Tesla-Design Notiz-Modal -->
+    <div class="modal-overlay" id="noteModalOverlay" onclick="closeNoteModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <h3 class="modal-header-title" id="modalTitle">Notiz bearbeiten</h3>
+            <textarea class="modal-textarea" id="modalTextarea" placeholder="Notiz eingeben..."></textarea>
+            <div class="modal-buttons">
+                <button class="modal-btn danger" id="modalDeleteBtn" onclick="deleteCurrentNote()" style="display: none;">Löschen</button>
+                <button class="modal-btn" onclick="closeNoteModal()">Abbrechen</button>
+                <button class="modal-btn primary" onclick="saveCurrentNote()">Speichern</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let currentDate = new Date();
         let currentState = localStorage.getItem('tesla_dashboard_state') || 'NW';
@@ -657,8 +776,8 @@
         let showYearView = false;
         let vacationsCache = {};
         
-        // Notizen aus dem localStorage laden
         let calendarNotes = JSON.parse(localStorage.getItem('tesla_calendar_notes') || '{}');
+        let activeNoteDateKey = null;
 
         const monthNames = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
 
@@ -917,24 +1036,54 @@
 
         function formatDateReadable(dateStr) {
             let parts = dateStr.split('-');
-            return `${parseInt(parts[2])}. ${monthNames[parseInt(parts[1]) - 1]}`;
+            return `${parseInt(parts[2])}. ${monthNames[parseInt(parts[1]) - 1]} ${parts[0]}`;
         }
 
-        // Klick auf einen Tag in der Monatsansicht zum Bearbeiten/Erstellen einer Notiz
-        function handleDayClick(dateKey) {
+        // Tesla Modal öffnen
+        function openNoteModal(dateKey) {
+            activeNoteDateKey = dateKey;
             let currentNote = calendarNotes[dateKey] || "";
-            let newNote = prompt(`Notiz für ${formatDateReadable(dateKey)}:\n(Leer lassen zum Löschen)`, currentNote);
+            document.getElementById('modalTitle').innerText = `Notiz · ${formatDateReadable(dateKey)}`;
+            document.getElementById('modalTextarea').value = currentNote;
             
-            if (newNote !== null) {
-                newNote = newNote.trim();
-                if (newNote === "") {
-                    delete calendarNotes[dateKey];
-                } else {
-                    calendarNotes[dateKey] = newNote;
-                }
-                localStorage.setItem('tesla_calendar_notes', JSON.stringify(calendarNotes));
-                renderCalendar();
+            let deleteBtn = document.getElementById('modalDeleteBtn');
+            if (currentNote.trim() !== "") {
+                deleteBtn.style.display = 'block';
+            } else {
+                deleteBtn.style.display = 'none';
             }
+
+            document.getElementById('noteModalOverlay').classList.add('active');
+            setTimeout(() => document.getElementById('modalTextarea').focus(), 50);
+        }
+
+        // Tesla Modal schließen
+        function closeNoteModal() {
+            document.getElementById('noteModalOverlay').classList.remove('active');
+            activeNoteDateKey = null;
+        }
+
+        // Notiz speichern
+        function saveCurrentNote() {
+            if (!activeNoteDateKey) return;
+            let val = document.getElementById('modalTextarea').value.trim();
+            if (val === "") {
+                delete calendarNotes[activeNoteDateKey];
+            } else {
+                calendarNotes[activeNoteDateKey] = val;
+            }
+            localStorage.setItem('tesla_calendar_notes', JSON.stringify(calendarNotes));
+            closeNoteModal();
+            renderCalendar();
+        }
+
+        // Notiz direkt löschen
+        function deleteCurrentNote() {
+            if (!activeNoteDateKey) return;
+            delete calendarNotes[activeNoteDateKey];
+            localStorage.setItem('tesla_calendar_notes', JSON.stringify(calendarNotes));
+            closeNoteModal();
+            renderCalendar();
         }
 
         function renderCalendar() {
@@ -1117,7 +1266,7 @@
                     let noteIndicatorHTML = noteText ? `<span class="note-indicator" title="${noteText}"></span>` : '';
 
                     gridHTML += `
-                        <div class="${classList}" onclick="handleDayClick('${dateKey}')">
+                        <div class="${classList}" onclick="openNoteModal('${dateKey}')">
                             <span>${d}</span>
                             ${tooltipHTML}
                             ${noteIndicatorHTML}
@@ -1135,10 +1284,9 @@
 
                 let monthInfoHTML = '';
                 
-                // Notizen im Monat zuerst anzeigen
                 monthNotes.forEach(n => {
                     monthInfoHTML += `
-                        <div class="info-item note-bar" onclick="handleDayClick('${n.date}')" style="cursor: pointer;">
+                        <div class="info-item note-bar" onclick="openNoteModal('${n.date}')" style="cursor: pointer;" title="Klicken zum Bearbeiten">
                             <span class="info-date">${svgs.note} ${formatDateReadable(n.date)}</span>
                             <span class="info-name">${n.name}</span>
                         </div>
@@ -1193,6 +1341,7 @@
         function toggleVacationMode() {
             showVacations = !showVacations;
             document.getElementById('toggleVacation').classList.toggle('active', showVacations);
+            renderCommand(); // falls helper
             renderCalendar();
         }
 
