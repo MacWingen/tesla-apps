@@ -143,7 +143,6 @@
             padding-right: 24px;
         }
 
-        /* Explizite Anpassung der Dropdown-Einträge für Hell- und Dunkelmodus */
         .state-select-chip option {
             background-color: var(--card-bg);
             color: var(--text-color);
@@ -276,13 +275,23 @@
             color: var(--accent-red);
         }
 
-        .note-indicator {
+        /* Notiz-Icon auf der Kachel (dezent in Subtext-/Grauton) */
+        .day-note-icon {
             position: absolute;
-            bottom: 4px;
-            width: 4px;
-            height: 4px;
-            background-color: var(--accent-blue);
-            border-radius: 50%;
+            bottom: 3px;
+            width: 10px;
+            height: 10px;
+            color: var(--subtext-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .day-note-icon svg {
+            width: 10px;
+            height: 10px;
+            stroke: currentColor;
+            fill: none;
         }
 
         .tooltip-text {
@@ -1265,7 +1274,7 @@
                     else if (showBridgeDays && isBridge) tooltipHTML = `<span class="tooltip-text bridge-tooltip">Brücke</span>`;
                     else if (showVacations && vacationName) tooltipHTML = `<span class="tooltip-text vacation-tooltip">${vacationName.replace('ferien', '')}</span>`;
 
-                    let noteIndicatorHTML = noteText ? `<span class="note-indicator" title="${noteText}"></span>` : '';
+                    let noteIndicatorHTML = noteText ? `<div class="day-note-icon" title="${noteText}">${svgs.note}</div>` : '';
 
                     gridHTML += `
                         <div class="${classList}" onclick="openNoteModal('${dateKey}')">
