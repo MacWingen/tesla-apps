@@ -90,7 +90,7 @@
             margin-bottom: 2px;
         }
 
-        .option-chip, .state-select-chip {
+        .option-chip {
             background: var(--card-inner);
             border: 1px solid var(--tile-border);
             color: var(--subtext-color);
@@ -107,12 +107,12 @@
             outline: none;
         }
 
-        .option-chip svg, .state-select-chip svg {
+        .option-chip svg {
             stroke: currentColor;
             opacity: 0.85;
         }
 
-        .option-chip:hover, .state-select-chip:hover, .state-select-chip:focus {
+        .option-chip:hover {
             color: var(--text-color);
             background: var(--hover-bg);
             border-color: var(--subtext-color);
@@ -128,25 +128,6 @@
         .option-chip.active svg {
             stroke: var(--accent-blue);
             opacity: 1;
-        }
-
-        /* Bundesland Dropdown im Chip-Stil mit SVG-Icon und Dark-Mode Unterstützung */
-        .state-select-chip {
-            color: var(--text-color);
-            background-color: var(--card-inner);
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url("data:image/svg+xml;utf8,<svg fill='%23888888' height='10' viewBox='0 0 24 24' width='10' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-            background-repeat: no-repeat;
-            background-position: right 8px center;
-            padding-right: 24px;
-        }
-
-        .state-select-chip option {
-            background-color: var(--card-bg);
-            color: var(--text-color);
-            padding: 8px;
         }
 
         /* Kalender-Header: Symmetrisch mit Pfeilen links/rechts und Titel in der Mitte */
@@ -275,7 +256,7 @@
             color: var(--accent-red);
         }
 
-        /* Notiz-Icon auf der Kachel (dezent in Subtext-/Grauton) */
+        /* Notiz-Icon auf der Kachel */
         .day-note-icon {
             position: absolute;
             bottom: 3px;
@@ -668,7 +649,6 @@
             .calendar-card { padding: 12px; border-radius: 14px; }
             .calendar-title { font-size: 15px; }
             .nav-btn { width: 32px; height: 32px; font-size: 16px; border-radius: 8px; }
-            .state-select-chip { height: 26px; font-size: 9.5px; padding: 0 20px 0 6px; }
             .option-chip { font-size: 9.5px; padding: 4px 8px; height: 26px; }
             .day-cell { border-radius: 7px; font-size: 11px; }
             .info-item { padding: 8px 10px; font-size: 11px; }
@@ -700,24 +680,6 @@
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
                 Jahresansicht
             </button>
-            <select id="stateSelect" class="state-select-chip" onchange="changeState()">
-                <option value="NW">Nordrhein-Westfalen (NW)</option>
-                <option value="BW">Baden-Württemberg (BW)</option>
-                <option value="BY">Bayern (BY)</option>
-                <option value="BE">Berlin (BE)</option>
-                <option value="BB">Brandenburg (BB)</option>
-                <option value="HB">Bremen (HB)</option>
-                <option value="HH">Hamburg (HH)</option>
-                <option value="HE">Hessen (HE)</option>
-                <option value="MV">Mecklenburg-Vorpommern (MV)</option>
-                <option value="NI">Niedersachsen (NI)</option>
-                <option value="RP">Rheinland-Pfalz (RP)</option>
-                <option value="SL">Saarland (SL)</option>
-                <option value="SN">Sachsen (SN)</option>
-                <option value="ST">Sachsen-Anhalt (ST)</option>
-                <option value="SH">Schleswig-Holstein (SH)</option>
-                <option value="TH">Thüringen (TH)</option>
-            </select>
         </div>
 
         <!-- Symmetrischer Kalender-Header mit Pfeilen links/rechts und Titel in der Mitte -->
@@ -782,6 +744,7 @@
     <script>
         let currentDate = new Date();
         let currentState = localStorage.getItem('tesla_dashboard_state') || 'NW';
+        let currentStateName = localStorage.getItem('tesla_dashboard_state_name') || 'Nordrhein-Westfalen';
         let showVacations = false;
         let showBridgeDays = false;
         let showYearView = false;
@@ -792,7 +755,65 @@
 
         const monthNames = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
 
-        document.getElementById('stateSelect').value = currentState;
+        const stateMapping = {
+            "Baden-Württemberg": "BW",
+            "Bayern": "BY",
+            "Berlin": "BE",
+            "Brandenburg": "BB",
+            "Bremen": "HB",
+            "Hamburg": "HH",
+            "Hessen": "HE",
+            "Mecklenburg-Vorpommern": "MV",
+            "Niedersachsen": "NI",
+            "Nordrhein-Westfalen": "NW",
+            "Rheinland-Pfalz": "RP",
+            "Saarland": "SL",
+            "Sachsen": "SN",
+            "Sachsen-Anhalt": "ST",
+            "Schleswig-Holstein": "SH",
+            "Thüringen": "TH"
+        };
+
+        function initLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        let lat = position.coords.latitude;
+                        let lon = position.coords.longitude;
+                        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&accept-language=de`)
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data && data.address) {
+                                    let state = data.address.state;
+                                    if (state) {
+                                        for (let key in stateMapping) {
+                                            if (state.includes(key)) {
+                                                currentStateName = key;
+                                                currentState = stateMapping[key];
+                                                localStorage.setItem('tesla_dashboard_state', currentState);
+                                                localStorage.setItem('tesla_dashboard_state_name', currentStateName);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                                fetchVacations(currentDate.getFullYear(), currentState);
+                            })
+                            .catch(err => {
+                                console.warn("GPS Reverse Geocoding fehlgeschlagen, nutze Standard:", err);
+                                fetchVacations(currentDate.getFullYear(), currentState);
+                            });
+                    },
+                    error => {
+                        console.warn("GPS-Zugriff nicht verfügbar:", error);
+                        fetchVacations(currentDate.getFullYear(), currentState);
+                    },
+                    { timeout: 8000 }
+                );
+            } else {
+                fetchVacations(currentDate.getFullYear(), currentState);
+            }
+        }
 
         const svgs = {
             holiday: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>',
@@ -1101,8 +1122,7 @@
             let year = currentDate.getFullYear();
             let month = currentDate.getMonth();
 
-            let selectElem = document.getElementById('stateSelect');
-            let stateName = selectElem.options[selectElem.selectedIndex].text;
+            let stateName = `${currentStateName} (${currentState})`;
 
             let titleText = showYearView ? `Jahreskalender ${year}` : `${monthNames[month]} ${year}`;
             document.getElementById('calendarTitle').innerText = titleText;
@@ -1343,12 +1363,6 @@
             }
         }
 
-        function changeState() {
-            currentState = document.getElementById('stateSelect').value;
-            localStorage.setItem('tesla_dashboard_state', currentState);
-            fetchVacations(currentDate.getFullYear(), currentState);
-        }
-
         function toggleVacationMode() {
             showVacations = !showVacations;
             document.getElementById('toggleVacation').classList.toggle('active', showVacations);
@@ -1383,7 +1397,7 @@
             }
         }
 
-        fetchVacations(currentDate.getFullYear(), currentState);
+        initLocation();
     </script>
 </body>
 </html>
