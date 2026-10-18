@@ -130,9 +130,10 @@
             opacity: 1;
         }
 
-        /* Bundesland Dropdown im Chip-Stil mit SVG-Icon */
+        /* Bundesland Dropdown im Chip-Stil mit SVG-Icon und Dark-Mode Unterstützung */
         .state-select-chip {
             color: var(--text-color);
+            background-color: var(--card-inner);
             appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
@@ -142,10 +143,11 @@
             padding-right: 24px;
         }
 
+        /* Explizite Anpassung der Dropdown-Einträge für Hell- und Dunkelmodus */
         .state-select-chip option {
             background-color: var(--card-bg);
             color: var(--text-color);
-            padding: 6px;
+            padding: 8px;
         }
 
         /* Kalender-Header: Symmetrisch mit Pfeilen links/rechts und Titel in der Mitte */
@@ -1341,7 +1343,6 @@
         function toggleVacationMode() {
             showVacations = !showVacations;
             document.getElementById('toggleVacation').classList.toggle('active', showVacations);
-            renderCommand(); // falls helper
             renderCalendar();
         }
 
