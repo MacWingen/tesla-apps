@@ -177,17 +177,10 @@
             border-bottom: 1px solid var(--tile-border);
         }
 
-        .emulator-screen {
+        #emulator {
+            width: 100%;
+            height: 100%;
             flex-grow: 1;
-            width: 100%;
-            height: 100%;
-            background: #000;
-        }
-
-        #emulatorFrame {
-            width: 100%;
-            height: 100%;
-            border: none;
         }
     </style>
 </head>
@@ -207,9 +200,8 @@
                 <span id="activeGameTitle" style="font-weight: 700; font-size: 14px;">Spiel läuft...</span>
                 <button class="back-btn" onclick="closeEmulator()">Spiel beenden</button>
             </div>
-            <div class="emulator-screen" id="emulatorScreenWrapper">
-                <!-- Iframe wird hier dynamisch mit absoluter URL gefüllt -->
-            </div>
+            <!-- EmulatorJS Container -->
+            <div id="emulator"></div>
         </div>
     </div>
 
@@ -262,22 +254,38 @@
             });
         }
 
+        let currentScript = null;
+
         function launchSnesGame(game) {
             document.getElementById('snesGameGrid').style.display = 'none';
             document.getElementById('emulatorContainer').classList.add('active');
             document.getElementById('activeGameTitle').innerText = game.name;
-            
-            // Ermittelt die absolute Basis-URL deiner GitHub Pages Seite
-            const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-            const absoluteRomUrl = baseUrl + game.rom;
 
-            const screenWrapper = document.getElementById('emulatorScreenWrapper');
-            screenWrapper.innerHTML = `<iframe id="emulatorFrame" src="https://emulatorjs.org/embed?system=snes&rom=${encodeURIComponent(absoluteRomUrl)}" allowfullscreen></iframe>`;
+            // Alten Emulator-Inhalt bereinigen falls vorhanden
+            document.getElementById('emulator').innerHTML = '';
+            if (currentScript) {
+                currentScript.remove();
+            }
+
+            // Konfiguration für EmulatorJS setzen
+            window.EJS_player = '#emulator';
+            window.EJS_gameUrl = game.rom;
+            window.EJS_core = 'snes';
+            window.EJS_startOnLoaded = true;
+            window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
+
+            // Loader-Skript dynamisch einfügen
+            currentScript = document.createElement('script');
+            currentScript.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
+            document.body.appendChild(currentScript);
         }
 
         function closeEmulator() {
-            const screenWrapper = document.getElementById('emulatorScreenWrapper');
-            screenWrapper.innerHTML = ''; 
+            document.getElementById('emulator').innerHTML = '';
+            if (currentScript) {
+                currentScript.remove();
+                currentScript = null;
+            }
             document.getElementById('emulatorContainer').classList.remove('active');
             document.getElementById('snesGameGrid').style.display = 'grid';
         }
