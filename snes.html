@@ -117,7 +117,7 @@
             border-color: var(--accent-blue);
         }
 
-        /* 4:3 Querformat für die Cover im ROM-Ordner */
+        /* Exaktes 4:3 Querformat für die 400x300 Cover */
         .game-cover-wrapper {
             width: 100%;
             aspect-ratio: 4 / 3;
@@ -206,14 +206,14 @@
             </div>
             <div class="emulator-screen">
                 <div style="color: #888; text-align: center;">
-                    <p>Emulator lädt ROM aus roms/snes/ ...</p>
+                    <p id="emulatorStatus">Lade ROM: roms/snes/ ...</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Hier greifen die Cover jetzt direkt aus dem roms/snes/ Ordner
+        // Spiele-Array: Cover und .smc ROMs liegen direkt zusammen unter roms/snes/
         const snesGames = [
             { 
                 id: "supermario", 
@@ -266,8 +266,10 @@
             document.getElementById('snesGameGrid').style.display = 'none';
             document.getElementById('emulatorContainer').classList.add('active');
             document.getElementById('activeGameTitle').innerText = game.name;
+            document.getElementById('emulatorStatus').innerText = "Starte ROM: " + game.rom + " ...";
             
-            // Hier binden wir gleich den Emulator-Core ein
+            // Hier wird im nächsten Schritt der Emulator-Core (WebAssembly) angebunden, 
+            // der die Datei aus game.rom einliest.
         }
 
         function closeEmulator() {
@@ -279,3 +281,4 @@
     </script>
 </body>
 </html>
+```
