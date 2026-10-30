@@ -222,29 +222,32 @@
     </div>
 
     <script>
+        // Automatischer Basis-Pfad für GitHub Pages (berücksichtigt das /tesla-apps/ Repository)
+        const repoBase = window.location.hostname.includes('github.io') ? '/tesla-apps' : '';
+
         const snesGames = [
             { 
                 id: "supermario", 
                 name: "Super Mario World", 
-                cover: "roms/snes/super_mario_world.png", 
-                rom: "roms/snes/super_mario_world.smc" 
+                cover: repoBase + "/roms/snes/super_mario_world.png", 
+                rom: repoBase + "/roms/snes/super_mario_world.smc" 
             },
             { 
                 id: "zelda", 
                 name: "Zelda: A Link to the Past", 
-                cover: "roms/snes/zelda.png", 
-                rom: "roms/snes/zelda.smc" 
+                cover: repoBase + "/roms/snes/zelda.png", 
+                rom: repoBase + "/roms/snes/zelda.smc" 
             },
             { 
                 id: "mariokart", 
                 name: "Super Mario Kart", 
-                cover: "roms/snes/mario_kart.png", 
-                rom: "roms/snes/mario_kart.smc" 
+                cover: repoBase + "/roms/snes/mario_kart.png", 
+                rom: repoBase + "/roms/snes/mario_kart.smc" 
             },
             { 
                 id: "metroid", 
                 name: "Super Metroid", 
-                cover: "roms/snes/super_metroid.png", 
+                cover: repoBase + "/roms/snes/super_metroid.png", 
                 rom: "roms/snes/super_metroid.smc" 
             }
         ];
@@ -279,8 +282,9 @@
             document.getElementById('activeGameTitle').innerText = game.name;
 
             try {
-                // ROM-Datei direkt über GitHub Pages / lokalen Server laden
+                // ROM-Datei mit absolutem Repository-Pfad laden
                 let response = await fetch(game.rom);
+                if (!response.ok) throw new Error("HTTP Fehler " + response.status);
                 let buffer = await response.arrayBuffer();
                 let romData = new Uint8Array(buffer);
 
