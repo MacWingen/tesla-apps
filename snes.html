@@ -10,6 +10,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
 
+    <!-- JSNES Emulator Core über CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsnes/1.2.0/jsnes.min.js"></script>
+
     <style>
         :root {
             --bg-color: #161616;
@@ -156,12 +159,12 @@
         .emulator-container {
             display: none;
             width: 100%;
-            height: 80vh;
             background: #000;
             border-radius: 16px;
             border: 1px solid var(--tile-border);
             overflow: hidden;
             flex-direction: column;
+            align-items: center;
         }
 
         .emulator-container.active {
@@ -169,6 +172,7 @@
         }
 
         .emulator-header {
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -178,20 +182,20 @@
         }
 
         .emulator-screen {
-            flex-grow: 1;
             width: 100%;
-            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 20px;
             background: #000;
         }
 
-        /* Iframe für den direktstartenden Emulator-Player */
-        #emulatorFrame {
-            width: 100%;
-            height: 100%;
-            border: none;
+        canvas {
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #333;
         }
     </style>
 </head>
@@ -211,8 +215,8 @@
                 <span id="activeGameTitle" style="font-weight: 700; font-size: 14px;">Spiel läuft...</span>
                 <button class="back-btn" onclick="closeEmulator()">Spiel beenden</button>
             </div>
-            <div class="emulator-screen" id="emulatorScreenWrapper">
-                <!-- Hier wird der Player dynamisch geladen -->
+            <div class="emulator-screen">
+                <canvas id="emscripten_canvas" width="256" height="224"></canvas>
             </div>
         </div>
     </div>
@@ -245,6 +249,9 @@
             }
         ];
 
+        let nes = null;
+        let animationFrameId = null;
+
         function renderSnesGames() {
             const grid = document.getElementById('snesGameGrid');
             grid.innerHTML = '';
@@ -266,18 +273,56 @@
             });
         }
 
-        function launchSnesGame(game) {
+        async function launchSnesGame(game) {
             document.getElementById('snesGameGrid').style.display = 'none';
             document.getElementById('emulatorContainer').classList.add('active');
             document.getElementById('activeGameTitle').innerText = game.name;
-            
-            const screenWrapper = document.getElementById('emulatorScreenWrapper');
-            screenWrapper.innerHTML = `<iframe id="emulatorFrame" src="https://emulatorjs.org/embed?system=snes&rom=${encodeURIComponent(game.rom)}" allowfullscreen></iframe>`;
+
+            try {
+                // ROM-Datei direkt über GitHub Pages / lokalen Server laden
+                let response = await fetch(game.rom);
+                let buffer = await response.arrayBuffer();
+                let romData = new Uint8Array(buffer);
+
+                // Canvas initialisieren
+                const canvas = document.getElementById('emscripten_canvas');
+                const ctx = canvas.getContext('2d');
+                let image = ctx.createImageData(canvas.width, canvas.height);
+
+                nes = new jsnes.NES({
+                    onFrame: function(frameData) {
+                        for (let i = 0; i < frameData.length; i++) {
+                            image.data[i * 4] = (frameData[i] & 0xFF0000) >> 16;
+                            image.data[i * 4 + 1] = (frameData[i] & 0x00FF00) >> 8;
+                            image.data[i * 4 + 2] = (frameData[i] & 0x0000FF);
+                            image.data[i * 4 + 3] = 0xFF;
+                        }
+                        ctx.putImageData(image, 0, 0);
+                    },
+                    audioSampleRate: 44100
+                });
+
+                // ROM laden und starten
+                nes.loadROM(romData);
+                runEmulation();
+
+            } catch (err) {
+                console.error("Fehler beim Laden der ROM:", err);
+                alert("ROM konnte nicht geladen werden. Prüfe den Pfad: " + game.rom);
+            }
+        }
+
+        function runEmulation() {
+            if (!nes) return;
+            nes.frame();
+            animationFrameId = requestAnimationFrame(runEmulation);
         }
 
         function closeEmulator() {
-            const screenWrapper = document.getElementById('emulatorScreenWrapper');
-            screenWrapper.innerHTML = ''; // Stoppt das Spiel / schließt den Player
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            nes = null;
             document.getElementById('emulatorContainer').classList.remove('active');
             document.getElementById('snesGameGrid').style.display = 'grid';
         }
