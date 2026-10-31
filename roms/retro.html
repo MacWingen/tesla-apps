@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Retro Hub & Emulation</title>
+    
+    <meta name="theme-color" content="#161616" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#F1F1F1" media="(prefers-color-scheme: light)">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <style>
+        :root {
+            --bg-color: #161616;
+            --card-bg: #2A2A2A;
+            --text-color: #FFFFFF;
+            --tile-bg: #2A2A2A;
+            --tile-border: rgba(255, 255, 255, 0.08);
+            --subtext-color: #AAAAAA;
+            --hover-bg: rgba(255, 255, 255, 0.07);
+            --accent-blue: #007AFF;
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                --bg-color: #F1F1F1;
+                --card-bg: #FFFFFF;
+                --text-color: #111111;
+                --tile-bg: #FFFFFF;
+                --tile-border: rgba(0, 0, 0, 0.08);
+                --subtext-color: #888888;
+                --hover-bg: rgba(0, 0, 0, 0.05);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text-color);
+            margin: 0;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100dvh;
+            width: 100%;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--tile-border);
+        }
+
+        .back-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--tile-border);
+            color: var(--text-color);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .back-btn:hover {
+            background: var(--hover-bg);
+        }
+
+        .page-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .system-tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding-bottom: 4px;
+        }
+
+        .system-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .sys-tab {
+            background: var(--card-bg);
+            border: 1px solid var(--tile-border);
+            color: var(--subtext-color);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .sys-tab.active, .sys-tab:hover {
+            color: var(--text-color);
+            border-color: var(--accent-blue);
+            background: var(--hover-bg);
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 16px;
+            width: 100%;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            border: 1px solid var(--tile-border);
+            border-radius: 14px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            transition: transform 0.15s ease, border-color 0.15s ease;
+        }
+
+        .game-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent-blue);
+        }
+
+        .game-cover {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            background: #111;
+        }
+
+        .game-info {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .game-name {
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .game-sys {
+            font-size: 10px;
+            color: var(--subtext-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Emulator Ansicht */
+        .emulator-container {
+            display: none;
+            width: 100%;
+            height: 70vh;
+            background: #000;
+            border-radius: 16px;
+            border: 1px solid var(--tile-border);
+            overflow: hidden;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .emulator-container.active {
+            display: flex;
+        }
+
+        .emulator-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--card-bg);
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--tile-border);
+        }
+
+        .emulator-screen {
+            flex-grow: 1;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #gameCanvas {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Kopfleiste -->
+        <div class="top-bar">
+            <a href="index.html" class="back-btn">&#8249; Dashboard</a>
+            <h1 class="page-title">🕹️ Retro Gaming Hub</h1>
+            <div style="width: 70px;"></div>
+        </div>
+
+        <!-- System Auswahl -->
+        <div class="system-tabs">
+            <button class="sys-tab active" onclick="filterSystem('all', this)">Alle Spiele</button>
+            <button class="sys-tab" onclick="filterSystem('snes', this)">Super Nintendo (SNES)</button>
+            <button class="sys-tab" onclick="filterSystem('nes', this)">NES</button>
+            <button class="sys-tab" onclick="filterSystem('gb', this)">Game Boy</button>
+        </div>
+
+        <!-- Spiel-Auswahl Raster -->
+        <div class="game-grid" id="gameGrid"></div>
+
+        <!-- Emulator Ausführungs-Container -->
+        <div class="emulator-container" id="emulatorContainer">
+            <div class="emulator-header">
+                <span id="activeGameTitle" style="font-weight: 700; font-size: 14px;">Spiel läuft...</span>
+                <button class="back-btn" onclick="closeEmulator()">Spiel beenden</button>
+            </div>
+            <div class="emulator-screen">
+                <!-- Hier wird der Emulator-Core / Canvas eingebunden -->
+                <div style="color: #888; text-align: center;">
+                    <p>Lade Emulator-Kern & ROM...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Beispieldaten für deine Retro-Spiele mit Covern und Systemen
+        const games = [
+            { id: "supermario", name: "Super Mario World", system: "snes", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2mbs.jpg", rom: "smw.smc" },
+            { id: "zelda", name: "Zelda: A Link to the Past", system: "snes", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2pio.jpg", rom: "zelda.smc" },
+            { id: "mariokart", name: "Super Mario Kart", system: "snes", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2pp0.jpg", rom: "mk.smc" },
+            { id: "metroid", name: "Super Metroid", system: "snes", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1x7g.jpg", rom: "metroid.smc" },
+            { id: "tetris", name: "Tetris", system: "gb", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2mzt.jpg", rom: "tetris.gb" },
+            { id: "mariobros", name: "Super Mario Bros.", system: "nes", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1tn7.jpg", rom: "smb.nes" }
+        ];
+
+        let currentSystemFilter = 'all';
+
+        function renderGames() {
+            const grid = document.getElementById('gameGrid');
+            grid.innerHTML = '';
+
+            let filtered = games.filter(g => currentSystemFilter === 'all' || g.system === currentSystemFilter);
+
+            filtered.forEach(game => {
+                let card = document.createElement('div');
+                card.className = 'game-card';
+                card.onclick = () => launchGame(game);
+                card.innerHTML = `
+                    <img src="${game.cover}" alt="${game.name}" class="game-cover" onerror="this.src='https://via.placeholder.com/130x140?text=Retro'">
+                    <div class="game-info">
+                        <span class="game-name">${game.name}</span>
+                        <span class="game-sys">${game.system.toUpperCase()}</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterSystem(sys, btn) {
+            currentSystemFilter = sys;
+            document.querySelectorAll('.sys-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            renderGames();
+        }
+
+        function launchGame(game) {
+            document.getElementById('gameGrid').style.display = 'none';
+            document.querySelector('.system-tabs').style.display = 'none';
+            document.getElementById('emulatorContainer').classList.add('active');
+            document.getElementById('activeGameTitle').innerText = game.name;
+            
+            // Hier greift später der Emulator-Core (z.B. EmulatorJS oder Wasm-Init mit game.rom)
+        }
+
+        function closeEmulator() {
+            document.getElementById('emulatorContainer').classList.remove('active');
+            document.getElementById('gameGrid').style.display = 'grid';
+            document.querySelector('.system-tabs').style.display = 'flex';
+        }
+
+        renderGames();
+    </script>
+</body>
+</html>
+```
+
+Speichere diese Datei einfach als `retro.html` im selben Verzeichnis ab wie deine `index.html`. Wenn du magst, kannst du sie im Anschluss ganz unkompliziert mit deinem Dashboard verknüpfen!
