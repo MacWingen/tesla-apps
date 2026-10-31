@@ -17,7 +17,6 @@
         }
         body { background-color: var(--bg-color); color: var(--text-color); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         
-        /* Player-Container mit sanfter Ein-/Ausfahr-Animation */
         .player-wrapper {
             width: 100%;
             max-width: 900px;
@@ -36,7 +35,6 @@
         .player-box { width: 100%; background: #000; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); margin-bottom: 10px; }
         video { width: 100%; height: 100%; object-fit: contain; background: #000; }
 
-        /* Steuerungsleiste (Start/Stop Button & Info) */
         .controls-bar {
             display: flex;
             justify-content: space-between;
@@ -63,7 +61,6 @@
 
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; width: 100%; max-width: 900px; }
         
-        /* Kachel-Struktur im Radio-Stil mit Overlays */
         .card { 
             background: var(--card-bg); 
             border: 1px solid var(--border-color); 
@@ -74,12 +71,16 @@
             transition: border-color 0.2s; 
             position: relative;
             overflow: hidden;
+            min-height: 90px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         .card:hover { border-color: var(--accent-blue); }
-        .card img { width: 40px; height: 40px; object-fit: contain; margin-bottom: 6px; display: block; margin-left: auto; margin-right: auto; }
-        .card b { font-size: 14px; }
+        .card img { width: 40px; height: 40px; object-fit: contain; margin-bottom: 6px; display: block; }
+        .card b { font-size: 13px; line-height: 1.2; }
 
-        /* Live Badge in Rot */
         .live-badge {
             position: absolute;
             top: 6px;
@@ -96,7 +97,6 @@
         }
         .card.playing .live-badge { display: block; }
 
-        /* Radio-State Stopp-Overlay bei Wiedergabe */
         .radio-state-overlay {
             position: absolute;
             inset: 0;
@@ -113,7 +113,6 @@
     </style>
 </head>
 <body>
-    <!-- Eingeklappter Player-Bereich -->
     <div class="player-wrapper" id="playerWrapper">
         <div class="player-box">
             <video id="videoPlayer" controls playsinline></video>
@@ -128,6 +127,7 @@
 
     <script>
         const channels = [
+            // --- Öffentlich-Rechtliche ---
             { id: "ard", name: "Das Erste", url: "https://daserste-live.ard-mcdn.de/daserste/live/hls/de/master.m3u8", logo: "tv-icons/ard-de.png" },
             { id: "zdf", name: "ZDF", url: "https://zdf-hls-15.akamaized.net/hls/live/2016498/de/high/master.m3u8", logo: "tv-icons/zdf-de.png" },
             { id: "wdr", name: "WDR", url: "https://wdrfs247.akamaized.net/hls/live/681509/wdr_msl4_fs247/master.m3u8", logo: "tv-icons/wdr-de.png" },
@@ -137,7 +137,226 @@
             { id: "mdr", name: "MDR", url: "https://mdrtvsnhls.akamaized.net/hls/live/2016928/mdrtvsn/master.m3u8", logo: "tv-icons/mdr-de.png" },
             { id: "hr", name: "HR", url: "https://hrhlsde.akamaized.net/hls/live/2024526/hrhlsde/index.m3u8", logo: "tv-icons/hr-de.png" },
             { id: "rbb", name: "RBB", url: "https://rbb-hls-berlin.akamaized.net/hls/live/2017824/rbb_berlin/index.m3u8", logo: "tv-icons/rbb-de.png" },
-            { id: "tagesschau24", name: "Tagesschau24", url: "https://tagesschau.akamaized.net/hls/live/2020115/tagesschau/tagesschau_1/master.m3u8", logo: "tv-icons/tagesschau24-de.png" }
+            { id: "tagesschau24", name: "Tagesschau24", url: "https://tagesschau.akamaized.net/hls/live/2020115/tagesschau/tagesschau_1/master.m3u8", logo: "tv-icons/tagesschau24-de.png" },
+
+            // --- Pluto TV (Vollständig 1:1) ---
+            { id: "plu-1", name: "21 Jump Street", url: "https://jmp2.uk/plu-686cffbf3ffa5e0c91cdcfb3.m3u8", logo: "" },
+            { id: "plu-2", name: "90210", url: "https://jmp2.uk/plu-65a67dd13af63d0008257f17.m3u8", logo: "" },
+            { id: "plu-3", name: "Alle hassen Chris", url: "https://jmp2.uk/plu-622f6e1e2792150007e0b2ff.m3u8", logo: "" },
+            { id: "plu-4", name: "Andromeda", url: "https://jmp2.uk/plu-663a163f8ea5560008a3f234.m3u8", logo: "" },
+            { id: "plu-5", name: "Anger Management", url: "https://jmp2.uk/plu-655ca57e4261ca00080b3a04.m3u8", logo: "" },
+            { id: "plu-6", name: "Auction Hunters", url: "https://jmp2.uk/plu-5ede45d077746000072be0fe.m3u8", logo: "" },
+            { id: "plu-7", name: "Auto Motor Sport", url: "https://jmp2.uk/plu-5f760c3d41aa2d0007bfde19.m3u8", logo: "" },
+            { id: "plu-8", name: "Awkward", url: "https://jmp2.uk/plu-62bc1784120ba80007935aaa.m3u8", logo: "" },
+            { id: "plu-9", name: "Ax Men Die Holzfäller (720p)", url: "https://jmp2.uk/plu-6914913274601d957ae35565.m3u8", logo: "" },
+            { id: "plu-10", name: "Axel!", url: "https://jmp2.uk/plu-667d63d236a2f90008f72269.m3u8", logo: "" },
+            { id: "plu-11", name: "BBC Travel", url: "https://jmp2.uk/plu-60e4519e6873180007d3cddb.m3u8", logo: "" },
+            { id: "plu-12", name: "Becker", url: "https://jmp2.uk/plu-630348a54c48ce00077eb6c7.m3u8", logo: "" },
+            { id: "plu-13", name: "Beverly Hills 90210", url: "https://jmp2.uk/plu-60afb576053df900076fa2f0.m3u8", logo: "" },
+            { id: "plu-14", name: "BIG BROTHER CLASSIC", url: "https://jmp2.uk/plu-663e09e4b18d700008e48dcf.m3u8", logo: "" },
+            { id: "plu-15", name: "Blue Mountain State", url: "https://jmp2.uk/plu-67ff7dd84906b1acfad97330.m3u8", logo: "" },
+            { id: "plu-16", name: "Bronco (720p)", url: "https://jmp2.uk/plu-684ac10236c9361b1977f7bc.m3u8", logo: "" },
+            { id: "plu-17", name: "BVB-Frauen", url: "https://jmp2.uk/plu-66337ea1307fa300082c28a0.m3u8", logo: "" },
+            { id: "plu-18", name: "Call My Agent!", url: "https://jmp2.uk/plu-69776f2b2c00406316a01945.m3u8", logo: "" },
+            { id: "plu-19", name: "CBS News 24/7", url: "https://jmp2.uk/plu-62441d6ded1827000763dcda.m3u8", logo: "" },
+            { id: "plu-20", name: "CC Pluto TV", url: "https://jmp2.uk/plu-5d4947590ba40f75dc29c26b.m3u8", logo: "" },
+            { id: "plu-21", name: "Chaos City", url: "https://jmp2.uk/plu-60afbad343e3840007164348.m3u8", logo: "" },
+            { id: "plu-22", name: "Cheers", url: "https://jmp2.uk/plu-611e7f224676bf00076a4d8d.m3u8", logo: "" },
+            { id: "plu-23", name: "CNN Headlines International", url: "https://jmp2.uk/plu-66337e365a402e00087eccaf.m3u8", logo: "" },
+            { id: "plu-24", name: "Comedy Central South Park", url: "https://jmp2.uk/plu-60c716084d842c00085f6e64.m3u8", logo: "" },
+            { id: "plu-25", name: "Dating hinter Gittern", url: "https://jmp2.uk/plu-691b2b690d121b44ad4a53ef.m3u8", logo: "" },
+            { id: "plu-26", name: "DAZN Darts x Pluto TV", url: "https://jmp2.uk/plu-64b67f0424ade50008a3be17.m3u8", logo: "" },
+            { id: "plu-27", name: "DAZN Heldinnen x Pluto TV", url: "https://jmp2.uk/plu-64afe50c5dc16600087f3227.m3u8", logo: "" },
+            { id: "plu-28", name: "Der Bergdoktor", url: "https://jmp2.uk/plu-69b0167477cdde1f05c8a625.m3u8", logo: "" },
+            { id: "plu-29", name: "Der Chef (720p)", url: "https://jmp2.uk/plu-67dc21ce5a15c0759a07ee19.m3u8", logo: "" },
+            { id: "plu-30", name: "Der Denver-Clan", url: "https://jmp2.uk/plu-62cebd7302478b00073a6b71.m3u8", logo: "" },
+            { id: "plu-31", name: "Die fliegenden Ärzte", url: "https://jmp2.uk/plu-688734b9035d6ef9c34aac16.m3u8", logo: "" },
+            { id: "plu-32", name: "Die glorreichen Sieben", url: "https://jmp2.uk/plu-69c2ac2b14c0213702da7a29.m3u8", logo: "" },
+            { id: "plu-33", name: "Die Nanny", url: "https://jmp2.uk/plu-66c6fc06489bab0008b6f9da.m3u8", logo: "" },
+            { id: "plu-34", name: "Die Sieben-Millionen-Dollar-Frau (684p)", url: "https://jmp2.uk/plu-677fb078a4af36ad50111032.m3u8", logo: "" },
+            { id: "plu-35", name: "Dominance FC TV", url: "https://jmp2.uk/plu-685aaec481c345899e4458bb.m3u8", logo: "" },
+            { id: "plu-36", name: "Don Matteo (720p)", url: "https://jmp2.uk/plu-686d004094a028da3aac8cb0.m3u8", logo: "" },
+            { id: "plu-37", name: "Drake & Josh", url: "https://jmp2.uk/plu-65a67c494a10d800085cab06.m3u8", logo: "" },
+            { id: "plu-38", name: "Dyn Sport Mix (720p)", url: "https://jmp2.uk/plu-6866525c8a412a0e95c438b4.m3u8", logo: "" },
+            { id: "plu-39", name: "Ein Engel auf Erden", url: "https://jmp2.uk/plu-622f487722d9d400075f74dd.m3u8", logo: "" },
+            { id: "plu-40", name: "Eine himmlische Familie", url: "https://jmp2.uk/plu-66a244d5cd0d3100083b1e47.m3u8", logo: "" },
+            { id: "plu-41", name: "Eine schrecklich nette Familie", url: "https://jmp2.uk/plu-67a324d221af380008105d6f.m3u8", logo: "" },
+            { id: "plu-42", name: "Euronews (720p)", url: "https://jmp2.uk/plu-6639d7d4b18d700008da5316.m3u8", logo: "" },
+            { id: "plu-43", name: "F.B.I. Files", url: "https://jmp2.uk/plu-64eddce19001910008df22b8.m3u8", logo: "" },
+            { id: "plu-44", name: "Farmland TV (720p)", url: "https://jmp2.uk/plu-663a15d7cb3ea10008edac88.m3u8", logo: "" },
+            { id: "plu-45", name: "FIFA+ (720p)", url: "https://jmp2.uk/plu-660bfc032433010008def35a.m3u8", logo: "" },
+            { id: "plu-46", name: "Filmgold (720p)", url: "https://jmp2.uk/plu-6305ca798bd95300072d2f93.m3u8", logo: "" },
+            { id: "plu-47", name: "Flipper", url: "https://jmp2.uk/plu-68d277fb12bf71eaaed3e9f1.m3u8", logo: "" },
+            { id: "plu-48", name: "Fluss-Monster", url: "https://jmp2.uk/plu-62a0b2aff4cf470007e47e29.m3u8", logo: "" },
+            { id: "plu-49", name: "Frasier", url: "https://jmp2.uk/plu-62cebf042ffc6d0007c4e59a.m3u8", logo: "" },
+            { id: "plu-50", name: "Frasier: Berühmte Gäste", url: "https://jmp2.uk/plu-6790fa9e1cfc4aa96dfadcef.m3u8", logo: "" },
+            { id: "plu-51", name: "Fury", url: "https://jmp2.uk/plu-6270ea4345f5bc0007823048.m3u8", logo: "" },
+            { id: "plu-52", name: "Germany Shore", url: "https://jmp2.uk/plu-6447dea7e94c380008dba94c.m3u8", logo: "" },
+            { id: "plu-53", name: "Gigolos", url: "https://jmp2.uk/plu-68d27437e6767bdeb23f0336.m3u8", logo: "" },
+            { id: "plu-54", name: "Hausmeister Krause", url: "https://jmp2.uk/plu-622f6faf65be650007f57aab.m3u8", logo: "" },
+            { id: "plu-55", name: "Hell's Kitchen (720p)", url: "https://jmp2.uk/plu-644257fe7cb4b100081ed874.m3u8", logo: "" },
+            { id: "plu-56", name: "iCarly", url: "https://jmp2.uk/plu-5e8b580a233dc90007f0cb9d.m3u8", logo: "" },
+            { id: "plu-57", name: "Ice Pilots", url: "https://jmp2.uk/plu-5ce40f42ba7f7f5ea9518fe1.m3u8", logo: "" },
+            { id: "plu-58", name: "Just.fishing", url: "https://jmp2.uk/plu-61b33085897b9d000702b72e.m3u8", logo: "" },
+            { id: "plu-59", name: "KultKrimi", url: "https://jmp2.uk/plu-5cb5cfe5caf83414128f209e.m3u8", logo: "" },
+            { id: "plu-60", name: "KultKrimi: Der Alte", url: "https://jmp2.uk/plu-65dde5ef28730900089af7cf.m3u8", logo: "" },
+            { id: "plu-61", name: "KultKrimi: Der Kommissar", url: "https://jmp2.uk/plu-65dde626ec9fda0008b3dc89.m3u8", logo: "" },
+            { id: "plu-62", name: "KultKrimi: Derrick", url: "https://jmp2.uk/plu-65dde5848145cb00083277f6.m3u8", logo: "" },
+            { id: "plu-63", name: "KultKrimi: Die Rettungsflieger", url: "https://jmp2.uk/plu-67ed0c86f7c5d70b90889a51.m3u8", logo: "" },
+            { id: "plu-64", name: "KultKrimi: Ein Fall für zwei", url: "https://jmp2.uk/plu-68590366010ddd78ef837d29.m3u8", logo: "" },
+            { id: "plu-65", name: "KultKrimi: Küstenwache", url: "https://jmp2.uk/plu-67ebbdced2832b463faa1e79.m3u8", logo: "" },
+            { id: "plu-66", name: "Ladykracher", url: "https://jmp2.uk/plu-667d3534ca74680008696051.m3u8", logo: "" },
+            { id: "plu-67", name: "Liebe Sünde", url: "https://jmp2.uk/plu-68d276ce59fd82da32267d0d.m3u8", logo: "" },
+            { id: "plu-68", name: "Love Boat", url: "https://jmp2.uk/plu-655ca3d1fbc15b00081f1186.m3u8", logo: "" },
+            { id: "plu-69", name: "McLeods Töchter", url: "https://jmp2.uk/plu-66c6fcfc6838ee00085beb1a.m3u8", logo: "" },
+            { id: "plu-70", name: "Melrose Place", url: "https://jmp2.uk/plu-64be745340962900080b55e7.m3u8", logo: "" },
+            { id: "plu-71", name: "Merhaba Türkische Serien (720p)", url: "https://jmp2.uk/plu-6864e8f264d94c1425fb4563.m3u8", logo: "" },
+            { id: "plu-72", name: "Mission Impossible", url: "https://jmp2.uk/plu-634fe5afece2e60007c9d8b8.m3u8", logo: "" },
+            { id: "plu-73", name: "Missions", url: "https://jmp2.uk/plu-6824539e1295f98347e95242.m3u8", logo: "" },
+            { id: "plu-74", name: "MODUS Super Series Darts (720p)", url: "https://jmp2.uk/plu-66337e6ba0a74e000889563b.m3u8", logo: "" },
+            { id: "plu-75", name: "Mork vom Ork", url: "https://jmp2.uk/plu-642ad2127ef83900085f8910.m3u8", logo: "" },
+            { id: "plu-76", name: "MOVIEDOME (720p)", url: "https://jmp2.uk/plu-615c1e5ce3039400070a0547.m3u8", logo: "" },
+            { id: "plu-77", name: "MTV Catfish TV Show (720p)", url: "https://jmp2.uk/plu-5db6a697d5f34a000934cd13.m3u8", logo: "" },
+            { id: "plu-78", name: "MTV Dating (720p)", url: "https://jmp2.uk/plu-5caf330ea5068259a32320fd.m3u8", logo: "" },
+            { id: "plu-79", name: "MTV Pluto TV", url: "https://jmp2.uk/plu-5caf325764025859afdd6c4d.m3u8", logo: "" },
+            { id: "plu-80", name: "MTV Reality (720p)", url: "https://jmp2.uk/plu-685136fb33a52de120bbb086.m3u8", logo: "" },
+            { id: "plu-81", name: "MTV Ridiculousness", url: "https://jmp2.uk/plu-5f9847fd513250000728a9a5.m3u8", logo: "" },
+            { id: "plu-82", name: "MTV Teen Mom (720p)", url: "https://jmp2.uk/plu-5cffcf5686dfe15595fb3f56.m3u8", logo: "" },
+            { id: "plu-83", name: "N24 Doku", url: "https://jmp2.uk/plu-60080e8a4bf36000076a81b1.m3u8", logo: "" },
+            { id: "plu-84", name: "Naruto (720p)", url: "https://jmp2.uk/plu-65d5fc39a25d5e00082895c4.m3u8", logo: "" },
+            { id: "plu-85", name: "Nick Jr. Club (720p)", url: "https://jmp2.uk/plu-67f3eb1c443f0671bc03ece8.m3u8", logo: "" },
+            { id: "plu-86", name: "Nickelodeon Classics (720p)", url: "https://jmp2.uk/plu-67f3eb800a1beb98767ca748.m3u8", logo: "" },
+            { id: "plu-87", name: "Nickelodeon Teen (720p)", url: "https://jmp2.uk/plu-5f0d668b872e4400073acc68.m3u8", logo: "" },
+            { id: "plu-88", name: "Nickelodeon Toons (720p)", url: "https://jmp2.uk/plu-5ede448d3d50590007a4419e.m3u8", logo: "" },
+            { id: "plu-89", name: "Pastewka", url: "https://jmp2.uk/plu-686cfef52704ca31d85c4bf1.m3u8", logo: "" },
+            { id: "plu-90", name: "Perry Mason", url: "https://jmp2.uk/plu-64eddc3485efec00085b0369.m3u8", logo: "" },
+            { id: "plu-91", name: "Pluto TV Action", url: "https://jmp2.uk/plu-65004605110545000842035d.m3u8", logo: "" },
+            { id: "plu-92", name: "Pluto TV Adult Animation", url: "https://jmp2.uk/plu-67f68bd2135aeda9ddf0ef54.m3u8", logo: "" },
+            { id: "plu-93", name: "Pluto TV Animals", url: "https://jmp2.uk/plu-5d767ae7b456c8cf265ce922.m3u8", logo: "" },
+            { id: "plu-94", name: "Pluto TV Anime", url: "https://jmp2.uk/plu-608181d420fc8500075f612a.m3u8", logo: "" },
+            { id: "plu-95", name: "Pluto TV Britische Serien", url: "https://jmp2.uk/plu-677e5a3d7bffa6000808dbf2.m3u8", logo: "" },
+            { id: "plu-96", name: "Pluto TV Bud & Terence", url: "https://jmp2.uk/plu-64be7398e4391c0008cdedfe.m3u8", logo: "" },
+            { id: "plu-97", name: "Pluto TV Comedy Therapie", url: "https://jmp2.uk/plu-69b968ba255fecb01f602257.m3u8", logo: "" },
+            { id: "plu-98", name: "Pluto TV Crime", url: "https://jmp2.uk/plu-5e7b6c60fd20c50007910bf5.m3u8", logo: "" },
+            { id: "plu-99", name: "Pluto TV Deutsche Comedy", url: "https://jmp2.uk/plu-6672f49f61a39900089db68e.m3u8", logo: "" },
+            { id: "plu-100", name: "Pluto TV Explore", url: "https://jmp2.uk/plu-5ad9b8551b95267e225e59c1.m3u8", logo: "" },
+            { id: "plu-101", name: "Pluto TV Ferne Galaxien", url: "https://jmp2.uk/plu-68ada46d5190a45dc9c45af1.m3u8", logo: "" },
+            { id: "plu-102", name: "Pluto TV Food", url: "https://jmp2.uk/plu-5dc280c9aa218c0009724b4b.m3u8", logo: "" },
+            { id: "plu-103", name: "Pluto TV Fran: Beste Mama-Momente", url: "https://jmp2.uk/plu-69b968e011fc7b9e27c0d958.m3u8", logo: "" },
+            { id: "plu-104", name: "Pluto TV Haialarm", url: "https://jmp2.uk/plu-69b015c5d29cc97de7da4af8.m3u8", logo: "" },
+            { id: "plu-105", name: "Pluto TV Historische Serien", url: "https://jmp2.uk/plu-68ada3395190a45dc9c445cf.m3u8", logo: "" },
+            { id: "plu-106", name: "Pluto TV History", url: "https://jmp2.uk/plu-5d767b1c126c65d0a307355f.m3u8", logo: "" },
+            { id: "plu-107", name: "Pluto TV Horror", url: "https://jmp2.uk/plu-62f4f4b88157cf00075c22db.m3u8", logo: "" },
+            { id: "plu-108", name: "Pluto TV Horror-Serien", url: "https://jmp2.uk/plu-67ff7d9c7fc25e0e72451bc9.m3u8", logo: "" },
+            { id: "plu-109", name: "Pluto TV Kult Comedies", url: "https://jmp2.uk/plu-66337de656fc840008ff7a65.m3u8", logo: "" },
+            { id: "plu-110", name: "Pluto TV Kultfilme", url: "https://jmp2.uk/plu-5dde47b63585b500099f74ec.m3u8", logo: "" },
+            { id: "plu-111", name: "Pluto TV Laughs in Spanish", url: "https://jmp2.uk/plu-69a554179a3f3bb488c7d2be.m3u8", logo: "" },
+            { id: "plu-112", name: "Pluto TV Movies", url: "https://jmp2.uk/plu-5c5c3b948002db3c3e0b262e.m3u8", logo: "" },
+            { id: "plu-113", name: "Pluto TV Mystery", url: "https://jmp2.uk/plu-617aad99b68ef100072608cd.m3u8", logo: "" },
+            { id: "plu-114", name: "Pluto TV Nature", url: "https://jmp2.uk/plu-5be1c3f9851dd5632e2c91b2.m3u8", logo: "" },
+            { id: "plu-115", name: "Pluto TV Nordic Crime", url: "https://jmp2.uk/plu-67d984408d8dc3d7754dccf2.m3u8", logo: "" },
+            { id: "plu-116", name: "Pluto TV Paranormal", url: "https://jmp2.uk/plu-5f98487036af340008da1e37.m3u8", logo: "" },
+            { id: "plu-117", name: "Pluto TV Polizeiserien", url: "https://jmp2.uk/plu-64be64445dc166000899ce75.m3u8", logo: "" },
+            { id: "plu-118", name: "Pluto TV Reportagen", url: "https://jmp2.uk/plu-68ada3edf84960586ad31c7d.m3u8", logo: "" },
+            { id: "plu-119", name: "Pluto TV Romance", url: "https://jmp2.uk/plu-5dc287ce3086a20009f5024c.m3u8", logo: "" },
+            { id: "plu-120", name: "Pluto TV Sci-Fi", url: "https://jmp2.uk/plu-60ed498c4248a400077c0b9d.m3u8", logo: "" },
+            { id: "plu-121", name: "Pluto TV Science", url: "https://jmp2.uk/plu-5d767b4889bca2ce7b73ef2e.m3u8", logo: "" },
+            { id: "plu-122", name: "Pluto TV Serie", url: "https://jmp2.uk/plu-5dc190f7bfed110009d934c3.m3u8", logo: "" },
+            { id: "plu-123", name: "Pluto TV Sitcoms", url: "https://jmp2.uk/plu-5d767ab2b456c8cf265ce921.m3u8", logo: "" },
+            { id: "plu-124", name: "Pluto TV Snooker 900 (720p)", url: "https://jmp2.uk/plu-68ac5543a1ac0c90f2c8943e.m3u8", logo: "" },
+            { id: "plu-125", name: "Pluto TV Space", url: "https://jmp2.uk/plu-61409f8d6feb30000766b675.m3u8", logo: "" },
+            { id: "plu-126", name: "Pluto TV Star Trek", url: "https://jmp2.uk/plu-6152ee71bf99590007893a11.m3u8", logo: "" },
+            { id: "plu-127", name: "Pluto TV Star Trek: Animation", url: "https://jmp2.uk/plu-69492467ae33e24d916e56cf.m3u8", logo: "" },
+            { id: "plu-128", name: "Pluto TV True Crime", url: "https://jmp2.uk/plu-615333098185f00008715a56.m3u8", logo: "" },
+            { id: "plu-129", name: "Pluto TV Weihnachten im Sommer", url: "https://jmp2.uk/plu-642ad072283aa4000806148c.m3u8", logo: "" },
+            { id: "plu-130", name: "Pluto TV Western", url: "https://jmp2.uk/plu-630dd3b2605f140007e002f5.m3u8", logo: "" },
+            { id: "plu-131", name: "Pluto TV Western Serien", url: "https://jmp2.uk/plu-682453215c646751955e1204.m3u8", logo: "" },
+            { id: "plu-132", name: "Pluto TV Worst of Bundy", url: "https://jmp2.uk/plu-69b968ca1c36025fd0a3d92d.m3u8", logo: "" },
+            { id: "plu-133", name: "Profiling Paris", url: "https://jmp2.uk/plu-67d984c989788ef7f058b084.m3u8", logo: "" },
+            { id: "plu-134", name: "Quantum Leap (720p)", url: "https://jmp2.uk/plu-677fafd91da79bfe4fb0b4ec.m3u8", logo: "" },
+            { id: "plu-135", name: "Rauchende Colts", url: "https://jmp2.uk/plu-638f2bc7bc363100072f02dd.m3u8", logo: "" },
+            { id: "plu-136", name: "Rawhide Tausend Meilen Staub", url: "https://jmp2.uk/plu-638f2983dcd9100008c2374d.m3u8", logo: "" },
+            { id: "plu-137", name: "Red Bull TV DE (720p)", url: "https://jmp2.uk/plu-5e7cb84a172a0f0007da69e4.m3u8", logo: "" },
+            { id: "plu-138", name: "Red Shoe Diaries", url: "https://jmp2.uk/plu-645a0ddfe1979c00086d83ff.m3u8", logo: "" },
+            { id: "plu-139", name: "RoboCop", url: "https://jmp2.uk/plu-6628e513cee0d90008639b46.m3u8", logo: "" },
+            { id: "plu-140", name: "Rules of Engagement", url: "https://jmp2.uk/plu-64be635a40962900080aaca5.m3u8", logo: "" },
+            { id: "plu-141", name: "Sabrina Total verhext!", url: "https://jmp2.uk/plu-622f40c901d4b70007ad7609.m3u8", logo: "" },
+            { id: "plu-142", name: "Saving Hope", url: "https://jmp2.uk/plu-666fe4768768aa0008c31ddf.m3u8", logo: "" },
+            { id: "plu-143", name: "Schlosshotel Orth", url: "https://jmp2.uk/plu-69b01641a9b840a456a11c18.m3u8", logo: "" },
+            { id: "plu-144", name: "Schnell ermittelt", url: "https://jmp2.uk/plu-69b968a58323ef2714d1aa36.m3u8", logo: "" },
+            { id: "plu-145", name: "Sea Patrol", url: "https://jmp2.uk/plu-688735087b2cf33d01a2d411.m3u8", logo: "" },
+            { id: "plu-146", name: "Seaquest", url: "https://jmp2.uk/plu-69b14863dd687227e1e4b6b2.m3u8", logo: "" },
+            { id: "plu-147", name: "South Park: Butters Collection", url: "https://jmp2.uk/plu-646b14a0e94c3800082a8d3a.m3u8", logo: "" },
+            { id: "plu-148", name: "South Park: Cartman Collection", url: "https://jmp2.uk/plu-646b14747cb4b1000875724d.m3u8", logo: "" },
+            { id: "plu-149", name: "South Park: Kenny Collection", url: "https://jmp2.uk/plu-646b1404ee6a2f00082b5d66.m3u8", logo: "" },
+            { id: "plu-150", name: "South Park: Kyle Collection", url: "https://jmp2.uk/plu-646b14d0e1979c0008915a09.m3u8", logo: "" },
+            { id: "plu-151", name: "South Park: Original Version", url: "https://jmp2.uk/plu-646b150a15939400089e2702.m3u8", logo: "" },
+            { id: "plu-152", name: "South Park: Stan Collection", url: "https://jmp2.uk/plu-646b1438e94c3800082a8cff.m3u8", logo: "" },
+            { id: "plu-153", name: "Space Live (720p)", url: "https://jmp2.uk/plu-69a554497ed3b3fff0b9ca80.m3u8", logo: "" },
+            { id: "plu-154", name: "SPIEGEL TV (720p)", url: "https://jmp2.uk/plu-6576c20fb3801200084786c9.m3u8", logo: "" },
+            { id: "plu-155", name: "SPIEGEL TV Konflikte", url: "https://jmp2.uk/plu-65b9268fc798e800085add89.m3u8", logo: "" },
+            { id: "plu-156", name: "SpongeBob Schwammkopf (720p)", url: "https://jmp2.uk/plu-5d00e8adaab96b5635b2a005.m3u8", logo: "" },
+            { id: "plu-157", name: "Stand-up Comedy (720p)", url: "https://jmp2.uk/plu-663e09b341af640008c1b68c.m3u8", logo: "" },
+            { id: "plu-158", name: "Star Trek: The Next Generation", url: "https://jmp2.uk/plu-69776ce979545c21a1220bff.m3u8", logo: "" },
+            { id: "plu-159", name: "Star Trek: The Original Series", url: "https://jmp2.uk/plu-69776b58036e883f39e5ab8a.m3u8", logo: "" },
+            { id: "plu-160", name: "Stromberg", url: "https://jmp2.uk/plu-686cff3224918d4300fa542b.m3u8", logo: "" },
+            { id: "plu-161", name: "Swamp People", url: "https://jmp2.uk/plu-691491c6bb69fb3258c3524a.m3u8", logo: "" },
+            { id: "plu-162", name: "Takeshi's Castle", url: "https://jmp2.uk/plu-6054a9f4bc8a5f000771504c.m3u8", logo: "" },
+            { id: "plu-163", name: "Täterjagd", url: "https://jmp2.uk/plu-642abea1283aa4000805bb5b.m3u8", logo: "" },
+            { id: "plu-164", name: "Telenovela ZDF", url: "https://jmp2.uk/plu-5cb5d043a461406ffe3fb2de.m3u8", logo: "" },
+            { id: "plu-165", name: "Tennis Channel", url: "https://jmp2.uk/plu-6870c9333ffa5e0c914e9205.m3u8", logo: "" },
+            { id: "plu-166", name: "Terra Mater WILD (720p)", url: "https://jmp2.uk/plu-65b923f90cb1a100088a03ab.m3u8", logo: "" },
+            { id: "plu-167", name: "The L Word – Wenn Frauen lieben", url: "https://jmp2.uk/plu-68d2759a59fd82da3226492d.m3u8", logo: "" },
+            { id: "plu-168", name: "The Librarians", url: "https://jmp2.uk/plu-6989b64839dd847194cadcd7.m3u8", logo: "" },
+            { id: "plu-169", name: "The Nanny & Mr Sheffield A Fine Romance", url: "https://jmp2.uk/plu-6996f0335452cb4f0a2c4153.m3u8", logo: "" },
+            { id: "plu-170", name: "The Outer Limits", url: "https://jmp2.uk/plu-68ad90673efb41cd97c95825.m3u8", logo: "" },
+            { id: "plu-171", name: "The Real Housewives (720p)", url: "https://jmp2.uk/plu-677fb0231da79bfe4fb0bf4e.m3u8", logo: "" },
+            { id: "plu-172", name: "Top Gear", url: "https://jmp2.uk/plu-64c109735dc1660008a4a2dc.m3u8", logo: "" },
+            { id: "plu-173", name: "Top Gear Challenge", url: "https://jmp2.uk/plu-66a10384d5125900089dfd04.m3u8", logo: "" },
+            { id: "plu-174", name: "Totally Turtles (720p)", url: "https://jmp2.uk/plu-5d6792bd6be2998ad0ccce30.m3u8", logo: "" },
+            { id: "plu-175", name: "Unentdeckt – Mörder unter uns (720p)", url: "https://jmp2.uk/plu-650adc3198020f000862eed4.m3u8", logo: "" },
+            { id: "plu-176", name: "Vier Frauen und ein Todesfall", url: "https://jmp2.uk/plu-69b0160da9b840a456a11b4a.m3u8", logo: "" },
+            { id: "plu-177", name: "Wicked Tuna", url: "https://jmp2.uk/plu-65253d66c52b3600083d8dd2.m3u8", logo: "" },
+            { id: "plu-178", name: "Will&Grace (720p)", url: "https://jmp2.uk/plu-697a0577f9c3aa5a215a4ef8.m3u8", logo: "" },
+            { id: "plu-179", name: "World Poker Tour", url: "https://jmp2.uk/plu-5ad9b7aae738977e2c312132.m3u8", logo: "" },
+            { id: "plu-180", name: "X-Factor: Das Unfassbare", url: "https://jmp2.uk/plu-642d7e029189ce0008958af5.m3u8", logo: "" },
+            { id: "plu-181", name: "Yu-Gi-Oh!", url: "https://jmp2.uk/plu-642d4493aa2d690008f0a03f.m3u8", logo: "" },
+
+            // --- Rakuten TV (Vollständig 1:1) ---
+            { id: "rak-1", name: "Amasia (720p)", url: "https://splendid-film-amasia-1-eu.rakuten.wurl.tv/playlist.m3u8", logo: "" },
+            { id: "rak-2", name: "BBC Top Gear Germany (1080p)", url: "https://amg00793-amg00793c44-rakuten-de-5538.playouts.now.amagi.tv/playlist.m3u8", logo: "" },
+            { id: "rak-3", name: "DEFA TV (720p)", url: "https://wdrmediagroup-defatv-1-eu.rakuten.wurl.tv/playlist.m3u8", logo: "" },
+            { id: "rak-4", name: "FilmGold Germany (1080p)", url: "https://mainstreamfilmgold-rakuten.amagi.tv/playlist.m3u8", logo: "" },
+            { id: "rak-5", name: "Fluss Monster (1080p)", url: "https://rivermonstergermany-rakuten.amagi.tv/playlist.m3u8", logo: "" },
+            { id: "rak-6", name: "Graham Norton Germany (1080p)", url: "https://amg00654-itv-amg00654c37-rakuten-de-7600.playouts.now.amagi.tv/playlist.m3u8", logo: "" },
+            { id: "rak-7", name: "Hell's Kitchen Germany (1080p)", url: "https://hellskitchengermany-rakuten.amagi.tv/playlist.m3u8", logo: "" },
+            { id: "rak-8", name: "Krimi (720p)", url: "https://4dad3dcf.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWV1X0FSRFBsdXNLcmltaV9ITFM/playlist.m3u8", logo: "" },
+            { id: "rak-9", name: "Lindenstrasse (720p)", url: "https://ad2ef2da.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWV1X0FSRFBsdXNMaW5kZW5zdHJhZV9ITFM/playlist.m3u8", logo: "" },
+            { id: "rak-10", name: "LooLoo Kids TV (1080p)", url: "https://amg02757-amg02757c3-rakuten-de-6135.playouts.now.amagi.tv/playlist/amg02757-loolookids-llkdefast-rakutende/playlist.m3u8", logo: "" },
+            { id: "rak-11", name: "MyTime Movie Network Germany (1080p)", url: "https://appletree-mytimemoviegerman-rakuten.amagi.tv/playlist.m3u8", logo: "" },
+            { id: "rak-12", name: "Naruto Germany (1080p)", url: "https://palatinmedia-naruto-rakuten.amagi.tv/playlist.m3u8", logo: "" },
+            { id: "rak-13", name: "Rakuten TV Action Movies Germany (1080p)", url: "https://284824cf70404fdfb6ddf9349009c710.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6066/master.m3u8", logo: "" },
+            { id: "rak-14", name: "Rakuten TV Comedy Movies Germany (1080p)", url: "https://ecac08c9e2214375b907d6825aaf9a01.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6182/master.m3u8", logo: "" },
+            { id: "rak-15", name: "Rakuten TV Crime Series Germany (1080p)", url: "https://b6244e915ee04a5aa758e863a55a6a3d.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6217/master.m3u8", logo: "" },
+            { id: "rak-16", name: "Rakuten TV Drama Movies Germany (1080p)", url: "https://968754c2483045c1a9a7f677caec35b6.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6096/master.m3u8", logo: "" },
+            { id: "rak-17", name: "Rakuten TV Family Movies Germany (1080p)", url: "https://af230031eeac45f3b78d4f8a13265105.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6209/master.m3u8", logo: "" },
+            { id: "rak-18", name: "Rakuten TV German Cinema (1080p)", url: "https://a5dc66582aa040269fd99d7d7a6ac23b.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6200/master.m3u8", logo: "" },
+            { id: "rak-19", name: "Rakuten TV Romance Movies Germany (1080p)", url: "https://romance-rakuten-tv-de.fast.rakuten.tv/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6475/master.m3u8", logo: "" },
+            { id: "rak-20", name: "Rakuten TV Thrillers Germany (1080p)", url: "https://thriller-rakuten-tv-de.fast.rakuten.tv/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6481/master.m3u8", logo: "" },
+            { id: "rak-21", name: "Rakuten TV Top Movies Germany (1080p)", url: "https://cbb622b29f5d43b598991f3fa19de291.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-5985/master.m3u8", logo: "" },
+            { id: "rak-22", name: "Red Bull TV DE (1080p)", url: "https://769a97d9.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWV1X1JlZEJ1bGxUVl9ITFM/playlist.m3u8", logo: "" },
+            { id: "rak-23", name: "Royalworld Germany (720p)", url: "https://amogonetworx-royalworld-2-de.rakuten.wurl.tv/playlist.m3u8", logo: "" },
+            { id: "rak-24", name: "Starke Frauen (1080p)", url: "https://mainstreamstarkefrauen-rakuten.amagi.tv/playlist.m3u8", logo: "" },
+            { id: "rak-25", name: "Strongman Champions League (720p)", url: "https://rightsboosterltd-scl-2-eu.rakuten.wurl.tv/playlist.m3u8", logo: "" },
+            { id: "rak-26", name: "Tennis Channel Germany (720p)", url: "https://tennischanneldeu-rakuten.amagi.tv/playlist.m3u8", logo: "" },
+            { id: "rak-27", name: "Top Sci-Fi (1080p)", url: "https://amg00609-amg00609c5-rakuten-uk-3764.playouts.now.amagi.tv/master.m3u8", logo: "" },
+            { id: "rak-28", name: "Top Serien (1080p)", url: "https://amg00609-palatinmediafil-cractiontv-rakuten-dhjcp.amagi.tv/hls/amagi_hls_data_rakutenAA-cractiontv-rakuten/CDN/master.m3u8", logo: "" },
+            { id: "rak-29", name: "Travelxp Germany (720p)", url: "https://travelxp-travelxp-2-de.rakuten.wurl.tv/playlist.m3u8", logo: "" },
+            { id: "rak-30", name: "Vevo Pop Germany (1080p)", url: "https://amg00056-amg00056c7-rakuten-de-3245.playouts.now.amagi.tv/playlist.m3u8", logo: "" },
+            { id: "rak-31", name: "Vevo Schlager Pop (1080p)", url: "https://amg00056-amg00056c15-rakuten-it-3241.playouts.now.amagi.tv/playlist.m3u8", logo: "" },
+            { id: "rak-32", name: "Wicked Tuna Germany (1080p)", url: "https://amg00353-amg00353c28-rakuten-us-4895.playouts.now.amagi.tv/playlist.m3u8", logo: "" },
+            { id: "rak-33", name: "World of Freesports (1080p)", url: "https://mainstreammedia-worldoffreesportsintl-rakuten.amagi.tv/playlist.m3u8", logo: "" },
+            { id: "rak-34", name: "XITE (720p)", url: "https://xite-rakuten.amagi.tv/playlist.m3u8", logo: "" }
         ];
 
         const grid = document.getElementById('channelsGrid');
@@ -156,10 +375,13 @@
             let card = document.createElement('div');
             card.className = 'card';
             card.dataset.instanceId = c.id;
+            
+            let imgTag = c.logo ? `<img src="${c.logo}" alt="${c.name}">` : '';
+
             card.innerHTML = `
                 <div class="live-badge">LIVE</div>
                 <div class="radio-state-overlay">${stopSvgHTML}</div>
-                <img src="${c.logo}" alt="${c.name}">
+                ${imgTag}
                 <b>${c.name}</b>
             `;
             card.onclick = () => handleCardClick(c);
@@ -186,7 +408,6 @@
             playStream(channel.url);
         }
 
-        // Automatisches Abfangen aller Untertitelspuren (auch nachträglich hinzugefügter)
         if (video.textTracks) {
             video.textTracks.addEventListener('addtrack', function(e) {
                 e.track.mode = 'disabled';
