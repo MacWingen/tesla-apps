@@ -404,6 +404,9 @@
             channelInfo.innerHTML = `Aktiv: <b>${channel.name}</b>`;
             playerWrapper.classList.add('active');
             
+            // Automatisch nach oben scrollen, damit das Video direkt im Blickfeld ist
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
             updatePlayingStates();
             playStream(channel.url);
         }
@@ -471,7 +474,7 @@
                     playStream(currentUrl);
                     setPlayState(true);
                 } else if (channels.length > 0) {
-                    selectAndPlay(channels[0]);
+                    selectAndPlay(channels.length > 0 ? channels[0] : null);
                 }
             }
         }
