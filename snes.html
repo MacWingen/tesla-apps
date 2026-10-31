@@ -16,9 +16,7 @@
             --card-bg: #2A2A2A;
             --text-color: #FFFFFF;
             --tile-border: rgba(255, 255, 255, 0.08);
-            --subtext-color: #AAAAAA;
-            --hover-bg: rgba(255, 255, 255, 0.07);
-            --accent-blue: #007AFF;
+            --hover-border: #007AFF;
         }
 
         @media (prefers-color-scheme: light) {
@@ -27,8 +25,6 @@
                 --card-bg: #FFFFFF;
                 --text-color: #111111;
                 --tile-border: rgba(0, 0, 0, 0.08);
-                --subtext-color: #888888;
-                --hover-bg: rgba(0, 0, 0, 0.05);
             }
         }
 
@@ -55,10 +51,10 @@
 
         .container {
             width: 100%;
-            max-width: 900px;
+            max-width: 1000px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 16px;
         }
 
         .top-bar {
@@ -85,43 +81,50 @@
         }
 
         .back-btn:hover {
-            background: var(--hover-bg);
+            background: rgba(255, 255, 255, 0.07);
         }
 
-        .page-title {
-            font-size: 16px;
-            font-weight: 700;
-            margin: 0;
+        /* Zentriertes Logo im Header */
+        .header-logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+            padding: 0 10px;
         }
 
+        .header-logo {
+            max-height: 38px;
+            max-width: 280px;
+            width: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Grid für den Tesla Split-Screen im Querformat mit eckigen Kanten */
         .game-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 14px;
             width: 100%;
         }
 
         .game-card {
             background: var(--card-bg);
-            border: 1px solid var(--tile-border);
-            border-radius: 14px;
+            border: 2px solid var(--tile-border);
+            border-radius: 0px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             cursor: pointer;
-            transition: transform 0.15s ease, border-color 0.15s ease;
+            transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+            aspect-ratio: 4 / 3;
         }
 
         .game-card:hover {
             transform: translateY(-3px);
-            border-color: var(--accent-blue);
-        }
-
-        .game-cover-wrapper {
-            width: 100%;
-            aspect-ratio: 4 / 3;
-            overflow: hidden;
-            background: #111;
+            border-color: var(--hover-border);
+            box-shadow: 0 6px 16px rgba(0, 122, 255, 0.25);
         }
 
         .game-cover {
@@ -129,28 +132,6 @@
             height: 100%;
             object-fit: cover;
             display: block;
-        }
-
-        .game-info {
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .game-name {
-            font-size: 13px;
-            font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .game-sys {
-            font-size: 10px;
-            color: var(--subtext-color);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .emulator-container {
@@ -189,7 +170,10 @@
     <div class="container">
         <div class="top-bar">
             <a href="retro.html" class="back-btn">&#8249; Retro Hub</a>
-            <h1 class="page-title">🍄 Super Nintendo (SNES)</h1>
+            <div class="header-logo-container">
+                <!-- Falls Logo_SNES.png direkt im Hauptordner liegt, einfach so lassen. Sonst Pfad anpassen (z.B. roms/snes/Logo_SNES.png) -->
+                <img src="roms/snes/Logo_SNES.png" alt="Super Nintendo" class="header-logo">
+            </div>
             <div style="width: 70px;"></div>
         </div>
 
@@ -218,6 +202,18 @@
                 name: "Super Metroid", 
                 cover: "roms/snes/super_metroid.png", 
                 rom: "roms/snes/super_metroid.smc" 
+            },
+            { 
+                id: "fzero", 
+                name: "F-Zero", 
+                cover: "roms/snes/f-zero.png", 
+                rom: "roms/snes/f-zero.smc" 
+            },
+            { 
+                id: "secretomana", 
+                name: "Secret of Mana", 
+                cover: "roms/snes/secret_of_mana.png", 
+                rom: "roms/snes/secret_of_mana.smc" 
             }
         ];
 
@@ -228,15 +224,10 @@
             snesGames.forEach(game => {
                 let card = document.createElement('div');
                 card.className = 'game-card';
+                card.title = game.name;
                 card.onclick = () => launchSnesGame(game);
                 card.innerHTML = `
-                    <div class="game-cover-wrapper">
-                        <img src="${game.cover}" alt="${game.name}" class="game-cover">
-                    </div>
-                    <div class="game-info">
-                        <span class="game-name">${game.name}</span>
-                        <span class="game-sys">SNES Cartridge</span>
-                    </div>
+                    <img src="${game.cover}" alt="${game.name}" class="game-cover">
                 `;
                 grid.appendChild(card);
             });
@@ -249,20 +240,17 @@
             document.getElementById('emulatorContainer').classList.add('active');
             document.getElementById('activeGameTitle').innerText = game.name;
 
-            // Alten Emulator-Inhalt bereinigen falls vorhanden
             document.getElementById('emulator').innerHTML = '';
             if (currentScript) {
                 currentScript.remove();
             }
 
-            // Konfiguration für EmulatorJS setzen
             window.EJS_player = '#emulator';
             window.EJS_gameUrl = game.rom;
             window.EJS_core = 'snes';
             window.EJS_startOnLoaded = true;
             window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
 
-            // Loader-Skript dynamisch einfügen
             currentScript = document.createElement('script');
             currentScript.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
             document.body.appendChild(currentScript);
