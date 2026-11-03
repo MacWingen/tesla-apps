@@ -377,7 +377,7 @@
                             <span class="font-bold text-gray-800 dark:text-gray-200">Private App (nicht von der WBG)</span>
                         </div>
                         <div class="font-medium text-gray-400">
-                            <span>© 2026 Thomas Wingen (v2026-11-03-06)</span>
+                            <span>© 2026 Thomas Wingen (v2026-11-03-08)</span>
                         </div>
                     </div>
                     <div class="bg-amber-500/10 dark:bg-amber-500/10 border border-amber-500/20 p-2 rounded-lg space-y-1">
@@ -757,14 +757,15 @@
             wbgStations.sort((a, b) => a.distance - b.distance);
             const nearestStationId = wbgStations.length > 0 ? wbgStations[0].id : null;
 
-            let filteredStations = wbgStations;
+            let cityStations = wbgStations;
             if (currentFilter !== 'Alle') {
-                filteredStations = wbgStations.filter(st => st.city === currentFilter);
+                cityStations = wbgStations.filter(st => st.city === currentFilter);
             }
+            let totalCityStations = cityStations.length;
+            let totalCityPoints = cityStations.reduce((acc, st) => acc + parseInt(st.count), 0);
 
-            let totalPoints = filteredStations.reduce((acc, st) => acc + parseInt(st.count), 0);
-            // stationCount integrated into headerTitle
-            filteredStations = filteredStations.filter(st => !favorites.includes(st.id));
+            let filteredStations = cityStations.filter(st => !favorites.includes(st.id));
+            let remainingPoints = filteredStations.reduce((acc, st) => acc + parseInt(st.count), 0);
 
             const favStations = wbgStations.filter(st => favorites.includes(st.id));
             if (favStations.length > 0) {
@@ -787,7 +788,7 @@
 
             const headerTitle = document.createElement('div');
             headerTitle.className = "text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider px-1 pt-1 flex items-center justify-between";
-            headerTitle.innerHTML = `<span>${currentFilter === 'Alle' ? "Alle Standorte" : `Standorte in ${currentFilter}`}</span><span class="normal-case font-medium"><i class="fa-solid fa-location-dot text-amber-500 mr-0.5"></i><strong class="text-amber-500 dark:text-amber-400">${filteredStations.length}</strong>/${wbgStations.length} &nbsp;•&nbsp; <i class="fa-solid fa-plug text-emerald-500 mr-0.5"></i><strong class="text-emerald-600 dark:text-emerald-400">${totalPoints}</strong>/36</span>`;
+            headerTitle.innerHTML = `<span>${currentFilter === 'Alle' ? "Alle Standorte" : `Standorte in ${currentFilter}`}</span><span class="normal-case font-medium text-[9px] text-gray-500 dark:text-gray-400"><i class="fa-solid fa-location-dot text-amber-500 mr-0.5"></i><strong class="text-amber-500 dark:text-amber-400">${filteredStations.length}</strong>/${totalCityStations} Standorte &nbsp;•&nbsp; <i class="fa-solid fa-plug text-emerald-500 mr-0.5"></i><strong class="text-emerald-600 dark:text-emerald-400">${remainingPoints}</strong>/${totalCityPoints} Ladepunkte</span>`;
             listContainer.appendChild(headerTitle);
 
             filteredStations.forEach((st) => {
@@ -908,7 +909,7 @@
 
         
         // Automatische Versionsprüfung & Cache-Busting
-        const APP_VERSION = 'v2026-11-03-06';
+        const APP_VERSION = 'v2026-11-03-08';
         
         // Prüfen beim Start und wenn die App in den Vordergrund kommt (visibilitychange)
         function checkForAppUpdates() {
