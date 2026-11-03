@@ -377,7 +377,7 @@
                             <span class="font-bold text-gray-800 dark:text-gray-200">Private App (nicht von der WBG)</span>
                         </div>
                         <div class="font-medium text-gray-400">
-                            <span>© 2026 Thomas Wingen</span>
+                            <span>© 2026 Thomas Wingen (v2026-11-03-02)</span>
                         </div>
                     </div>
                     <div class="bg-amber-500/10 dark:bg-amber-500/10 border border-amber-500/20 p-2 rounded-lg space-y-1">
@@ -907,6 +907,37 @@
                 infoIcon.className = "fa-solid fa-circle-info text-xs opacity-50";
             }
         }
+
+        
+        // Automatische Versionsprüfung & Cache-Busting
+        const APP_VERSION = 'v2026-11-03-02';
+        
+        // Prüfen beim Start und wenn die App in den Vordergrund kommt (visibilitychange)
+        function checkForAppUpdates() {
+            fetch('index.html?check=' + Date.now(), { cache: 'no-store' })
+                .then(res => res.text())
+                .then(html => {
+                    if (html.includes('APP_VERSION') && !html.includes(APP_VERSION)) {
+                        console.log('Neue App-Version entdeckt! Aktualisiere Cache...');
+                        if ('caches' in window) {
+                            caches.keys().then(names => {
+                                names.forEach(name => caches.delete(name));
+                            });
+                        }
+                        localStorage.removeItem('wbg_stations_cache'); // falls vorhanden
+                        window.location.reload(true);
+                    }
+                }).catch(() => {});
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                checkForAppUpdates();
+            }
+        });
+        
+        // Einmalig beim Start nach 2 Sekunden prüfen
+        setTimeout(checkForAppUpdates, 2000);
 
         window.onload = initApp;
     </script>
