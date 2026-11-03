@@ -404,10 +404,9 @@
             </div>
         </div>
 
-        <!-- Zähler -->
-        <div class="px-3 py-1.5 bg-white/40 dark:bg-gray-950/40 border-b border-gray-200/50 dark:border-gray-900/50 text-[9.5px] text-gray-500 shrink-0 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-0.5 font-medium leading-tight">
-            <span id="stationCount" class="w-full sm:w-auto">Lade Standorte...</span>
-            <span class="text-gray-400 dark:text-gray-500">Sortiert nach Entfernung</span>
+        <!-- Zähler mit Icons & ohne überflüssigen Text -->
+        <div class="px-3 py-1.5 bg-white/40 dark:bg-gray-950/40 border-b border-gray-200/50 dark:border-gray-900/50 text-[10px] text-gray-600 dark:text-gray-300 shrink-0 flex items-center justify-center font-medium">
+            <span id="stationCount" class="truncate">Lade Standorte...</span>
         </div>
 
         <!-- Stationsliste -->
@@ -767,7 +766,7 @@
             }
 
             let totalPoints = filteredStations.reduce((acc, st) => acc + parseInt(st.count), 0);
-            document.getElementById('stationCount').innerHTML = `<span class="text-amber-500 dark:text-amber-400 font-bold">${filteredStations.length}</span> von ${wbgStations.length} Standorten (<span class="text-emerald-600 dark:text-emerald-400 font-bold">${totalPoints}</span> von 36 Ladepunkten)`;
+            document.getElementById('stationCount').innerHTML = `<i class="fa-solid fa-location-dot text-amber-500 mr-1"></i><span class="text-amber-500 dark:text-amber-400 font-bold">${filteredStations.length}</span> von ${wbgStations.length} Standorten &nbsp;•&nbsp; <i class="fa-solid fa-plug text-emerald-500 mr-1"></i><span class="text-emerald-600 dark:text-emerald-400 font-bold">${totalPoints}</span> von 36 Ladepunkten`;
             filteredStations = filteredStations.filter(st => !favorites.includes(st.id));
 
             const favStations = wbgStations.filter(st => favorites.includes(st.id));
