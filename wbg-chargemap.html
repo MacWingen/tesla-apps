@@ -377,7 +377,7 @@
                             <span class="font-bold text-gray-800 dark:text-gray-200">Private App (nicht von der WBG)</span>
                         </div>
                         <div class="font-medium text-gray-400">
-                            <span>© 2026 Thomas Wingen (v2026-11-03-05)</span>
+                            <span>© 2026 Thomas Wingen (v2026-11-03-06)</span>
                         </div>
                     </div>
                     <div class="bg-amber-500/10 dark:bg-amber-500/10 border border-amber-500/20 p-2 rounded-lg space-y-1">
@@ -768,9 +768,10 @@
 
             const favStations = wbgStations.filter(st => favorites.includes(st.id));
             if (favStations.length > 0) {
+                let favTotalPoints = favStations.reduce((acc, st) => acc + parseInt(st.count), 0);
                 const favSection = document.createElement('div');
                 favSection.className = "space-y-1.5 mb-3";
-                favSection.innerHTML = `<div class="text-[10px] font-bold text-amber-500 dark:text-amber-400 uppercase tracking-wider px-1 pt-1 flex items-center space-x-1"><i class="fa-solid fa-star"></i><span>Favoriten (${favStations.length})</span></div>`;
+                favSection.innerHTML = `<div class="text-[10px] font-bold text-amber-500 dark:text-amber-400 uppercase tracking-wider px-1 pt-1 flex items-center justify-between"><span><i class="fa-solid fa-star mr-1"></i>Favoriten</span><span class="normal-case font-medium text-[9px] text-gray-500 dark:text-gray-400"><i class="fa-solid fa-location-dot text-amber-500 mr-0.5"></i><strong class="text-amber-500 dark:text-amber-400">${favStations.length}</strong> Standorte &nbsp;•&nbsp; <i class="fa-solid fa-plug text-emerald-500 mr-0.5"></i><strong class="text-emerald-600 dark:text-emerald-400">${favTotalPoints}</strong> Ladepunkte</span></div>`;
                 
                 const favList = document.createElement('div');
                 favList.className = "space-y-1.5";
@@ -786,7 +787,7 @@
 
             const headerTitle = document.createElement('div');
             headerTitle.className = "text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider px-1 pt-1 flex items-center justify-between";
-            headerTitle.innerHTML = `<span>${currentFilter === 'Alle' ? "Alle Standorte" : `Standorte in ${currentFilter}`}</span><span class="normal-case font-medium text-[9px] text-gray-500 dark:text-gray-400"><i class="fa-solid fa-location-dot text-amber-500 mr-0.5"></i><strong class="text-amber-500 dark:text-amber-400">${filteredStations.length}</strong>/${wbgStations.length} Standorte &nbsp;•&nbsp; <i class="fa-solid fa-plug text-emerald-500 mr-0.5"></i><strong class="text-emerald-600 dark:text-emerald-400">${totalPoints}</strong>/36 Ladepunkte</span>`;
+            headerTitle.innerHTML = `<span>${currentFilter === 'Alle' ? "Alle Standorte" : `Standorte in ${currentFilter}`}</span><span class="normal-case font-medium"><i class="fa-solid fa-location-dot text-amber-500 mr-0.5"></i><strong class="text-amber-500 dark:text-amber-400">${filteredStations.length}</strong>/${wbgStations.length} &nbsp;•&nbsp; <i class="fa-solid fa-plug text-emerald-500 mr-0.5"></i><strong class="text-emerald-600 dark:text-emerald-400">${totalPoints}</strong>/36</span>`;
             listContainer.appendChild(headerTitle);
 
             filteredStations.forEach((st) => {
@@ -907,7 +908,7 @@
 
         
         // Automatische Versionsprüfung & Cache-Busting
-        const APP_VERSION = 'v2026-11-03-05';
+        const APP_VERSION = 'v2026-11-03-06';
         
         // Prüfen beim Start und wenn die App in den Vordergrund kommt (visibilitychange)
         function checkForAppUpdates() {
