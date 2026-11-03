@@ -56,7 +56,7 @@
             100% { transform: translateX(100%); }
         }
 
-        /* 4K Liquid Glass & 3D Depth Enhancements (Ultra-Refined) */
+                        /* 4K Liquid Glass & 3D Depth Enhancements (Ultra-Refined) */
         body {
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -145,6 +145,80 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12);
         }
 
+        /* Hauptcontainer mit 3D Float & Liquid Glass Kanten */
+        .wbg-app-container {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 
+                        0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+                        0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .dark .wbg-app-container {
+            background-color: rgba(10, 10, 12, 0.85);
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.8), 
+                        0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+                        0 1px 0 rgba(255, 255, 255, 0.12) inset;
+        }
+
+        /* Header Glass & Lichtkante */
+        .wbg-header {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+        }
+
+        /* Hero Result Box - 3D Glass Layer */
+        .wbg-hero-box {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2),
+                        0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+        .dark .wbg-hero-box {
+            background: linear-gradient(135deg, rgba(20, 24, 33, 0.9) 0%, rgba(10, 13, 18, 0.95) 100%);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1),
+                        0 8px 24px rgba(0, 0, 0, 0.4),
+                        0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+
+        /* Cards & Panels 3D Depth (Fixed - No movement on hover) */
+        .wbg-card-3d {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.04),
+                        0 1px 3px rgba(0, 0, 0, 0.02),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+        .dark .wbg-card-3d {
+            background: linear-gradient(145deg, rgba(18, 22, 30, 0.85) 0%, rgba(10, 12, 17, 0.9) 100%);
+            box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5),
+                        0 2px 6px rgba(0, 0, 0, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+                        inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+        }
+
+        /* Nearest Station Special Glow */
+        .wbg-nearest-glow {
+            box-shadow: 0 8px 30px -4px rgba(16, 185, 129, 0.2),
+                        0 2px 8px rgba(16, 185, 129, 0.1),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+        .dark .wbg-nearest-glow {
+            background: linear-gradient(145deg, rgba(16, 37, 29, 0.9) 0%, rgba(10, 20, 16, 0.95) 100%);
+            box-shadow: 0 12px 36px -4px rgba(16, 185, 129, 0.25),
+                        0 4px 12px rgba(0, 0, 0, 0.5),
+                        inset 0 1px 0 rgba(16, 185, 129, 0.3),
+                        inset 0 0 0 1px rgba(16, 185, 129, 0.2);
+        }
+
+        /* Interactive Buttons 3D Pop */
+        button, .wbg-btn-pop {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+        .dark button, .dark .wbg-btn-pop {
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+    
         /* Collapsible Calculator Panel */
         #calculatorSection, #infoSection {
             max-height: 700px;
@@ -161,6 +235,7 @@
             margin-bottom: 0 !important;
             border-width: 0 !important;
         }
+
     </style>
     <!-- Sofortiger Zustand für Rechner, um Aufblitzen beim Laden/Fahren zu verhindern -->
     <script>
@@ -294,7 +369,7 @@
                     </div>
                 </div>
 
-                <!-- App Version Footer & Private Support -->
+                                <!-- App Version Footer & Private Support -->
                 <div class="pt-2 mt-1 border-t border-gray-100 dark:border-gray-800/60 space-y-1.5 text-[10px] text-gray-500 dark:text-gray-400">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-1.5">
@@ -302,7 +377,7 @@
                             <span class="font-bold text-gray-800 dark:text-gray-200">Private App (nicht von der WBG)</span>
                         </div>
                         <div class="font-medium text-gray-400">
-                            <span>© 2026 Thomas Wingen (v2026-11-03-10)</span>
+                            <span>© 2026 Thomas Wingen (v2026-11-03-11)</span>
                         </div>
                     </div>
                     <div class="bg-amber-500/10 dark:bg-amber-500/10 border border-amber-500/20 p-2 rounded-lg space-y-1">
@@ -328,6 +403,8 @@
                 <button onclick="setCityFilter('Selm')" id="filter-Selm" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 py-1 rounded-lg flex-1 text-center text-[10px] transition">Selm</button>
             </div>
         </div>
+
+
 
         <!-- Stationsliste -->
         <div id="stationList" class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2 pb-safe">
@@ -359,6 +436,7 @@
 
         const rawWbgData = [
             { id: 'veilchenweg', title: 'Veilchenweg 10', address: 'Veilchenweg 10, 44532 Lünen-Niederaden', lat: 51.5959284, lon: 7.5578789, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Veilchenweg+10,+44532+L%C3%BCnen-Niederaden/@51.5959284,7.5578789,753m/data=!3m2!1e3!4b1!4m6!3m5!1s0x47b911c5829883dd:0x98315dd575de0e1e!8m2!3d51.5959284!4d7.5578789!16s%2Fg%2F11csgyvvw7?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyOC4wIKXMDSoASAFQAw%3D%3D' },
+            
             { id: 'winkel13', title: 'Im Winkel 13', address: 'Im Winkel 13, 44536 Lünen-Brambauer', lat: 51.5976, lon: 7.4557, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Im+Winkel+13,+44536+L%C3%BCnen-Brambauer/@51.5976428,7.4531406,17z' },
             { id: 'asternweg2', title: 'Asternweg 2', address: 'Asternweg 2, 44532 Lünen-Niederaden', lat: 51.5946, lon: 7.5563, count: '1x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Asternweg+2,+44532+L%C3%BCnen-Niederaden/@51.5946482,7.5537976,17z' },
             { id: 'vogelsberg', title: 'Am Vogelsberg 106', address: 'Am Vogelsberg 106, 44534 Lünen', lat: 51.6296, lon: 7.5357, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Am+Vogelsberg+106,+44534+L%C3%BCnen/@51.6296932,7.5331728,17z' },
@@ -386,7 +464,9 @@
             const savedTheme = localStorage.getItem('wbg_theme');
             const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             
+            // Erkennt gespeicherte Einstellung oder schaut auf das System (Dark/Light Mode)
             let currentTheme = savedTheme ? savedTheme : (prefersDark ? 'dark' : 'light');
+            
             if (currentTheme === 'dark') {
                 document.documentElement.classList.add('dark');
                 document.getElementById('themeIcon').className = "fa-solid fa-moon text-xs";
@@ -394,7 +474,6 @@
                 document.documentElement.classList.remove('dark');
                 document.getElementById('themeIcon').className = "fa-solid fa-sun text-xs";
             }
-
             const savedCalcState = localStorage.getItem('wbg_calc_collapsed');
             if (savedCalcState === 'false') {
                 document.getElementById('calculatorSection').classList.remove('collapsed');
@@ -404,18 +483,16 @@
                 document.getElementById('calcIcon').className = "fa-solid fa-calculator text-xs opacity-50";
             }
 
-            // Gespeicherte Akkudaten laden (falls vorhanden)
             const savedBatterySize = localStorage.getItem('wbg_battery_size');
-            if (savedBatterySize !== null) {
-                document.getElementById('batterySizeInput').value = savedBatterySize;
-                updateBatteryButtonsState(parseInt(savedBatterySize));
+            if (savedBatterySize) {
+                const bSize = parseInt(savedBatterySize);
+                document.getElementById('batterySizeInput').value = bSize;
+                setBatterySizeUI(bSize);
             }
-
             const savedStartSoc = localStorage.getItem('wbg_start_soc');
             if (savedStartSoc !== null) {
                 document.getElementById('startSoc').value = savedStartSoc;
             }
-
             const savedTargetSoc = localStorage.getItem('wbg_target_soc');
             if (savedTargetSoc !== null) {
                 document.getElementById('targetSoc').value = savedTargetSoc;
@@ -492,7 +569,16 @@
                 });
         }
 
-        function updateBatteryButtonsState(size) {
+        function setBatterySize(size) {
+            document.getElementById('batterySizeInput').value = size;
+            setBatterySizeUI(size);
+            try {
+                localStorage.setItem('wbg_battery_size', size);
+            } catch(e) {}
+            calculateAll();
+        }
+
+        function setBatterySizeUI(size) {
             [40, 60, 75, 100].forEach(s => {
                 const btn = document.getElementById(`bat-${s}`);
                 if (btn) {
@@ -505,13 +591,6 @@
             });
         }
 
-        function setBatterySize(size) {
-            document.getElementById('batterySizeInput').value = size;
-            localStorage.setItem('wbg_battery_size', size);
-            updateBatteryButtonsState(size);
-            calculateAll();
-        }
-
         function calculateMetrics() {
             let netCapacity = parseFloat(document.getElementById('batterySizeInput').value) || 60;
             let start = parseInt(document.getElementById('startSoc').value) || 0;
@@ -519,13 +598,7 @@
             
             if (start > target) {
                 target = start;
-                document.getElementById('targetSoc').value = target;
             }
-
-            // Werte im LocalStorage abspeichern
-            localStorage.setItem('wbg_battery_size', netCapacity);
-            localStorage.setItem('wbg_start_soc', start);
-            localStorage.setItem('wbg_target_soc', target);
 
             document.getElementById('startVal').innerText = start + '%';
             document.getElementById('targetVal').innerText = target + '%';
@@ -584,7 +657,12 @@
 
         function onBatteryInputChanged() {
             const val = parseInt(document.getElementById('batterySizeInput').value) || 60;
-            updateBatteryButtonsState(val);
+            setBatterySizeUI(val);
+            try {
+                localStorage.setItem('wbg_battery_size', val);
+                localStorage.setItem('wbg_start_soc', document.getElementById('startSoc').value);
+                localStorage.setItem('wbg_target_soc', document.getElementById('targetSoc').value);
+            } catch(e) {}
             calculateAll();
         }
 
@@ -665,7 +743,7 @@
                             <span class="bg-emerald-500/15 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-1.5 py-0.5 rounded-md flex items-center shadow-2xs">
                                 <i class="fa-solid fa-plug text-[9px] mr-1"></i>${st.count}
                             </span>
-                            <span class="${st.kw === '22 kW' ? 'bg-amber-500/15 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30' : 'bg-blue-500/15 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/30'} text-[10px] font-bold px-1.5 py-0.5 rounded-md flex items-center shadow-2xs">
+                            <span class="${st.kw === '22 kW' ? 'bg-amber-500/15 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30' : 'bg-blue-500/15 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/30'} text-[10px] font-bold px-1.5 py-0.5 rounded-md inline-flex items-center whitespace-nowrap shadow-2xs">
                                 <i class="fa-solid fa-bolt text-[9px] mr-1"></i>${st.kw}
                             </span>
                         </div>
@@ -740,7 +818,7 @@
             });
         }
 
-        function setCityFilter(cityName) {
+                function setCityFilter(cityName) {
             currentFilter = cityName;
             try {
                 localStorage.setItem('wbg_city_filter', cityName);
@@ -818,6 +896,7 @@
                 currentPull = 0;
             }, { passive: true });
         }
+
         
         function toggleCalculator() {
             const calcEl = document.getElementById('calculatorSection');
@@ -834,7 +913,7 @@
             processStations();
         }
 
-        function toggleInfo() {
+                function toggleInfo() {
             const infoEl = document.getElementById('infoSection');
             const infoIcon = document.getElementById('infoIcon');
             if (infoEl.classList.contains('collapsed')) {
@@ -845,10 +924,12 @@
                 infoIcon.className = "fa-solid fa-circle-info text-xs opacity-50";
             }
         }
+
         
         // Automatische Versionsprüfung & Cache-Busting
-        const APP_VERSION = 'v2026-11-03-10';
+        const APP_VERSION = 'v2026-11-03-11';
         
+        // Prüfen beim Start und wenn die App in den Vordergrund kommt (visibilitychange)
         function checkForAppUpdates() {
             fetch('index.html?check=' + Date.now(), { cache: 'no-store' })
                 .then(res => res.text())
@@ -860,7 +941,7 @@
                                 names.forEach(name => caches.delete(name));
                             });
                         }
-                        localStorage.removeItem('wbg_stations_cache');
+                        localStorage.removeItem('wbg_stations_cache'); // falls vorhanden
                         window.location.reload(true);
                     }
                 }).catch(() => {});
@@ -872,6 +953,7 @@
             }
         });
         
+        // Einmalig beim Start nach 2 Sekunden prüfen
         setTimeout(checkForAppUpdates, 2000);
 
         window.onload = initApp;
