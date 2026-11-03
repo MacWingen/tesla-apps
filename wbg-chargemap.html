@@ -439,7 +439,9 @@
         let weatherLoaded = false;
 
         const rawWbgData = [
-            { id: 'winkel13', title: 'Im Winkel 13', address: 'Im Winkel 13, 44536 Lünen-Brambauer', lat: 51.5976, lon: 7.4557, count: '2x', kw: '11 kW', price: 0.38, custom: true, city: 'Lünen', url: 'https://www.google.com/maps/place/Im+Winkel+13,+44536+L%C3%BCnen-Brambauer/@51.5976428,7.4531406,17z' },
+            { id: 'veilchenweg', title: 'Veilchenweg 10', address: 'Veilchenweg 10, 44532 Lünen-Niederaden', lat: 51.5959284, lon: 7.5578789, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Veilchenweg+10,+44532+L%C3%BCnen-Niederaden/@51.5959284,7.5578789,753m/data=!3m2!1e3!4b1!4m6!3m5!1s0x47b911c5829883dd:0x98315dd575de0e1e!8m2!3d51.5959284!4d7.5578789!16s%2Fg%2F11csgyvvw7?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyOC4wIKXMDSoASAFQAw%3D%3D' },
+            
+            { id: 'winkel13', title: 'Im Winkel 13', address: 'Im Winkel 13, 44536 Lünen-Brambauer', lat: 51.5976, lon: 7.4557, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Im+Winkel+13,+44536+L%C3%BCnen-Brambauer/@51.5976428,7.4531406,17z' },
             { id: 'asternweg2', title: 'Asternweg 2', address: 'Asternweg 2, 44532 Lünen-Niederaden', lat: 51.5946, lon: 7.5563, count: '1x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Asternweg+2,+44532+L%C3%BCnen-Niederaden/@51.5946482,7.5537976,17z' },
             { id: 'vogelsberg', title: 'Am Vogelsberg 106', address: 'Am Vogelsberg 106, 44534 Lünen', lat: 51.6296, lon: 7.5357, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Am+Vogelsberg+106,+44534+L%C3%BCnen/@51.6296932,7.5331728,17z' },
             { id: 'bebelstr', title: 'Bebelstraße 188', address: 'Bebelstraße 188, 44532 Lünen', lat: 51.5894, lon: 7.5371, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Bebelstra%C3%9Fe+188,+44532+L%C3%BCnen/@51.589446,7.5345666,17z' },
@@ -447,7 +449,7 @@
             { id: 'kurtstr', title: 'Kurt-Schumacher-Straße 11', address: 'Kurt-Schumacher-Straße 11, 44534 Lünen', lat: 51.6173, lon: 7.5267, count: '2x', kw: '22 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/WBG+L%C3%BCnen/@51.6173435,7.5241458,17z' },
             { id: 'luisenstr', title: 'Luisenhüttenstraße 24', address: 'Luisenhüttenstraße 24, 44536 Lünen', lat: 51.6137, lon: 7.5131, count: '2x', kw: '22 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Luisenh%C3%BCttenstra%C3%9Fe+24,+44536+L%C3%BCnen/@51.6137768,7.5105456,17z' },
             { id: 'moltkestr', title: 'Moltkestraße 75', address: 'Moltkestraße 75, 44536 Lünen', lat: 51.6148, lon: 7.4971, count: '2x', kw: '22 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Moltkestra%C3%9Fe+75,+44536+L%C3%BCnen/@51.6148069,7.4945678,17z' },
-            { id: 'nelkenweg', title: 'Nelkenweg 6', address: 'Nelkenweg 6, 44532 Lünen-Niederaden', lat: 51.5949, lon: 7.5543, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Nelkenweg+6,+44532+L%C3%BCnen-Niederaden/@51.5948995,7.5440003,15z' },
+            { id: 'nelkenweg', title: 'Nelkenweg 6', address: 'Nelkenweg 6, 44532 Lünen-Niederaden', lat: 51.5949, lon: 7.5543, count: '1x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Nelkenweg+6,+44532+L%C3%BCnen-Niederaden/@51.5948995,7.5440003,15z' },
             { id: 'ottoklug', title: 'Otto-Klug-Weg 14', address: 'Otto-Klug-Weg 14, 44534 Lünen', lat: 51.6225, lon: 7.5262, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Otto-Klug-Weg+14,+44534+L%C3%BCnen/@51.6225051,7.5236595,17z' },
             { id: 'parkstr', title: 'Parkstraße 19', address: 'Parkstraße 19, 44532 Lünen', lat: 51.6099, lon: 7.5190, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Parkstra%C3%9Fe+19,+44532+L%C3%BCnen/@51.6099633,7.5164822,17z' },
             { id: 'schachtweg', title: 'Schachtweg 8B', address: 'Schachtweg 8B, 44532 Lünen', lat: 51.5831, lon: 7.5078, count: '1x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Schachtweg+8B,+44532+L%C3%BCnen/@51.583161,7.5052238,17z' },
@@ -723,7 +725,14 @@
                     <div class="flex items-center justify-between text-[11px] text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-100 dark:border-gray-800/60">
                         <div class="flex items-center space-x-2.5">
                             <span class="text-gray-700 dark:text-gray-300 font-medium"><i class="fa-solid fa-location-dot text-emerald-500 mr-1"></i>${distText}</span>
-                            <span class="text-gray-700 dark:text-gray-300 font-semibold"><i class="fa-solid fa-bolt text-amber-400 mr-1"></i><span class="text-emerald-600 dark:text-emerald-400 font-bold mr-0.5">${st.count}</span> ${st.kw}</span>
+                            <div class="flex items-center space-x-1.5">
+                            <span class="bg-emerald-500/15 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-1.5 py-0.5 rounded-md flex items-center shadow-2xs">
+                                <i class="fa-solid fa-plug text-[9px] mr-1"></i>${st.count}
+                            </span>
+                            <span class="${st.kw === '22 kW' ? 'bg-amber-500/15 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30' : 'bg-blue-500/15 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/30'} text-[10px] font-bold px-1.5 py-0.5 rounded-md flex items-center shadow-2xs">
+                                <i class="fa-solid fa-bolt text-[9px] mr-1"></i>${st.kw}
+                            </span>
+                        </div>
                         </div>
                         <div class="flex items-center space-x-3">
                             <button onclick="toggleFavorite('${st.id}', event)" class="p-1 text-sm"><i class="${starClass} fa-star"></i></button>
@@ -757,7 +766,8 @@
                 filteredStations = wbgStations.filter(st => st.city === currentFilter);
             }
 
-            document.getElementById('stationCount').innerText = `${filteredStations.length} von ${wbgStations.length} Standorten`;
+            let totalPoints = filteredStations.reduce((acc, st) => acc + parseInt(st.count), 0);
+            document.getElementById('stationCount').innerHTML = `<span class="text-amber-500 dark:text-amber-400 font-bold">${filteredStations.length}</span> von ${wbgStations.length} Standorten (<span class="text-emerald-600 dark:text-emerald-400 font-bold">${totalPoints}</span> von 36 Ladepunkten)`;
             filteredStations = filteredStations.filter(st => !favorites.includes(st.id));
 
             const favStations = wbgStations.filter(st => favorites.includes(st.id));
