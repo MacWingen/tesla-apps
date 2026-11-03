@@ -56,7 +56,7 @@
             100% { transform: translateX(100%); }
         }
 
-        /* 4K Liquid Glass & 3D Depth Enhancements (Ultra-Refined) */
+                        /* 4K Liquid Glass & 3D Depth Enhancements (Ultra-Refined) */
         body {
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -143,6 +143,80 @@
         }
         .dark button, .dark .wbg-btn-pop {
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+        }
+
+        /* Hauptcontainer mit 3D Float & Liquid Glass Kanten */
+        .wbg-app-container {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 
+                        0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+                        0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .dark .wbg-app-container {
+            background-color: rgba(10, 10, 12, 0.85);
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.8), 
+                        0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+                        0 1px 0 rgba(255, 255, 255, 0.12) inset;
+        }
+
+        /* Header Glass & Lichtkante */
+        .wbg-header {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+        }
+
+        /* Hero Result Box - 3D Glass Layer */
+        .wbg-hero-box {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2),
+                        0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+        .dark .wbg-hero-box {
+            background: linear-gradient(135deg, rgba(20, 24, 33, 0.9) 0%, rgba(10, 13, 18, 0.95) 100%);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1),
+                        0 8px 24px rgba(0, 0, 0, 0.4),
+                        0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+
+        /* Cards & Panels 3D Depth (Fixed - No movement on hover) */
+        .wbg-card-3d {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.04),
+                        0 1px 3px rgba(0, 0, 0, 0.02),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+        .dark .wbg-card-3d {
+            background: linear-gradient(145deg, rgba(18, 22, 30, 0.85) 0%, rgba(10, 12, 17, 0.9) 100%);
+            box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5),
+                        0 2px 6px rgba(0, 0, 0, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+                        inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+        }
+
+        /* Nearest Station Special Glow */
+        .wbg-nearest-glow {
+            box-shadow: 0 8px 30px -4px rgba(16, 185, 129, 0.2),
+                        0 2px 8px rgba(16, 185, 129, 0.1),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+        .dark .wbg-nearest-glow {
+            background: linear-gradient(145deg, rgba(16, 37, 29, 0.9) 0%, rgba(10, 20, 16, 0.95) 100%);
+            box-shadow: 0 12px 36px -4px rgba(16, 185, 129, 0.25),
+                        0 4px 12px rgba(0, 0, 0, 0.5),
+                        inset 0 1px 0 rgba(16, 185, 129, 0.3),
+                        inset 0 0 0 1px rgba(16, 185, 129, 0.2);
+        }
+
+        /* Interactive Buttons 3D Pop */
+        button, .wbg-btn-pop {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+        .dark button, .dark .wbg-btn-pop {
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
         }
     
         /* Collapsible Calculator Panel */
@@ -295,7 +369,7 @@
                     </div>
                 </div>
 
-                <!-- App Version Footer & Private Support -->
+                                <!-- App Version Footer & Private Support -->
                 <div class="pt-2 mt-1 border-t border-gray-100 dark:border-gray-800/60 space-y-1.5 text-[10px] text-gray-500 dark:text-gray-400">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-1.5">
@@ -303,7 +377,7 @@
                             <span class="font-bold text-gray-800 dark:text-gray-200">Private App (nicht von der WBG)</span>
                         </div>
                         <div class="font-medium text-gray-400">
-                            <span>© 2026 Thomas Wingen (v2026-11-03-04)</span>
+                            <span>© 2026 Thomas Wingen (v2026-11-03-05)</span>
                         </div>
                     </div>
                     <div class="bg-amber-500/10 dark:bg-amber-500/10 border border-amber-500/20 p-2 rounded-lg space-y-1">
@@ -330,10 +404,7 @@
             </div>
         </div>
 
-        <!-- Zähler mit Icons & ohne überflüssigen Text -->
-        <div class="px-3 py-1.5 bg-white/40 dark:bg-gray-950/40 border-b border-gray-200/50 dark:border-gray-900/50 text-[10px] text-gray-600 dark:text-gray-300 shrink-0 flex items-center justify-center font-medium">
-            <span id="stationCount" class="truncate">Lade Standorte...</span>
-        </div>
+
 
         <!-- Stationsliste -->
         <div id="stationList" class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2 pb-safe">
@@ -393,6 +464,7 @@
             const savedTheme = localStorage.getItem('wbg_theme');
             const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             
+            // Erkennt gespeicherte Einstellung oder schaut auf das System (Dark/Light Mode)
             let currentTheme = savedTheme ? savedTheme : (prefersDark ? 'dark' : 'light');
             
             if (currentTheme === 'dark') {
@@ -409,33 +481,6 @@
             } else {
                 document.getElementById('calculatorSection').classList.add('collapsed');
                 document.getElementById('calcIcon').className = "fa-solid fa-calculator text-xs opacity-50";
-            }
-
-            // Gespeicherte Akkugröße laden
-            const savedBat = localStorage.getItem('wbg_battery_size');
-            if (savedBat) {
-                document.getElementById('batterySizeInput').value = savedBat;
-                let batNum = parseInt(savedBat);
-                [40, 60, 75, 100].forEach(s => {
-                    const btn = document.getElementById(`bat-${s}`);
-                    if (btn) {
-                        if (s === batNum) {
-                            btn.className = "bg-emerald-600 text-white border border-emerald-600 px-1.5 py-1 rounded-lg text-[10px] font-bold transition shadow-sm";
-                        } else {
-                            btn.className = "bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg text-[10px] font-semibold transition";
-                        }
-                    }
-                });
-            }
-
-            // Gespeicherte Slider SoC laden
-            const savedStartSoc = localStorage.getItem('wbg_start_soc');
-            if (savedStartSoc !== null) {
-                document.getElementById('startSoc').value = savedStartSoc;
-            }
-            const savedTargetSoc = localStorage.getItem('wbg_target_soc');
-            if (savedTargetSoc !== null) {
-                document.getElementById('targetSoc').value = savedTargetSoc;
             }
 
             const savedFilter = localStorage.getItem('wbg_city_filter');
@@ -511,7 +556,6 @@
 
         function setBatterySize(size) {
             document.getElementById('batterySizeInput').value = size;
-            localStorage.setItem('wbg_battery_size', size);
             [40, 60, 75, 100].forEach(s => {
                 const btn = document.getElementById(`bat-${s}`);
                 if (btn) {
@@ -526,15 +570,10 @@
         }
 
         function calculateMetrics() {
-            let batInputVal = parseFloat(document.getElementById('batterySizeInput').value) || 60;
-            localStorage.setItem('wbg_battery_size', batInputVal);
-
+            let netCapacity = parseFloat(document.getElementById('batterySizeInput').value) || 60;
             let start = parseInt(document.getElementById('startSoc').value) || 0;
             let target = parseInt(document.getElementById('targetSoc').value) || 0;
             
-            localStorage.setItem('wbg_start_soc', start);
-            localStorage.setItem('wbg_target_soc', target);
-
             if (start > target) {
                 target = start;
             }
@@ -563,7 +602,7 @@
             }
 
             let socDiff = target - start;
-            let netKwh = (batInputVal * socDiff) / 100;
+            let netKwh = (netCapacity * socDiff) / 100;
             let grossKwh = netKwh * currentLossFactor;
             
             const heroBg = document.getElementById('heroBatteryBg');
@@ -596,9 +635,6 @@
 
         function onBatteryInputChanged() {
             const val = parseInt(document.getElementById('batterySizeInput').value);
-            if (!isNaN(val)) {
-                localStorage.setItem('wbg_battery_size', val);
-            }
             [40, 60, 75, 100].forEach(s => {
                 const btn = document.getElementById(`bat-${s}`);
                 if (btn) {
@@ -727,7 +763,7 @@
             }
 
             let totalPoints = filteredStations.reduce((acc, st) => acc + parseInt(st.count), 0);
-            document.getElementById('stationCount').innerHTML = `<i class="fa-solid fa-location-dot text-amber-500 mr-1"></i><span class="text-amber-500 dark:text-amber-400 font-bold">${filteredStations.length}</span> von ${wbgStations.length} Standorten &nbsp;•&nbsp; <i class="fa-solid fa-plug text-emerald-500 mr-1"></i><span class="text-emerald-600 dark:text-emerald-400 font-bold">${totalPoints}</span> von 36 Ladepunkten`;
+            // stationCount integrated into headerTitle
             filteredStations = filteredStations.filter(st => !favorites.includes(st.id));
 
             const favStations = wbgStations.filter(st => favorites.includes(st.id));
@@ -749,8 +785,8 @@
             }
 
             const headerTitle = document.createElement('div');
-            headerTitle.className = "text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider px-1 pt-1";
-            headerTitle.innerText = currentFilter === 'Alle' ? "Alle Standorte" : `Standorte in ${currentFilter}`;
+            headerTitle.className = "text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider px-1 pt-1 flex items-center justify-between";
+            headerTitle.innerHTML = `<span>${currentFilter === 'Alle' ? "Alle Standorte" : `Standorte in ${currentFilter}`}</span><span class="normal-case font-medium text-[9px] text-gray-500 dark:text-gray-400"><i class="fa-solid fa-location-dot text-amber-500 mr-0.5"></i><strong class="text-amber-500 dark:text-amber-400">${filteredStations.length}</strong>/${wbgStations.length} Standorte &nbsp;•&nbsp; <i class="fa-solid fa-plug text-emerald-500 mr-0.5"></i><strong class="text-emerald-600 dark:text-emerald-400">${totalPoints}</strong>/36 Ladepunkte</span>`;
             listContainer.appendChild(headerTitle);
 
             filteredStations.forEach((st) => {
@@ -762,7 +798,7 @@
             });
         }
 
-        function setCityFilter(cityName) {
+                function setCityFilter(cityName) {
             currentFilter = cityName;
             try {
                 localStorage.setItem('wbg_city_filter', cityName);
@@ -841,6 +877,7 @@
             }, { passive: true });
         }
 
+        
         function toggleCalculator() {
             const calcEl = document.getElementById('calculatorSection');
             const calcIcon = document.getElementById('calcIcon');
@@ -856,7 +893,7 @@
             processStations();
         }
 
-        function toggleInfo() {
+                function toggleInfo() {
             const infoEl = document.getElementById('infoSection');
             const infoIcon = document.getElementById('infoIcon');
             if (infoEl.classList.contains('collapsed')) {
@@ -868,9 +905,11 @@
             }
         }
 
-        // Automatische Versionsprüfung & Cache-Busting
-        const APP_VERSION = 'v2026-11-03-04';
         
+        // Automatische Versionsprüfung & Cache-Busting
+        const APP_VERSION = 'v2026-11-03-05';
+        
+        // Prüfen beim Start und wenn die App in den Vordergrund kommt (visibilitychange)
         function checkForAppUpdates() {
             fetch('index.html?check=' + Date.now(), { cache: 'no-store' })
                 .then(res => res.text())
@@ -882,6 +921,7 @@
                                 names.forEach(name => caches.delete(name));
                             });
                         }
+                        localStorage.removeItem('wbg_stations_cache'); // falls vorhanden
                         window.location.reload(true);
                     }
                 }).catch(() => {});
@@ -893,6 +933,7 @@
             }
         });
         
+        // Einmalig beim Start nach 2 Sekunden prüfen
         setTimeout(checkForAppUpdates, 2000);
 
         window.onload = initApp;
