@@ -18,7 +18,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <!-- Open Graph / Social Media Vorschau (WhatsApp, iMessage, etc.) -->
+    <!-- Open Graph / Social Media Vorschau -->
     <meta property="og:title" content="WBG Chargemap">
     <meta property="og:description" content="Ladeinfrastruktur & Ladezeit-Rechner für WBG Standorte">
     <meta property="og:image" content="https://macwingen.github.io/tesla-apps/wbg-chargemap/icons/wbg-chargemap.png">
@@ -56,7 +56,7 @@
             100% { transform: translateX(100%); }
         }
 
-                        /* 4K Liquid Glass & 3D Depth Enhancements (Ultra-Refined) */
+        /* 4K Liquid Glass & 3D Depth Enhancements */
         body {
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -64,162 +64,49 @@
             background-color: #f3f4f6;
         }
         .dark body {
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            text-rendering: optimizeLegibility;
             background-color: #000000;
         }
 
-        /* Hauptcontainer mit 3D Float & Ultra Liquid Glass Kanten */
         .wbg-app-container {
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
             box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.3), 
-                        0 0 0 1px rgba(255, 255, 255, 0.2) inset,
-                        0 1px 3px rgba(0, 0, 0, 0.1);
+                        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
         }
         .dark .wbg-app-container {
             background-color: rgba(8, 8, 10, 0.88);
             box-shadow: 0 40px 80px -16px rgba(0, 0, 0, 0.85), 
-                        0 0 0 1px rgba(255, 255, 255, 0.12) inset,
-                        0 1px 0 rgba(255, 255, 255, 0.18) inset,
-                        0 -1px 0 rgba(0, 0, 0, 0.5) inset;
+                        0 0 0 1px rgba(255, 255, 255, 0.12) inset;
         }
 
-        /* Header Glass & Lichtkante */
         .wbg-header {
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset;
         }
 
-        /* Hero Result Box - 3D Glass Layer with Specular Highlight */
         .wbg-hero-box {
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4),
-                        0 6px 16px rgba(0, 0, 0, 0.04);
         }
         .dark .wbg-hero-box {
             background: linear-gradient(135deg, rgba(22, 27, 38, 0.92) 0%, rgba(10, 14, 20, 0.96) 100%);
-            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.15),
-                        0 10px 30px rgba(0, 0, 0, 0.5),
-                        0 0 0 1px rgba(255, 255, 255, 0.08);
         }
 
-        /* Cards & Panels 3D Depth (Ultra Clean & Sharp) */
         .wbg-card-3d {
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            box-shadow: 0 6px 20px -3px rgba(0, 0, 0, 0.05),
-                        0 1px 3px rgba(0, 0, 0, 0.02),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.6);
         }
         .dark .wbg-card-3d {
             background: linear-gradient(145deg, rgba(20, 25, 34, 0.88) 0%, rgba(11, 14, 20, 0.92) 100%);
-            box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.6),
-                        0 2px 8px rgba(0, 0, 0, 0.3),
-                        inset 0 1px 1px rgba(255, 255, 255, 0.12),
-                        inset 0 0 0 1px rgba(255, 255, 255, 0.05);
         }
 
-        /* Nearest Station Special Glow */
         .wbg-nearest-glow {
-            box-shadow: 0 10px 35px -4px rgba(16, 185, 129, 0.25),
-                        0 2px 8px rgba(16, 185, 129, 0.15),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+            box-shadow: 0 10px 35px -4px rgba(16, 185, 129, 0.25);
         }
         .dark .wbg-nearest-glow {
             background: linear-gradient(145deg, rgba(16, 42, 32, 0.92) 0%, rgba(10, 22, 17, 0.96) 100%);
-            box-shadow: 0 14px 40px -4px rgba(16, 185, 129, 0.3),
-                        0 4px 16px rgba(0, 0, 0, 0.6),
-                        inset 0 1px 2px rgba(16, 185, 129, 0.4),
-                        inset 0 0 0 1px rgba(16, 185, 129, 0.25);
         }
 
-        /* Interactive Buttons 3D Pop */
-        button, .wbg-btn-pop {
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-        }
-        .dark button, .dark .wbg-btn-pop {
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-        }
-
-        /* Hauptcontainer mit 3D Float & Liquid Glass Kanten */
-        .wbg-app-container {
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 
-                        0 0 0 1px rgba(255, 255, 255, 0.1) inset,
-                        0 1px 3px rgba(0, 0, 0, 0.05);
-        }
-        .dark .wbg-app-container {
-            background-color: rgba(10, 10, 12, 0.85);
-            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.8), 
-                        0 0 0 1px rgba(255, 255, 255, 0.08) inset,
-                        0 1px 0 rgba(255, 255, 255, 0.12) inset;
-        }
-
-        /* Header Glass & Lichtkante */
-        .wbg-header {
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
-        }
-
-        /* Hero Result Box - 3D Glass Layer */
-        .wbg-hero-box {
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2),
-                        0 4px 12px rgba(0, 0, 0, 0.03);
-        }
-        .dark .wbg-hero-box {
-            background: linear-gradient(135deg, rgba(20, 24, 33, 0.9) 0%, rgba(10, 13, 18, 0.95) 100%);
-            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1),
-                        0 8px 24px rgba(0, 0, 0, 0.4),
-                        0 0 0 1px rgba(255, 255, 255, 0.05);
-        }
-
-        /* Cards & Panels 3D Depth (Fixed - No movement on hover) */
-        .wbg-card-3d {
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.04),
-                        0 1px 3px rgba(0, 0, 0, 0.02),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.4);
-        }
-        .dark .wbg-card-3d {
-            background: linear-gradient(145deg, rgba(18, 22, 30, 0.85) 0%, rgba(10, 12, 17, 0.9) 100%);
-            box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5),
-                        0 2px 6px rgba(0, 0, 0, 0.3),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.08),
-                        inset 0 0 0 1px rgba(255, 255, 255, 0.03);
-        }
-
-        /* Nearest Station Special Glow */
-        .wbg-nearest-glow {
-            box-shadow: 0 8px 30px -4px rgba(16, 185, 129, 0.2),
-                        0 2px 8px rgba(16, 185, 129, 0.1),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.5);
-        }
-        .dark .wbg-nearest-glow {
-            background: linear-gradient(145deg, rgba(16, 37, 29, 0.9) 0%, rgba(10, 20, 16, 0.95) 100%);
-            box-shadow: 0 12px 36px -4px rgba(16, 185, 129, 0.25),
-                        0 4px 12px rgba(0, 0, 0, 0.5),
-                        inset 0 1px 0 rgba(16, 185, 129, 0.3),
-                        inset 0 0 0 1px rgba(16, 185, 129, 0.2);
-        }
-
-        /* Interactive Buttons 3D Pop */
-        button, .wbg-btn-pop {
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        }
-        .dark button, .dark .wbg-btn-pop {
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-        }
-    
-        /* Collapsible Calculator Panel */
         #calculatorSection, #infoSection {
             max-height: 700px;
             opacity: 1;
@@ -235,9 +122,7 @@
             margin-bottom: 0 !important;
             border-width: 0 !important;
         }
-
     </style>
-    <!-- Sofortiger Zustand für Rechner, um Aufblitzen beim Laden/Fahren zu verhindern -->
     <script>
         if (localStorage.getItem('wbg_calc_collapsed') === 'false') {
             document.write('<style>#calculatorSection { max-height: 450px !important; opacity: 1 !important; }</style>');
@@ -246,10 +131,9 @@
 </head>
 <body class="bg-gray-100 dark:bg-black text-gray-900 dark:text-gray-100 h-screen flex flex-col items-center justify-center p-2 sm:py-3 overflow-hidden text-xs font-sans transition-colors duration-200">
 
-    <!-- App Container -->
     <div class="wbg-app-container w-full h-full max-w-xl bg-white/90 dark:bg-gray-950/90 border border-gray-200/80 dark:border-gray-800/80 rounded-2xl flex flex-col overflow-hidden relative">
 
-        <!-- Header -->
+        <!-- Header (ohne Benachrichtigungs-Button) -->
         <div class="wbg-header px-4 py-3 border-b border-gray-200/60 dark:border-gray-900/80 flex items-center justify-between bg-white/80 dark:bg-gray-950/80 backdrop-blur shrink-0">
             <div class="flex items-center space-x-2.5">
                 <div class="bg-emerald-500/10 border border-emerald-500/20 p-2 rounded-xl text-emerald-500 dark:text-emerald-400 shadow-sm">
@@ -278,16 +162,23 @@
             <!-- Hero Result Box -->
             <div class="relative flex items-center -mx-0.5">
                 <div class="wbg-hero-box relative w-full bg-white/90 dark:bg-gray-900/90 border border-emerald-500/20 dark:border-emerald-500/20 rounded-2xl px-3 py-2.5 flex items-center justify-between overflow-hidden">
-                    <div class="absolute inset-y-0 left-0 bg-emerald-500/10 dark:bg-emerald-500/15 pointer-events-none transition-all duration-300 z-0" id="heroBatteryBg" style="width: 85%;">
+                    <div class="absolute inset-y-0 bg-emerald-500/10 dark:bg-emerald-500/15 pointer-events-none transition-all duration-300 z-0" id="heroBatteryRangeBg" style="left: 20%; width: 60%;"></div>
+                    <div class="absolute inset-y-0 left-0 bg-emerald-500/25 dark:bg-emerald-500/35 pointer-events-none transition-all duration-500 z-0" id="heroBatteryBg" style="width: 20%;">
                         <div class="absolute inset-0 overflow-hidden">
-                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-400/30 dark:via-emerald-400/20 to-transparent -translate-x-full animate-[shimmer_2s_infinite]"></div>
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-400/40 dark:via-emerald-400/30 to-transparent -translate-x-full animate-[shimmer_2s_infinite]"></div>
                         </div>
                     </div>
                     
                     <div class="relative z-10">
                         <span class="text-[10px] uppercase tracking-wider text-blue-600 dark:text-blue-400 font-semibold block">Fertig um</span>
                         <strong id="topFinishTime" class="text-base font-black text-gray-900 dark:text-white tracking-tight">--:--</strong>
-                        <span class="text-[10px] text-gray-500 dark:text-gray-400 block" id="topDuration">Ladezeit: --</span>
+                        <div class="flex items-center space-x-2 mt-0.5">
+                            <span class="text-[10px] text-gray-500 dark:text-gray-400 font-bold" id="topDuration">Ladezeit: --</span>
+                            <button onclick="toggleLiveCharging()" id="liveChargeBtn" class="text-[9px] bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/30 font-bold px-2 py-0.5 rounded-md inline-flex items-center space-x-1 transition shadow-2xs">
+                                <i id="liveBtnIcon" class="fa-solid fa-play text-[8px]"></i>
+                                <span id="liveBtnText">Live-Start</span>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="relative z-10 text-right border-l border-gray-200/60 dark:border-gray-800/40 pl-4">
@@ -316,7 +207,7 @@
                 </div>
             </div>
 
-            <!-- Slider SoC mit dynamischen Farben -->
+            <!-- Slider SoC -->
             <div class="wbg-card-3d bg-white/80 dark:bg-gray-950/70 border border-gray-200/60 dark:border-gray-800/40 rounded-xl p-2 space-y-1.5">
                 <div class="flex justify-between text-[11px] font-medium">
                     <span class="text-gray-600 dark:text-gray-300">Aktueller Akkustand ➔ <strong id="startVal" class="font-bold">20%</strong></span>
@@ -336,25 +227,22 @@
                     <div class="text-emerald-600 dark:text-emerald-400 font-bold"><i class="fa-solid fa-building mr-1.5"></i>WBG Lünen - Ladeinfrastruktur</div>
                 </div>
                 
-                <!-- Tarife -->
                 <div class="space-y-1 text-[11px]">
                     <div class="font-semibold text-gray-800 dark:text-gray-200"><i class="fa-solid fa-tags text-amber-500 mr-1"></i>Tarife & Optionen:</div>
                     <div class="space-y-1 pl-1 text-gray-600 dark:text-gray-300">
-                        <div class="flex items-start space-x-1.5"><span class="text-gray-400 select-none">•</span><div class="flex-1"><i class="fa-solid fa-charging-station text-emerald-500 mr-1"></i><strong>Stellplatz mit eigener Wallbox:</strong> 0,38 € / kWh + erhöhte Stellplatzmiete</div></div>
-                        <div class="flex items-start space-x-1.5"><span class="text-gray-400 select-none">•</span><div class="flex-1"><i class="fa-solid fa-bolt text-amber-500 mr-1"></i><strong>Laden an WBG-Ladesäulen:</strong> 0,38 € / kWh + 5,00 € mtl. Grundgebühr</div></div>
-                        <div class="flex items-start space-x-1.5"><span class="text-gray-400 select-none">•</span><div class="flex-1"><i class="fa-solid fa-wallet text-blue-500 mr-1"></i><strong>Mit zwei Ladekarten & Monatsabrechnung:</strong> 0,38 € / kWh + 7,00 € mtl. Grundgebühr</div></div>
+                        <div class="flex items-start space-x-1.5"><span class="text-gray-400 select-none">•</span><div class="flex-1"><strong>Stellplatz mit eigener Wallbox:</strong> 0,38 € / kWh + erhöhte Stellplatzmiete</div></div>
+                        <div class="flex items-start space-x-1.5"><span class="text-gray-400 select-none">•</span><div class="flex-1"><strong>Laden an WBG-Ladesäulen:</strong> 0,38 € / kWh + 5,00 € mtl. Grundgebühr</div></div>
+                        <div class="flex items-start space-x-1.5"><span class="text-gray-400 select-none">•</span><div class="flex-1"><strong>Mit zwei Ladekarten & Monatsabrechnung:</strong> 0,38 € / kWh + 7,00 € mtl. Grundgebühr</div></div>
                     </div>
                 </div>
 
-                <!-- Voraussetzung & Ladekarte -->
                 <div class="pt-2 border-t border-gray-100 dark:border-gray-800/60 space-y-1 text-[11px]">
                     <div class="font-semibold text-gray-800 dark:text-gray-200"><i class="fa-solid fa-wallet text-emerald-500 mr-1"></i>Ladekarte & Voraussetzungen:</div>
                     <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
-                        Voraussetzung ist ein gültiges Mietverhältnis bei der WBG Lünen. Die Beantragung und Ausgabe der Ladekarte erfolgt direkt über den zuständigen Ansprechpartner.
+                        Voraussetzung ist ein gültiges Mietverhältnis bei der WBG Lünen. Die Beantragung und Ausgabe erfolgt direkt über den zuständigen Ansprechpartner.
                     </p>
                 </div>
 
-                <!-- Ansprechpartner -->
                 <div class="pt-2 border-t border-gray-100 dark:border-gray-800/60 space-y-1 text-[11px]">
                     <div class="font-semibold text-gray-800 dark:text-gray-200"><i class="fa-solid fa-headset text-blue-500 mr-1"></i>Ansprechpartner & Support:</div>
                     <div class="text-gray-700 dark:text-gray-300 font-medium">Arie Schnettler</div>
@@ -369,7 +257,6 @@
                     </div>
                 </div>
 
-                                <!-- App Version Footer & Private Support -->
                 <div class="pt-2 mt-1 border-t border-gray-100 dark:border-gray-800/60 space-y-1.5 text-[10px] text-gray-500 dark:text-gray-400">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-1.5">
@@ -377,16 +264,8 @@
                             <span class="font-bold text-gray-800 dark:text-gray-200">Private App (nicht von der WBG)</span>
                         </div>
                         <div class="font-medium text-gray-400">
-                            <span>© 2026 Thomas Wingen (v2026-11-03-11)</span>
+                            <span>© 2026 Thomas Wingen (v2026-11-03-23)</span>
                         </div>
-                    </div>
-                    <div class="bg-amber-500/10 dark:bg-amber-500/10 border border-amber-500/20 p-2 rounded-lg space-y-1">
-                        <p class="text-[10px] text-gray-700 dark:text-gray-300 leading-snug font-medium">
-                            Diese App wurde privat von einem Mieter erstellt. Die WBG hat damit nichts zu tun. Bei Fehlern oder Fragen zur App bitte direkt mich anschreiben:
-                        </p>
-                        <a href="mailto:t.winingen@outlook.de?subject=WBG%20Chargemap%20-%20Feedback" class="text-emerald-600 dark:text-emerald-400 hover:underline font-bold flex items-center pt-0.5">
-                            <i class="fa-solid fa-envelope mr-1.5"></i>E-Mail an den App-Ersteller senden
-                        </a>
                     </div>
                 </div>
             </div>
@@ -404,8 +283,6 @@
             </div>
         </div>
 
-
-
         <!-- Stationsliste -->
         <div id="stationList" class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2 pb-safe">
             <div id="refreshIndicator" class="bg-white dark:bg-gray-900/80 border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 text-center text-[11px] font-bold flex items-center justify-center rounded-xl shadow-sm">
@@ -419,7 +296,6 @@
 
     </div>
 
-    <!-- JavaScript Logik -->
     <script>
         let userLat = 51.5976;
         let userLon = 7.4557; 
@@ -433,10 +309,14 @@
         }
         let currentLossFactor = 1.07;
         let weatherLoaded = false;
+        
+        let isChargingLive = localStorage.getItem('wbg_is_charging') === 'true';
+        let chargeStartTime = parseInt(localStorage.getItem('wbg_charge_start_time')) || Date.now();
+        let chargeStartSoc = parseInt(localStorage.getItem('wbg_charge_start_soc')) || 20;
+        let notificationTimer = null;
 
         const rawWbgData = [
-            { id: 'veilchenweg', title: 'Veilchenweg 10', address: 'Veilchenweg 10, 44532 Lünen-Niederaden', lat: 51.5959284, lon: 7.5578789, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Veilchenweg+10,+44532+L%C3%BCnen-Niederaden/@51.5959284,7.5578789,753m/data=!3m2!1e3!4b1!4m6!3m5!1s0x47b911c5829883dd:0x98315dd575de0e1e!8m2!3d51.5959284!4d7.5578789!16s%2Fg%2F11csgyvvw7?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyOC4wIKXMDSoASAFQAw%3D%3D' },
-            
+            { id: 'veilchenweg', title: 'Veilchenweg 10', address: 'Veilchenweg 10, 44532 Lünen-Niederaden', lat: 51.5959284, lon: 7.5578789, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Veilchenweg+10,+44532+L%C3%BCnen-Niederaden/@51.5959284,7.5578789,753m/data=!3m2!1e3!4b1!4m6!3m5!1s0x47b911c5829883dd:0x98315dd575de0e1e!8m2!3d51.5959284!4d7.5578789!16s%2Fg%2F11csgyvvw7?authuser=0&entry=ttu' },
             { id: 'winkel13', title: 'Im Winkel 13', address: 'Im Winkel 13, 44536 Lünen-Brambauer', lat: 51.5976, lon: 7.4557, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Im+Winkel+13,+44536+L%C3%BCnen-Brambauer/@51.5976428,7.4531406,17z' },
             { id: 'asternweg2', title: 'Asternweg 2', address: 'Asternweg 2, 44532 Lünen-Niederaden', lat: 51.5946, lon: 7.5563, count: '1x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Asternweg+2,+44532+L%C3%BCnen-Niederaden/@51.5946482,7.5537976,17z' },
             { id: 'vogelsberg', title: 'Am Vogelsberg 106', address: 'Am Vogelsberg 106, 44534 Lünen', lat: 51.6296, lon: 7.5357, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Am+Vogelsberg+106,+44534+L%C3%BCnen/@51.6296932,7.5331728,17z' },
@@ -460,13 +340,79 @@
             { id: 'campus', title: 'Campus 6b', address: 'Campus 6b, 59379 Selm', lat: 51.6961, lon: 7.4658, count: '2x', kw: '11 kW', price: 0.38, city: 'Selm', url: 'https://www.google.com/maps/place/Campus+6b,+59379+Selm/@51.6961522,7.4632242,17z' }
         ];
 
+        function scheduleNotification(totalMins) {
+            if (notificationTimer) {
+                clearTimeout(notificationTimer);
+                notificationTimer = null;
+            }
+            if (isChargingLive && "Notification" in window && Notification.permission === 'granted' && totalMins > 0) {
+                const ms = totalMins * 60000;
+                notificationTimer = setTimeout(() => {
+                    if (Notification.permission === 'granted') {
+                        new Notification("⚡ WBG Chargemap", {
+                            body: "Dein Auto hat das eingestellte Ladeziel erreicht!",
+                            icon: "icons/wbg-chargemap.png"
+                        });
+                    }
+                }, ms);
+            }
+        }
+
+        function toggleLiveCharging() {
+            isChargingLive = !isChargingLive;
+            localStorage.setItem('wbg_is_charging', isChargingLive);
+            
+            if (isChargingLive) {
+                chargeStartTime = Date.now();
+                chargeStartSoc = parseInt(document.getElementById('startSoc').value) || 20;
+                localStorage.setItem('wbg_charge_start_time', chargeStartTime);
+                localStorage.setItem('wbg_charge_start_soc', chargeStartSoc);
+
+                // Automatische Benachrichtigungsberechtigung anfragen beim Live-Start
+                if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === "granted") {
+                            alert("Live-Laden gestartet & Benachrichtigungen aktiviert! ⚡");
+                        } else {
+                            alert("Live-Laden gestartet! (Benachrichtigungen wurden nicht erlaubt)");
+                        }
+                    });
+                } else {
+                    alert("Live-Ladevorgang gestartet! Restzeit läuft herunter. ⚡");
+                }
+            } else {
+                alert("Live-Ladevorgang gestoppt.");
+                if (notificationTimer) {
+                    clearTimeout(notificationTimer);
+                    notificationTimer = null;
+                }
+            }
+            updateLiveChargingUI();
+            calculateMetrics();
+        }
+
+        function updateLiveChargingUI() {
+            const btnText = document.getElementById('liveBtnText');
+            const btnIcon = document.getElementById('liveBtnIcon');
+            const btnEl = document.getElementById('liveChargeBtn');
+            if (btnEl) {
+                if (isChargingLive) {
+                    btnEl.className = "text-[9px] bg-emerald-600 text-white hover:bg-emerald-700 font-bold px-2 py-0.5 rounded-md inline-flex items-center space-x-1 transition shadow-sm animate-pulse";
+                    if (btnText) btnText.innerText = "Lädt live...";
+                    if (btnIcon) btnIcon.className = "fa-solid fa-spinner fa-spin text-[8px]";
+                } else {
+                    btnEl.className = "text-[9px] bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/30 font-bold px-2 py-0.5 rounded-md inline-flex items-center space-x-1 transition shadow-2xs";
+                    if (btnText) btnText.innerText = "Live-Start";
+                    if (btnIcon) btnIcon.className = "fa-solid fa-play text-[8px]";
+                }
+            }
+        }
+
         function initApp() {
             const savedTheme = localStorage.getItem('wbg_theme');
             const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             
-            // Erkennt gespeicherte Einstellung oder schaut auf das System (Dark/Light Mode)
             let currentTheme = savedTheme ? savedTheme : (prefersDark ? 'dark' : 'light');
-            
             if (currentTheme === 'dark') {
                 document.documentElement.classList.add('dark');
                 document.getElementById('themeIcon').className = "fa-solid fa-moon text-xs";
@@ -474,6 +420,7 @@
                 document.documentElement.classList.remove('dark');
                 document.getElementById('themeIcon').className = "fa-solid fa-sun text-xs";
             }
+
             const savedCalcState = localStorage.getItem('wbg_calc_collapsed');
             if (savedCalcState === 'false') {
                 document.getElementById('calculatorSection').classList.remove('collapsed');
@@ -512,6 +459,13 @@
                     }
                 });
             }
+
+            updateLiveChargingUI();
+            setInterval(() => {
+                if (isChargingLive) {
+                    calculateMetrics();
+                }
+            }, 1000);
 
             requestGpsLocation(true);
         }
@@ -598,61 +552,82 @@
             
             if (start > target) {
                 target = start;
+                document.getElementById('targetSoc').value = target;
             }
 
             document.getElementById('startVal').innerText = start + '%';
             document.getElementById('targetVal').innerText = target + '%';
 
-            const startValEl = document.getElementById('startVal');
-            startValEl.className = "font-bold ";
-            if (start < 15) {
-                startValEl.className += "text-red-500 dark:text-red-400";
-            } else if (start <= 25) {
-                startValEl.className += "text-amber-500 dark:text-amber-400";
-            } else {
-                startValEl.className += "text-gray-900 dark:text-white";
-            }
-
-            const targetValEl = document.getElementById('targetVal');
-            targetValEl.className = "font-bold ";
-            if (target < 50) {
-                targetValEl.className += "text-amber-500 dark:text-amber-400";
-            } else if (target <= 80) {
-                targetValEl.className += "text-emerald-500 dark:text-emerald-400";
-            } else {
-                targetValEl.className += "text-emerald-600 dark:text-emerald-300 font-black";
-            }
-
             let socDiff = target - start;
             let netKwh = (netCapacity * socDiff) / 100;
             let grossKwh = netKwh * currentLossFactor;
             
+            const heroRangeBg = document.getElementById('heroBatteryRangeBg');
             const heroBg = document.getElementById('heroBatteryBg');
             const heroKwhSub = document.getElementById('heroKwhSub');
-            if (heroBg) heroBg.style.width = target + '%';
-            if (heroKwhSub) heroKwhSub.innerText = `${grossKwh.toFixed(1)} kWh geladen`;
 
-            let power = 11.0; 
-            let hours = grossKwh / power;
-            let totalMins = Math.round(hours * 60);
-            let hrs = Math.floor(totalMins / 60);
-            let mins = totalMins % 60;
+            if (heroRangeBg) {
+                heroRangeBg.style.left = start + '%';
+                heroRangeBg.style.width = Math.max(5, (target - start)) + '%';
+            }
+
+            let liveSoc = start;
+            let remainingMins = Math.round((grossKwh / 11.0) * 60);
+
+            if (isChargingLive) {
+                let elapsedHours = (Date.now() - chargeStartTime) / 3600000;
+                let addedNetKwh = (11.0 / currentLossFactor) * elapsedHours;
+                liveSoc = Math.min(target, chargeStartSoc + (addedNetKwh / netCapacity) * 100);
+                
+                let totalNeededNetKwh = ((target - chargeStartSoc) / 100) * netCapacity;
+                let currentLoadedNetKwh = ((liveSoc - chargeStartSoc) / 100) * netCapacity;
+                let remainingNetKwh = Math.max(0, totalNeededNetKwh - currentLoadedNetKwh);
+                let remainingGrossKwh = remainingNetKwh * currentLossFactor;
+                remainingMins = Math.round((remainingGrossKwh / 11.0) * 60);
+
+                if (liveSoc >= target) {
+                    isChargingLive = false;
+                    localStorage.setItem('wbg_is_charging', 'false');
+                    updateLiveChargingUI();
+                    alert("Ladeziel erfolgreich erreicht! ⚡");
+                }
+            }
+
+            if (heroBg) {
+                heroBg.style.left = start + '%';
+                let currentFillWidth = isChargingLive ? Math.max(5, (liveSoc - start)) : 5;
+                heroBg.style.width = currentFillWidth + '%';
+            }
+
+            let hrs = Math.floor(remainingMins / 60);
+            let mins = remainingMins % 60;
+            let durationStr = hrs > 0 ? `${hrs}h ${mins}m` : `${mins}m`;
 
             let now = new Date();
-            let finishTime = new Date(now.getTime() + totalMins * 60000);
+            let finishTime = new Date(now.getTime() + remainingMins * 60000);
             let finishHours = String(finishTime.getHours()).padStart(2, '0');
             let finishMinutes = String(finishTime.getMinutes()).padStart(2, '0');
             let timeString = `${finishHours}:${finishMinutes}`;
 
-            let durationStr = hrs > 0 ? `${hrs}h ${mins}m` : `${mins}m`;
-            let cost = (grossKwh * 0.38).toFixed(2);
+            let activeGrossKwh = isChargingLive ? (((liveSoc - chargeStartSoc) / 100) * netCapacity) * currentLossFactor : grossKwh;
+            let activeCost = activeGrossKwh * 0.38;
 
             document.getElementById('topFinishTime').innerText = `${timeString} Uhr`;
-            document.getElementById('topDuration').innerText = `Ladezeit: ${durationStr}`;
-            document.getElementById('topCostVal').innerText = cost;
-            if (heroKwhSub) heroKwhSub.innerText = `${grossKwh.toFixed(1)} kWh geladen`;
+            document.getElementById('topDuration').innerText = `Restzeit: ${durationStr}`;
+            document.getElementById('topCostVal').innerText = activeCost.toFixed(2);
+            
+            if (heroKwhSub) {
+                if (isChargingLive) {
+                    let currentLoadedNetKwh = Math.max(0, ((liveSoc - chargeStartSoc) / 100) * netCapacity);
+                    heroKwhSub.innerText = `${currentLoadedNetKwh.toFixed(1)} / ${netKwh.toFixed(1)} kWh geladen`;
+                } else {
+                    heroKwhSub.innerText = `${grossKwh.toFixed(1)} kWh geladen`;
+                }
+            }
 
-            return { cost: cost, duration: durationStr };
+            scheduleNotification(remainingMins);
+
+            return { cost: activeCost.toFixed(2), duration: durationStr };
         }
 
         function onBatteryInputChanged() {
@@ -818,7 +793,7 @@
             });
         }
 
-                function setCityFilter(cityName) {
+        function setCityFilter(cityName) {
             currentFilter = cityName;
             try {
                 localStorage.setItem('wbg_city_filter', cityName);
@@ -836,7 +811,7 @@
             processStations();
         }
 
-        // Pull-to-Refresh Logic (Smooth Drag & Snap-back with Notification Feedback)
+        // Pull-to-Refresh Logic
         let touchStartY = 0;
         let currentPull = 0;
         let isPulling = false;
@@ -897,7 +872,6 @@
             }, { passive: true });
         }
 
-        
         function toggleCalculator() {
             const calcEl = document.getElementById('calculatorSection');
             const calcIcon = document.getElementById('calcIcon');
@@ -913,7 +887,7 @@
             processStations();
         }
 
-                function toggleInfo() {
+        function toggleInfo() {
             const infoEl = document.getElementById('infoSection');
             const infoIcon = document.getElementById('infoIcon');
             if (infoEl.classList.contains('collapsed')) {
@@ -924,12 +898,9 @@
                 infoIcon.className = "fa-solid fa-circle-info text-xs opacity-50";
             }
         }
-
         
-        // Automatische Versionsprüfung & Cache-Busting
-        const APP_VERSION = 'v2026-11-03-11';
+        const APP_VERSION = 'v2026-11-03-23';
         
-        // Prüfen beim Start und wenn die App in den Vordergrund kommt (visibilitychange)
         function checkForAppUpdates() {
             fetch('index.html?check=' + Date.now(), { cache: 'no-store' })
                 .then(res => res.text())
@@ -941,7 +912,7 @@
                                 names.forEach(name => caches.delete(name));
                             });
                         }
-                        localStorage.removeItem('wbg_stations_cache'); // falls vorhanden
+                        localStorage.removeItem('wbg_stations_cache');
                         window.location.reload(true);
                     }
                 }).catch(() => {});
@@ -953,7 +924,6 @@
             }
         });
         
-        // Einmalig beim Start nach 2 Sekunden prüfen
         setTimeout(checkForAppUpdates, 2000);
 
         window.onload = initApp;
