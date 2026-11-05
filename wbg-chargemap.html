@@ -195,7 +195,7 @@
                 <div class="w-1.5 h-4 bg-emerald-500/40 dark:bg-emerald-500/30 rounded-r-sm shrink-0 ml-0.5 shadow-sm"></div>
             </div>
 
-            <!-- Kombinierter Batch: Akkukapazität (10-100 kWh Rondell) & Ladeleistung-Schnellwahl -->
+            <!-- Kombinierter Batch: Akkukapazität & Ladeleistung-Schnellwahl -->
             <div class="wbg-card-3d bg-white/80 dark:bg-gray-950/70 border border-gray-200/60 dark:border-gray-800/40 rounded-xl px-2 py-1.5 flex items-center justify-between gap-2 overflow-x-auto">
                 <div class="flex items-center space-x-1 bg-gray-50 dark:bg-gray-900/80 border border-gray-200/60 dark:border-gray-800/40 rounded-lg px-2 py-1 shrink-0 shadow-sm">
                     <span class="text-gray-500 dark:text-gray-400 text-[10px] font-medium">Akkukapazität:</span>
@@ -231,29 +231,32 @@
             </div>
         </div>
 
-        <!-- WBG Info & Tarife Panel -->
+        <!-- WBG Info & Tarife Panel (Vollständig integriert aus der alten Version) -->
         <div id="infoSection" class="collapsed px-3 py-2.5 bg-gray-50/80 dark:bg-gray-900/40 border-b border-gray-200/60 dark:border-gray-900/60 space-y-2 shrink-0">
             <div class="wbg-card-3d bg-white/80 dark:bg-gray-950/80 border border-gray-200/60 dark:border-gray-800/40 rounded-xl p-2.5 space-y-2">
                 <div class="flex items-center space-x-2 border-b border-gray-100 dark:border-gray-800/60 pb-1.5">
                     <div class="text-emerald-600 dark:text-emerald-400 font-bold"><i class="fa-solid fa-building mr-1.5"></i>WBG Lünen - Ladeinfrastruktur</div>
                 </div>
                 
+                <!-- Tarife -->
                 <div class="space-y-1 text-[11px]">
                     <div class="font-semibold text-gray-800 dark:text-gray-200"><i class="fa-solid fa-tags text-amber-500 mr-1"></i>Tarife & Optionen:</div>
                     <div class="space-y-1 pl-1 text-gray-600 dark:text-gray-300">
-                        <div class="flex items-start space-x-1.5"><span class="text-gray-400 select-none">•</span><div class="flex-1"><strong>Stellplatz mit eigener Wallbox:</strong> 0,38 € / kWh + erhöhte Stellplatzmiete</div></div>
-                        <div class="flex items-start space-x-1.5"><span class="text-gray-400 select-none">•</span><div class="flex-1"><strong>Laden an WBG-Ladesäulen:</strong> 0,38 € / kWh + 5,00 € mtl. Grundgebühr</div></div>
-                        <div class="flex items-start space-x-1.5"><span class="text-gray-400 select-none">•</span><div class="flex-1"><strong>Mit zwei Ladekarten & Monatsabrechnung:</strong> 0,38 € / kWh + 7,00 € mtl. Grundgebühr</div></div>
+                        <div class="flex items-start space-x-1.5"><span class="text-gray-400 select-none">•</span><div class="flex-1"><i class="fa-solid fa-charging-station text-emerald-500 mr-1"></i><strong>Stellplatz mit eigener Wallbox:</strong> 0,38 € / kWh + erhöhte Stellplatzmiete</div></div>
+                        <div class="flex items-start space-x-1.5"><span class="text-gray-400 select-none">•</span><div class="flex-1"><i class="fa-solid fa-bolt text-amber-500 mr-1"></i><strong>Laden an WBG-Ladesäulen:</strong> 0,38 € / kWh + 5,00 € mtl. Grundgebühr</div></div>
+                        <div class="flex items-start space-x-1.5"><span class="text-gray-400 select-none">•</span><div class="flex-1"><i class="fa-solid fa-wallet text-blue-500 mr-1"></i><strong>Mit zwei Ladekarten & Monatsabrechnung:</strong> 0,38 € / kWh + 7,00 € mtl. Grundgebühr</div></div>
                     </div>
                 </div>
 
+                <!-- Voraussetzung & Ladekarte -->
                 <div class="pt-2 border-t border-gray-100 dark:border-gray-800/60 space-y-1 text-[11px]">
                     <div class="font-semibold text-gray-800 dark:text-gray-200"><i class="fa-solid fa-wallet text-emerald-500 mr-1"></i>Ladekarte & Voraussetzungen:</div>
                     <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
-                        Voraussetzung ist ein gültiges Mietverhältnis bei der WBG Lünen. Die Beantragung und Ausgabe erfolgt direkt über den zuständigen Ansprechpartner.
+                        Voraussetzung ist ein gültiges Mietverhältnis bei der WBG Lünen. Die Beantragung und Ausgabe der Ladekarte erfolgt direkt über den zuständigen Ansprechpartner.
                     </p>
                 </div>
 
+                <!-- Ansprechpartner -->
                 <div class="pt-2 border-t border-gray-100 dark:border-gray-800/60 space-y-1 text-[11px]">
                     <div class="font-semibold text-gray-800 dark:text-gray-200"><i class="fa-solid fa-headset text-blue-500 mr-1"></i>Ansprechpartner & Support:</div>
                     <div class="text-gray-700 dark:text-gray-300 font-medium">Arie Schnettler</div>
@@ -268,6 +271,7 @@
                     </div>
                 </div>
 
+                <!-- App Version Footer & Private Support -->
                 <div class="pt-2 mt-1 border-t border-gray-100 dark:border-gray-800/60 space-y-1.5 text-[10px] text-gray-500 dark:text-gray-400">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-1.5">
@@ -275,8 +279,16 @@
                             <span class="font-bold text-gray-800 dark:text-gray-200">Private App (nicht von der WBG)</span>
                         </div>
                         <div class="font-medium text-gray-400">
-                            <span>© 2026 Thomas Wingen (v2026-11-05-32)</span>
+                            <span>© 2026 Thomas Wingen</span>
                         </div>
+                    </div>
+                    <div class="bg-amber-500/10 dark:bg-amber-500/10 border border-amber-500/20 p-2 rounded-lg space-y-1">
+                        <p class="text-[10px] text-gray-700 dark:text-gray-300 leading-snug font-medium">
+                            Diese App wurde privat von einem Mieter erstellt. Die WBG hat damit nichts zu tun. Bei Fehlern oder Fragen zur App bitte direkt mich anschreiben:
+                        </p>
+                        <a href="mailto:t.winingen@outlook.de?subject=WBG%20Chargemap%20-%20Feedback" class="text-emerald-600 dark:text-emerald-400 hover:underline font-bold flex items-center pt-0.5">
+                            <i class="fa-solid fa-envelope mr-1.5"></i>E-Mail an den App-Ersteller senden
+                        </a>
                     </div>
                 </div>
             </div>
@@ -918,7 +930,7 @@
             }
         }
         
-        const APP_VERSION = 'v2026-11-05-32';
+        const APP_VERSION = 'v2026-11-05-33';
         
         function checkForAppUpdates() {
             fetch('index.html?check=' + Date.now(), { cache: 'no-store' })
