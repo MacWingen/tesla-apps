@@ -213,8 +213,16 @@
             <!-- Slider SoC -->
             <div class="wbg-card-3d bg-white/80 dark:bg-gray-950/70 border border-gray-200/60 dark:border-gray-800/40 rounded-xl p-2 space-y-1.5">
                 <div class="flex justify-between text-[11px] font-medium">
-                    <span class="text-gray-600 dark:text-gray-300">Aktueller Akkustand ➔ <strong id="startVal" class="font-bold">20%</strong></span>
-                    <span class="text-gray-600 dark:text-gray-300">Aufladen bis ➔ <strong id="targetVal" class="font-bold">80%</strong></span>
+                    <span class="text-gray-600 dark:text-gray-300 flex items-center space-x-1">
+                        <span>Aktueller Akkustand ➔</span>
+                        <input type="number" id="startSocInput" value="20" min="0" max="95" step="1" inputmode="numeric" pattern="[0-9]*" oninput="onSocInputChanged('start')" class="w-8 bg-transparent font-bold text-gray-900 dark:text-white text-right outline-none border-b border-gray-400 dark:border-gray-600">
+                        <span>%</span>
+                    </span>
+                    <span class="text-gray-600 dark:text-gray-300 flex items-center space-x-1">
+                        <span>Aufladen bis ➔</span>
+                        <input type="number" id="targetSocInput" value="80" min="5" max="100" step="1" inputmode="numeric" pattern="[0-9]*" oninput="onSocInputChanged('target')" class="w-8 bg-transparent font-bold text-gray-900 dark:text-white text-right outline-none border-b border-gray-400 dark:border-gray-600">
+                        <span>%</span>
+                    </span>
                 </div>
                 <div class="flex space-x-3 px-1">
                     <input type="range" id="startSoc" min="0" max="95" value="20" oninput="onBatteryInputChanged()" class="w-1/2">
@@ -411,10 +419,14 @@
             const savedStartSoc = localStorage.getItem('wbg_start_soc');
             if (savedStartSoc !== null) {
                 document.getElementById('startSoc').value = savedStartSoc;
+                const startIn = document.getElementById('startSocInput');
+                if (startIn) startIn.value = savedStartSoc;
             }
             const savedTargetSoc = localStorage.getItem('wbg_target_soc');
             if (savedTargetSoc !== null) {
                 document.getElementById('targetSoc').value = savedTargetSoc;
+                const targetIn = document.getElementById('targetSocInput');
+                if (targetIn) targetIn.value = savedTargetSoc;
             }
 
             const savedFilter = localStorage.getItem('wbg_city_filter');
@@ -538,8 +550,10 @@
                 document.getElementById('targetSoc').value = target;
             }
 
-            document.getElementById('startVal').innerText = start + '%';
-            document.getElementById('targetVal').innerText = target + '%';
+            const startIn = document.getElementById('startSocInput');
+            if (startIn && document.activeElement !== startIn) startIn.value = start;
+            const targetIn = document.getElementById('targetSocInput');
+            if (targetIn && document.activeElement !== targetIn) targetIn.value = target;
 
             let speedLossMultiplier = 1.0;
             if (chargeKw <= 3.7) speedLossMultiplier = 1.15;
@@ -617,6 +631,21 @@
             return { cost: activeCost.toFixed(2), duration: durationStr };
         }
 
+        function onSocInputChanged(type) {
+            if (type === 'start') {
+                let val = parseInt(document.getElementById('startSocInput').value);
+                if (isNaN(val)) return;
+                val = Math.max(0, Math.min(95, val));
+                document.getElementById('startSoc').value = val;
+            } else {
+                let val = parseInt(document.getElementById('targetSocInput').value);
+                if (isNaN(val)) return;
+                val = Math.max(5, Math.min(100, val));
+                document.getElementById('targetSoc').value = val;
+            }
+            onBatteryInputChanged();
+        }
+
         function onBatteryInputChanged() {
             const val = parseInt(document.getElementById('batterySizeInput').value) || 60;
             try {
@@ -654,7 +683,11 @@
 
         function shareStation(title, address, kw, count, mapsUrl) {
             const shortMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(title + ', ' + address)}`;
-            const shareText = `⚡ WBG Ladestation: ${title}\n📍 ${address}\n🔌 Leistung: ${kw} AC (${count} Ladepunkte)\n💰 Tarif: 0,38 € / kWh\n🗺️ Navigieren: ${shortMapsUrl}`;
+            const shareText = `⚡ WBG Ladestation: ${title}
+📍 ${address}
+🔌 Leistung: ${kw} AC (${count} Ladepunkte)
+💰 Tarif: 0,38 € / kWh
+🗺️ Navigieren: ${shortMapsUrl}`;
 
             if (navigator.share) {
                 navigator.share({ title: `WBG: ${title}`, text: shareText, url: shortMapsUrl }).catch(() => {});
