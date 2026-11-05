@@ -133,7 +133,7 @@
 
     <div class="wbg-app-container w-full h-full max-w-xl bg-white/90 dark:bg-gray-950/90 border border-gray-200/80 dark:border-gray-800/80 rounded-2xl flex flex-col overflow-hidden relative">
 
-        <!-- Header (ohne Benachrichtigungs-Button) -->
+        <!-- Header -->
         <div class="wbg-header px-4 py-3 border-b border-gray-200/60 dark:border-gray-900/80 flex items-center justify-between bg-white/80 dark:bg-gray-950/80 backdrop-blur shrink-0">
             <div class="flex items-center space-x-2.5">
                 <div class="bg-emerald-500/10 border border-emerald-500/20 p-2 rounded-xl text-emerald-500 dark:text-emerald-400 shadow-sm">
@@ -144,6 +144,9 @@
                 </div>
             </div>
             <div class="flex items-center space-x-2">
+                <a href="https://maps.app.goo.gl/TLwV8WjQLJFWRchx6" target="_blank" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-800 text-gray-700 dark:text-gray-300 p-2 rounded-xl transition" title="Google Maps Gesamtliste öffnen">
+                    <i class="fa-solid fa-map-location-dot text-xs"></i>
+                </a>
                 <button onclick="toggleCalculator()" class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-800 text-gray-700 dark:text-gray-300 p-2 rounded-xl transition" title="Rechner ein-/ausblenden">
                     <i id="calcIcon" class="fa-solid fa-calculator text-xs"></i>
                 </button>
@@ -264,7 +267,7 @@
                             <span class="font-bold text-gray-800 dark:text-gray-200">Private App (nicht von der WBG)</span>
                         </div>
                         <div class="font-medium text-gray-400">
-                            <span>© 2026 Thomas Wingen (v2026-11-03-23)</span>
+                            <span>© 2026 Thomas Wingen (v2026-11-03-24)</span>
                         </div>
                     </div>
                 </div>
@@ -313,7 +316,6 @@
         let isChargingLive = localStorage.getItem('wbg_is_charging') === 'true';
         let chargeStartTime = parseInt(localStorage.getItem('wbg_charge_start_time')) || Date.now();
         let chargeStartSoc = parseInt(localStorage.getItem('wbg_charge_start_soc')) || 20;
-        let notificationTimer = null;
 
         const rawWbgData = [
             { id: 'veilchenweg', title: 'Veilchenweg 10', address: 'Veilchenweg 10, 44532 Lünen-Niederaden', lat: 51.5959284, lon: 7.5578789, count: '2x', kw: '11 kW', price: 0.38, city: 'Lünen', url: 'https://www.google.com/maps/place/Veilchenweg+10,+44532+L%C3%BCnen-Niederaden/@51.5959284,7.5578789,753m/data=!3m2!1e3!4b1!4m6!3m5!1s0x47b911c5829883dd:0x98315dd575de0e1e!8m2!3d51.5959284!4d7.5578789!16s%2Fg%2F11csgyvvw7?authuser=0&entry=ttu' },
@@ -340,24 +342,6 @@
             { id: 'campus', title: 'Campus 6b', address: 'Campus 6b, 59379 Selm', lat: 51.6961, lon: 7.4658, count: '2x', kw: '11 kW', price: 0.38, city: 'Selm', url: 'https://www.google.com/maps/place/Campus+6b,+59379+Selm/@51.6961522,7.4632242,17z' }
         ];
 
-        function scheduleNotification(totalMins) {
-            if (notificationTimer) {
-                clearTimeout(notificationTimer);
-                notificationTimer = null;
-            }
-            if (isChargingLive && "Notification" in window && Notification.permission === 'granted' && totalMins > 0) {
-                const ms = totalMins * 60000;
-                notificationTimer = setTimeout(() => {
-                    if (Notification.permission === 'granted') {
-                        new Notification("⚡ WBG Chargemap", {
-                            body: "Dein Auto hat das eingestellte Ladeziel erreicht!",
-                            icon: "icons/wbg-chargemap.png"
-                        });
-                    }
-                }, ms);
-            }
-        }
-
         function toggleLiveCharging() {
             isChargingLive = !isChargingLive;
             localStorage.setItem('wbg_is_charging', isChargingLive);
@@ -367,25 +351,6 @@
                 chargeStartSoc = parseInt(document.getElementById('startSoc').value) || 20;
                 localStorage.setItem('wbg_charge_start_time', chargeStartTime);
                 localStorage.setItem('wbg_charge_start_soc', chargeStartSoc);
-
-                // Automatische Benachrichtigungsberechtigung anfragen beim Live-Start
-                if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
-                    Notification.requestPermission().then(permission => {
-                        if (permission === "granted") {
-                            alert("Live-Laden gestartet & Benachrichtigungen aktiviert! ⚡");
-                        } else {
-                            alert("Live-Laden gestartet! (Benachrichtigungen wurden nicht erlaubt)");
-                        }
-                    });
-                } else {
-                    alert("Live-Ladevorgang gestartet! Restzeit läuft herunter. ⚡");
-                }
-            } else {
-                alert("Live-Ladevorgang gestoppt.");
-                if (notificationTimer) {
-                    clearTimeout(notificationTimer);
-                    notificationTimer = null;
-                }
             }
             updateLiveChargingUI();
             calculateMetrics();
@@ -589,7 +554,6 @@
                     isChargingLive = false;
                     localStorage.setItem('wbg_is_charging', 'false');
                     updateLiveChargingUI();
-                    alert("Ladeziel erfolgreich erreicht! ⚡");
                 }
             }
 
@@ -624,8 +588,6 @@
                     heroKwhSub.innerText = `${grossKwh.toFixed(1)} kWh geladen`;
                 }
             }
-
-            scheduleNotification(remainingMins);
 
             return { cost: activeCost.toFixed(2), duration: durationStr };
         }
@@ -899,7 +861,7 @@
             }
         }
         
-        const APP_VERSION = 'v2026-11-03-23';
+        const APP_VERSION = 'v2026-11-03-24';
         
         function checkForAppUpdates() {
             fetch('index.html?check=' + Date.now(), { cache: 'no-store' })
