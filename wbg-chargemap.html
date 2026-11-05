@@ -108,7 +108,7 @@
         }
 
         #calculatorSection, #infoSection {
-            max-height: 700px;
+            max-height: 800px;
             opacity: 1;
             overflow: hidden;
             transition: max-height 0.8s ease-in-out, opacity 0.8s ease-in-out, padding 0.8s ease-in-out, margin 0.8s ease-in-out;
@@ -125,7 +125,7 @@
     </style>
     <script>
         if (localStorage.getItem('wbg_calc_collapsed') === 'false') {
-            document.write('<style>#calculatorSection { max-height: 450px !important; opacity: 1 !important; }</style>');
+            document.write('<style>#calculatorSection { max-height: 500px !important; opacity: 1 !important; }</style>');
         }
     </script>
 </head>
@@ -177,10 +177,10 @@
                         <strong id="topFinishTime" class="text-base font-black text-gray-900 dark:text-white tracking-tight">--:--</strong>
                         <div class="flex items-center space-x-2 mt-0.5">
                             <span class="text-[10px] text-gray-500 dark:text-gray-400 font-bold" id="topDuration">Ladezeit: --</span>
-                            <button onclick="toggleLiveCharging()" id="liveChargeBtn" class="text-[9px] bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/30 font-bold px-2 py-0.5 rounded-md inline-flex items-center space-x-1 transition shadow-2xs">
+                            <span onclick="toggleLiveCharging()" id="liveChargeBtn" class="text-[10px] text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 font-bold cursor-pointer inline-flex items-center space-x-1 transition select-none">
                                 <i id="liveBtnIcon" class="fa-solid fa-play text-[8px]"></i>
                                 <span id="liveBtnText">Live-Start</span>
-                            </button>
+                            </span>
                         </div>
                     </div>
 
@@ -195,18 +195,18 @@
                 <div class="w-1.5 h-4 bg-emerald-500/40 dark:bg-emerald-500/30 rounded-r-sm shrink-0 ml-0.5 shadow-sm"></div>
             </div>
 
-            <!-- Akkukapazität & Schnellwahl -->
-            <div class="wbg-card-3d bg-white/80 dark:bg-gray-950/70 border border-gray-200/60 dark:border-gray-800/40 rounded-xl px-1.5 py-1.5 flex items-center justify-start gap-1 overflow-x-auto">
-                <div class="flex items-center space-x-0.5 bg-gray-50 dark:bg-gray-900/80 border border-gray-200/60 dark:border-gray-800/40 rounded-lg px-1.5 py-1 shrink-0 shadow-sm">
+            <!-- Kombinierter Batch: Akkukapazität (manuell) & Ladeleistung-Schnellwahl (3,7 / 7,4 / 11 / 22 kW) -->
+            <div class="wbg-card-3d bg-white/80 dark:bg-gray-950/70 border border-gray-200/60 dark:border-gray-800/40 rounded-xl px-2 py-1.5 flex items-center justify-between gap-2 overflow-x-auto">
+                <div class="flex items-center space-x-1 bg-gray-50 dark:bg-gray-900/80 border border-gray-200/60 dark:border-gray-800/40 rounded-lg px-2 py-1 shrink-0 shadow-sm">
                     <span class="text-gray-500 dark:text-gray-400 text-[10px] font-medium">Akkukapazität:</span>
-                    <input type="number" id="batterySizeInput" value="60" min="10" max="200" step="1" oninput="onBatteryInputChanged()" class="w-7 bg-transparent text-right font-bold text-emerald-600 dark:text-emerald-400 outline-none text-xs">
+                    <input type="number" id="batterySizeInput" value="60" min="5" max="300" step="1" oninput="onBatteryInputChanged()" class="w-9 bg-transparent text-right font-bold text-emerald-600 dark:text-emerald-400 outline-none text-xs">
                     <span class="text-gray-400 text-[10px]">kWh</span>
                 </div>
                 <div class="flex items-center space-x-1 shrink-0">
-                    <button onclick="setBatterySize(40)" id="bat-40" class="bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg text-[10px] font-semibold transition">40<span class="text-[8px] opacity-60 font-normal ml-0.5">kWh</span></button>
-                    <button onclick="setBatterySize(60)" id="bat-60" class="bg-emerald-600 text-white border border-emerald-600 px-1.5 py-1 rounded-lg text-[10px] font-bold transition shadow-sm">60<span class="text-[8px] opacity-80 font-normal ml-0.5">kWh</span></button>
-                    <button onclick="setBatterySize(75)" id="bat-75" class="bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg text-[10px] font-semibold transition">75<span class="text-[8px] opacity-60 font-normal ml-0.5">kWh</span></button>
-                    <button onclick="setBatterySize(100)" id="bat-100" class="bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg text-[10px] font-semibold transition">100<span class="text-[8px] opacity-60 font-normal ml-0.5">kWh</span></button>
+                    <button onclick="setChargeKw(3.7)" id="kw-3.7" class="bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg text-[10px] font-semibold transition">3,7<span class="text-[8px] opacity-60 font-normal ml-0.5">kW</span></button>
+                    <button onclick="setChargeKw(7.4)" id="kw-7.4" class="bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg text-[10px] font-semibold transition">7,4<span class="text-[8px] opacity-60 font-normal ml-0.5">kW</span></button>
+                    <button onclick="setChargeKw(11)" id="kw-11" class="bg-emerald-600 text-white border border-emerald-600 px-1.5 py-1 rounded-lg text-[10px] font-bold transition shadow-sm">11<span class="text-[8px] opacity-80 font-normal ml-0.5">kW</span></button>
+                    <button onclick="setChargeKw(22)" id="kw-22" class="bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg text-[10px] font-semibold transition">22<span class="text-[8px] opacity-60 font-normal ml-0.5">kW</span></button>
                 </div>
             </div>
 
@@ -267,7 +267,7 @@
                             <span class="font-bold text-gray-800 dark:text-gray-200">Private App (nicht von der WBG)</span>
                         </div>
                         <div class="font-medium text-gray-400">
-                            <span>© 2026 Thomas Wingen (v2026-11-03-24)</span>
+                            <span>© 2026 Thomas Wingen (v2026-11-03-31)</span>
                         </div>
                     </div>
                 </div>
@@ -310,7 +310,7 @@
         } catch (e) {
             favorites = [];
         }
-        let currentLossFactor = 1.07;
+        let baseLossFactor = 1.07;
         let weatherLoaded = false;
         
         let isChargingLive = localStorage.getItem('wbg_is_charging') === 'true';
@@ -362,11 +362,11 @@
             const btnEl = document.getElementById('liveChargeBtn');
             if (btnEl) {
                 if (isChargingLive) {
-                    btnEl.className = "text-[9px] bg-emerald-600 text-white hover:bg-emerald-700 font-bold px-2 py-0.5 rounded-md inline-flex items-center space-x-1 transition shadow-sm animate-pulse";
+                    btnEl.className = "text-[10px] text-red-500 font-bold cursor-pointer inline-flex items-center space-x-1 transition select-none animate-pulse";
                     if (btnText) btnText.innerText = "Lädt live...";
                     if (btnIcon) btnIcon.className = "fa-solid fa-spinner fa-spin text-[8px]";
                 } else {
-                    btnEl.className = "text-[9px] bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/30 font-bold px-2 py-0.5 rounded-md inline-flex items-center space-x-1 transition shadow-2xs";
+                    btnEl.className = "text-[10px] text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 font-bold cursor-pointer inline-flex items-center space-x-1 transition select-none";
                     if (btnText) btnText.innerText = "Live-Start";
                     if (btnIcon) btnIcon.className = "fa-solid fa-play text-[8px]";
                 }
@@ -397,10 +397,17 @@
 
             const savedBatterySize = localStorage.getItem('wbg_battery_size');
             if (savedBatterySize) {
-                const bSize = parseInt(savedBatterySize);
-                document.getElementById('batterySizeInput').value = bSize;
-                setBatterySizeUI(bSize);
+                document.getElementById('batterySizeInput').value = savedBatterySize;
             }
+
+            const savedChargeKw = localStorage.getItem('wbg_charge_kw');
+            if (savedChargeKw) {
+                const kwVal = parseFloat(savedChargeKw);
+                setChargeKwUI(kwVal);
+            } else {
+                setChargeKwUI(11);
+            }
+
             const savedStartSoc = localStorage.getItem('wbg_start_soc');
             if (savedStartSoc !== null) {
                 document.getElementById('startSoc').value = savedStartSoc;
@@ -475,33 +482,32 @@
                 .then(res => res.json())
                 .then(data => {
                     let temp = (data && data.current && data.current.temperature_2m !== undefined) ? data.current.temperature_2m : 15;
-                    if (temp > 20) currentLossFactor = 1.04;
-                    else if (temp >= 10) currentLossFactor = 1.07;
-                    else if (temp >= 0) currentLossFactor = 1.12;
-                    else currentLossFactor = 1.18;
+                    if (temp > 20) baseLossFactor = 1.04;
+                    else if (temp >= 10) baseLossFactor = 1.07;
+                    else if (temp >= 0) baseLossFactor = 1.12;
+                    else baseLossFactor = 1.18;
                     weatherLoaded = true;
                     calculateMetrics();
                 })
                 .catch(() => {
-                    currentLossFactor = 1.07;
+                    baseLossFactor = 1.07;
                     calculateMetrics();
                 });
         }
 
-        function setBatterySize(size) {
-            document.getElementById('batterySizeInput').value = size;
-            setBatterySizeUI(size);
+        function setChargeKw(kw) {
+            setChargeKwUI(kw);
             try {
-                localStorage.setItem('wbg_battery_size', size);
+                localStorage.setItem('wbg_charge_kw', kw);
             } catch(e) {}
             calculateAll();
         }
 
-        function setBatterySizeUI(size) {
-            [40, 60, 75, 100].forEach(s => {
-                const btn = document.getElementById(`bat-${s}`);
+        function setChargeKwUI(kw) {
+            [3.7, 7.4, 11, 22].forEach(k => {
+                const btn = document.getElementById(`kw-${k}`);
                 if (btn) {
-                    if (s === size) {
+                    if (k === kw) {
                         btn.className = "bg-emerald-600 text-white border border-emerald-600 px-1.5 py-1 rounded-lg text-[10px] font-bold transition shadow-sm";
                     } else {
                         btn.className = "bg-gray-50 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-800/40 text-gray-700 dark:text-gray-300 px-1.5 py-1 rounded-lg text-[10px] font-semibold transition";
@@ -510,8 +516,20 @@
             });
         }
 
+        function getActiveChargeKw() {
+            let activeKw = 11;
+            [3.7, 7.4, 11, 22].forEach(k => {
+                const btn = document.getElementById(`kw-${k}`);
+                if (btn && btn.classList.contains('bg-emerald-600')) {
+                    activeKw = k;
+                }
+            });
+            return activeKw;
+        }
+
         function calculateMetrics() {
             let netCapacity = parseFloat(document.getElementById('batterySizeInput').value) || 60;
+            let chargeKw = getActiveChargeKw();
             let start = parseInt(document.getElementById('startSoc').value) || 0;
             let target = parseInt(document.getElementById('targetSoc').value) || 0;
             
@@ -522,6 +540,14 @@
 
             document.getElementById('startVal').innerText = start + '%';
             document.getElementById('targetVal').innerText = target + '%';
+
+            // Dynamische Ladeverluste abhängig von der Ladeleistung (langsames Laden hat prozentual höhere Standby-Verluste des Bordladers)
+            let speedLossMultiplier = 1.0;
+            if (chargeKw <= 3.7) speedLossMultiplier = 1.15;
+            else if (chargeKw <= 7.4) speedLossMultiplier = 1.10;
+            else speedLossMultiplier = 1.07;
+
+            let currentLossFactor = baseLossFactor * (speedLossMultiplier / 1.07);
 
             let socDiff = target - start;
             let netKwh = (netCapacity * socDiff) / 100;
@@ -537,18 +563,18 @@
             }
 
             let liveSoc = start;
-            let remainingMins = Math.round((grossKwh / 11.0) * 60);
+            let remainingMins = Math.round((grossKwh / chargeKw) * 60);
 
             if (isChargingLive) {
                 let elapsedHours = (Date.now() - chargeStartTime) / 3600000;
-                let addedNetKwh = (11.0 / currentLossFactor) * elapsedHours;
+                let addedNetKwh = (chargeKw / currentLossFactor) * elapsedHours;
                 liveSoc = Math.min(target, chargeStartSoc + (addedNetKwh / netCapacity) * 100);
                 
                 let totalNeededNetKwh = ((target - chargeStartSoc) / 100) * netCapacity;
                 let currentLoadedNetKwh = ((liveSoc - chargeStartSoc) / 100) * netCapacity;
                 let remainingNetKwh = Math.max(0, totalNeededNetKwh - currentLoadedNetKwh);
                 let remainingGrossKwh = remainingNetKwh * currentLossFactor;
-                remainingMins = Math.round((remainingGrossKwh / 11.0) * 60);
+                remainingMins = Math.round((remainingGrossKwh / chargeKw) * 60);
 
                 if (liveSoc >= target) {
                     isChargingLive = false;
@@ -594,7 +620,6 @@
 
         function onBatteryInputChanged() {
             const val = parseInt(document.getElementById('batterySizeInput').value) || 60;
-            setBatterySizeUI(val);
             try {
                 localStorage.setItem('wbg_battery_size', val);
                 localStorage.setItem('wbg_start_soc', document.getElementById('startSoc').value);
@@ -861,7 +886,7 @@
             }
         }
         
-        const APP_VERSION = 'v2026-11-03-24';
+        const APP_VERSION = 'v2026-11-03-31';
         
         function checkForAppUpdates() {
             fetch('index.html?check=' + Date.now(), { cache: 'no-store' })
