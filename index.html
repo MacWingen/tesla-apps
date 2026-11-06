@@ -171,6 +171,7 @@
             transition: color 0.15s ease, background-color 0.15s ease;
             flex-shrink: 0;
             position: relative;
+            text-decoration: none;
         }
 
         .bar-icon-btn:hover, .bar-icon-btn.active {
@@ -417,16 +418,6 @@
 
         .app-item:active {
             transform: scale(0.92); 
-        }
-
-        .app-item.just-favorited {
-            animation: tileSnap 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes tileSnap {
-            0% { transform: scale(1); }
-            50% { transform: scale(0.93); }
-            100% { transform: scale(1); }
         }
 
         .app-icon {
@@ -696,31 +687,31 @@
         /* A-Z Sidebar */
         .az-sidebar {
             position: sticky;
-            top: 158px;
+            top: 76px;
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
+            gap: 4px;
             z-index: 50;
             user-select: none;
             touch-action: pan-y;
             background: transparent;
-            padding: 6px 2px;
+            padding: 4px 2px;
             border: none;
             box-shadow: none;
             transition: top 0.2s ease;
         }
 
         .az-sidebar.has-genre-bar {
-            top: 202px;
+            top: 120px;
         }
 
         .az-sidebar a {
             font-size: 11px;
             font-weight: 700;
             text-decoration: none;
-            padding: 1px 4px;
+            padding: 4px 6px;
             border-radius: 4px;
             transition: color 0.1s;
             line-height: 1.2;
@@ -1182,6 +1173,13 @@
 
         <div class="bar-divider"></div>
 
+        <!-- TV-Button (verlinkt auf tv.html) -->
+        <a href="tv.html" class="bar-icon-btn" title="Live TV (tv.html)" style="height: 32px; padding: 2px 6px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
+        </a>
+
+        <div class="bar-divider"></div>
+
         <button class="bar-icon-btn" title="Ansicht umschalten" onclick="toggleView()" id="viewToggleBtn" style="flex-direction: row; gap: 6px; height: 32px;">
             <svg id="viewIcon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         </button>
@@ -1242,9 +1240,9 @@
                     <h4>Was kann dieses Dashboard?</h4>
                     <ul>
                         <li><strong>Webradio & Streams:</strong> 100+ Sender mit Live-Anzeige und Kachel-Stopp.</li>
+                        <li><strong>Live TV:</strong> Schneller Zugriff über das TV-Symbol in der Top-Bar.</li>
                         <li><strong>Favoriten:</strong> Kachel ca. 0,7 Sek. gedrückt halten (★).</li>
-                        <li><strong>Zuletzt genutzt / gehört:</strong> Automatische Historie für Apps & Radio (max. 6 Einträge, blauer Schimmer).</li>
-                        <li><strong>Wetter & Eilmeldungen:</strong> Direkte Stichworte & Teaser in der Übersicht.</li>
+                        <li><strong>Zuletzt genutzt / gehört:</strong> Automatische Historie ohne Favoriten-Duplikate.</li>
                     </ul>
                 </div>
 
@@ -1252,17 +1250,16 @@
 
                 <div class="modal-section">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                        <h4 style="margin: 0;">Release v1.3.2</h4>
-                        <span style="background-color: var(--hover-bg); padding: 2px 6px; border-radius: 6px; font-weight: 600; font-size: 10px; color: var(--text-color);">v1.3.2</span>
+                        <h4 style="margin: 0;">Release v1.3.8</h4>
+                        <span style="background-color: var(--hover-bg); padding: 2px 6px; border-radius: 6px; font-weight: 600; font-size: 10px; color: var(--text-color);">v1.3.8</span>
                     </div>
                     <ul>
-                        <li><strong>v1.3.2:</strong> "Zuletzt genutzt"-Sektion für Apps und "Zuletzt gehört" für Radio (max. 6) mit blauem Schimmer.</li>
-                        <li><strong>v1.3.0:</strong> Historien-Sektion integriert.</li>
+                        <li><strong>v1.3.8:</strong> TV-Direktlink in der Top-Bar integriert.</li>
                     </ul>
                 </div>
             </div>
             <div class="modal-footer">
-                Tesla Apps Dashboard v1.3.2 &copy; 2026 McWingen
+                Tesla Apps Dashboard v1.3.8 &copy; 2026 McWingen
             </div>
         </div>
     </div>
@@ -1303,13 +1300,13 @@
     </div>
 
     <footer style="margin-top: 40px; margin-bottom: 20px; font-size: 11px; color: var(--section-color); text-align: center; opacity: 0.7;">
-        Tesla Apps Dashboard v1.3.2 &copy; 2026 McWingen
+        Tesla Apps Dashboard v1.3.8 &copy; 2026 McWingen
     </footer>
 
     <audio id="globalAudioStream" preload="none"></audio>
 
     <script>
-        const CURRENT_VERSION = 'v1.3.2';
+        const CURRENT_VERSION = 'v1.3.8';
 
         const categories = [
             {
@@ -2348,70 +2345,76 @@
                 }
 
                 if (activeCategory === 'radio' && recentStations.length > 0 && !selectedLetter && activeGenre === 'all') {
-                    let recentHTML = `
-                        <div class="category-section">
-                            <h2 class="category-title">⏱ Zuletzt gehört</h2>
-                            <div class="app-list">
-                    `;
-                    recentStations.forEach(app => {
-                        let isPlaying = (currentPlayingId === app.id && !globalAudio.paused);
-                        let isPlayingClass = isPlaying && app.isRadio ? ' app-list-item playing' : 'app-list-item';
-                        isPlayingClass += ' is-recent-tile';
-                        let isFav = isFavorite(app.url);
-                        let favClass = isFav ? 'list-fav-btn is-fav' : 'list-fav-btn';
-                        let iconContent = app.image 
-                            ? `<img src="${app.image}" alt="${app.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="placeholder" style="display:none; font-size:16px;">${app.name[0]}</span>` 
-                            : `<span class="placeholder" style="display:none; font-size:16px;">${app.name[0]}</span>`;
-
-                        recentHTML += `
-                            <div class="${isPlayingClass}" data-url="${app.url}" data-instance-id="${app.id}" 
-                                 onpointerdown="handlePointerDown(this, '${app.id}', '${app.url}', event)" 
-                                 onpointermove="handlePointerMove(this, event)"
-                                 onpointerup="handlePointerUp(this, '${app.id}', '${app.url}', ${app.isRadio}, '${app.name}', '${app.image}', event)"
-                                 onpointercancel="handlePointerCancel(this)"
-                                 onpointerleave="handlePointerCancel(this)">
-                                <div class="app-list-icon">
-                                    ${iconContent}
-                                    ${app.isRadio ? '<div class="live-badge">LIVE</div>' : ''}
-                                    ${app.isRadio ? `<div class="radio-state-overlay">${stopSvgHTML}</div>` : ''}
-                                </div>
-                                <span class="app-list-name">${app.name}</span>
-                                <span class="${favClass}">★</span>
-                            </div>
+                    let filteredRecentStations = recentStations.filter(app => !favorites.includes(app.url));
+                    if (filteredRecentStations.length > 0) {
+                        let recentHTML = `
+                            <div class="category-section">
+                                <h2 class="category-title">⏱ Zuletzt gehört</h2>
+                                <div class="app-list">
                         `;
-                    });
-                    recentHTML += `</div></div>`;
-                    container.innerHTML += recentHTML;
+                        filteredRecentStations.forEach(app => {
+                            let isPlaying = (currentPlayingId === app.id && !globalAudio.paused);
+                            let isPlayingClass = isPlaying && app.isRadio ? ' app-list-item playing' : 'app-list-item';
+                            isPlayingClass += ' is-recent-tile';
+                            let isFav = isFavorite(app.url);
+                            let favClass = isFav ? 'list-fav-btn is-fav' : 'list-fav-btn';
+                            let iconContent = app.image 
+                                ? `<img src="${app.image}" alt="${app.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="placeholder" style="display:none; font-size:16px;">${app.name[0]}</span>` 
+                                : `<span class="placeholder" style="display:none; font-size:16px;">${app.name[0]}</span>`;
+
+                            recentHTML += `
+                                <div class="${isPlayingClass}" data-url="${app.url}" data-instance-id="${app.id}" 
+                                     onpointerdown="handlePointerDown(this, '${app.id}', '${app.url}', event)" 
+                                     onpointermove="handlePointerMove(this, event)"
+                                     onpointerup="handlePointerUp(this, '${app.id}', '${app.url}', ${app.isRadio}, '${app.name}', '${app.image}', event)"
+                                     onpointercancel="handlePointerCancel(this)"
+                                     onpointerleave="handlePointerCancel(this)">
+                                    <div class="app-list-icon">
+                                        ${iconContent}
+                                        ${app.isRadio ? '<div class="live-badge">LIVE</div>' : ''}
+                                        ${app.isRadio ? `<div class="radio-state-overlay">${stopSvgHTML}</div>` : ''}
+                                    </div>
+                                    <span class="app-list-name">${app.name}</span>
+                                    <span class="${favClass}">★</span>
+                                </div>
+                            `;
+                        });
+                        recentHTML += `</div></div>`;
+                        container.innerHTML += recentHTML;
+                    }
                 } else if (activeCategory !== 'radio' && recentApps.length > 0 && !selectedLetter) {
-                    let recentAppsHTML = `
-                        <div class="category-section">
-                            <h2 class="category-title">⏱ Zuletzt genutzt</h2>
-                            <div class="app-list">
-                    `;
-                    recentApps.forEach(app => {
-                        let isFav = isFavorite(app.url);
-                        let favClass = isFav ? 'list-fav-btn is-fav' : 'list-fav-btn';
-                        let iconContent = app.image 
-                            ? `<img src="${app.image}" alt="${app.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="placeholder" style="display:none; font-size:16px;">${app.name[0]}</span>` 
-                            : `<span class="placeholder" style="display:none; font-size:16px;">${app.name[0]}</span>`;
-
-                        recentAppsHTML += `
-                            <div class="app-list-item is-recent-tile" data-url="${app.url}" data-instance-id="${app.id}" 
-                                 onpointerdown="handlePointerDown(this, '${app.id}', '${app.url}', event)" 
-                                 onpointermove="handlePointerMove(this, event)"
-                                 onpointerup="handlePointerUp(this, '${app.id}', '${app.url}', ${app.isRadio}, '${app.name}', '${app.image}', event)"
-                                 onpointercancel="handlePointerCancel(this)"
-                                 onpointerleave="handlePointerCancel(this)">
-                                <div class="app-list-icon">
-                                    ${iconContent}
-                                </div>
-                                <span class="app-list-name">${app.name}</span>
-                                <span class="${favClass}">★</span>
-                            </div>
+                    let filteredRecentApps = recentApps.filter(app => !favorites.includes(app.url));
+                    if (filteredRecentApps.length > 0) {
+                        let recentAppsHTML = `
+                            <div class="category-section">
+                                <h2 class="category-title">⏱ Zuletzt genutzt</h2>
+                                <div class="app-list">
                         `;
-                    });
-                    recentAppsHTML += `</div></div>`;
-                    container.innerHTML += recentAppsHTML;
+                        filteredRecentApps.forEach(app => {
+                            let isFav = isFavorite(app.url);
+                            let favClass = isFav ? 'list-fav-btn is-fav' : 'list-fav-btn';
+                            let iconContent = app.image 
+                                ? `<img src="${app.image}" alt="${app.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="placeholder" style="display:none; font-size:16px;">${app.name[0]}</span>` 
+                                : `<span class="placeholder" style="display:none; font-size:16px;">${app.name[0]}</span>`;
+
+                            recentAppsHTML += `
+                                <div class="app-list-item is-recent-tile" data-url="${app.url}" data-instance-id="${app.id}" 
+                                     onpointerdown="handlePointerDown(this, '${app.id}', '${app.url}', event)" 
+                                     onpointermove="handlePointerMove(this, event)"
+                                     onpointerup="handlePointerUp(this, '${app.id}', '${app.url}', ${app.isRadio}, '${app.name}', '${app.image}', event)"
+                                     onpointercancel="handlePointerCancel(this)"
+                                     onpointerleave="handlePointerCancel(this)">
+                                    <div class="app-list-icon">
+                                        ${iconContent}
+                                    </div>
+                                    <span class="app-list-name">${app.name}</span>
+                                    <span class="${favClass}">★</span>
+                                </div>
+                            `;
+                        });
+                        recentAppsHTML += `</div></div>`;
+                        container.innerHTML += recentAppsHTML;
+                    }
                 }
 
                 azSidebar.innerHTML = '';
@@ -2516,70 +2519,64 @@
             } else {
                 azSidebar.style.display = 'none';
 
+                let allAppsFlat = [];
                 targetCategories.forEach(category => {
-                    let allCatApps = [];
                     if (category.subcategories) {
-                        category.subcategories.forEach(sub => {
-                            let filteredSubApps = sub.apps.filter(app => {
-                                if (activeCategory === 'radio' && activeGenre !== 'all' && app.genre !== activeGenre) {
-                                    return false;
-                                }
-                                return true;
-                            });
-                            allCatApps.push(...filteredSubApps);
-                        });
+                        category.subcategories.forEach(sub => allAppsFlat.push(...sub.apps));
                     } else if (category.apps) {
-                        allCatApps.push(...category.apps);
+                        allAppsFlat.push(...category.apps);
                     }
+                });
 
-                    let catFavs = allCatApps.filter(app => {
-                        return favorites.includes(app.url);
-                    }).sort((a, b) => a.name.localeCompare(b.name, 'de', { sensitivity: 'base' }));
+                let globalFavs = allAppsFlat.filter(app => favorites.includes(app.url))
+                    .sort((a, b) => a.name.localeCompare(b.name, 'de', { sensitivity: 'base' }));
 
-                    if (catFavs.length > 0 && !selectedLetter) {
-                        let favSectionHTML = `
-                            <div class="category-section is-category">
-                                <h2 class="category-title">★ Favoriten</h2>
-                                <div class="app-grid">
-                        `;
-                        catFavs.forEach(app => {
-                            let isPlaying = (currentPlayingId === app.id && !globalAudio.paused);
-                            let isPlayingClass = isPlaying && app.isRadio ? ' app-item playing' : 'app-item';
-                            isPlayingClass += ' is-favorite-tile';
-                            let isFav = isFavorite(app.url);
-                            let favClass = isFav ? 'fav-btn is-fav' : 'fav-btn';
-                            let iconContent = app.image 
-                                ? `<img src="${app.image}" alt="${app.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="placeholder" style="display:none; font-size:28px;">${app.name[0]}</span>` 
-                                : `<span class="placeholder" style="display:none; font-size:28px;">${app.name[0]}</span>`;
+                if (globalFavs.length > 0 && !selectedLetter) {
+                    let favSectionHTML = `
+                        <div class="category-section is-category">
+                            <h2 class="category-title">★ Favoriten</h2>
+                            <div class="app-grid">
+                    `;
+                    globalFavs.forEach(app => {
+                        let isPlaying = (currentPlayingId === app.id && !globalAudio.paused);
+                        let isPlayingClass = isPlaying && app.isRadio ? ' app-item playing' : 'app-item';
+                        isPlayingClass += ' is-favorite-tile';
+                        let isFav = isFavorite(app.url);
+                        let favClass = isFav ? 'fav-btn is-fav' : 'fav-btn';
+                        let iconContent = app.image 
+                            ? `<img src="${app.image}" alt="${app.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="placeholder" style="display:none; font-size:28px;">${app.name[0]}</span>` 
+                            : `<span class="placeholder" style="display:none; font-size:28px;">${app.name[0]}</span>`;
 
-                            favSectionHTML += `
-                                <div class="${isPlayingClass}" data-url="${app.url}" data-instance-id="${app.id}" 
-                                     onpointerdown="handlePointerDown(this, '${app.id}', '${app.url}', event)" 
-                                     onpointermove="handlePointerMove(this, event)"
-                                     onpointerup="handlePointerUp(this, '${app.id}', '${app.url}', ${app.isRadio}, '${app.name}', '${app.image}', event)"
-                                     onpointercancel="handlePointerCancel(this)"
-                                     onpointerleave="handlePointerCancel(this)">
-                                    <div class="app-icon">
-                                        ${iconContent}
-                                        ${app.isRadio ? '<div class="live-badge">LIVE</div>' : ''}
-                                        ${app.isRadio ? `<div class="radio-state-overlay">${stopSvgHTML}</div>` : ''}
-                                        <span class="${favClass}">★</span>
-                                    </div>
-                                    <span class="app-name">${app.name}</span>
+                        favSectionHTML += `
+                            <div class="${isPlayingClass}" data-url="${app.url}" data-instance-id="${app.id}" 
+                                 onpointerdown="handlePointerDown(this, '${app.id}', '${app.url}', event)" 
+                                 onpointermove="handlePointerMove(this, event)"
+                                 onpointerup="handlePointerUp(this, '${app.id}', '${app.url}', ${app.isRadio}, '${app.name}', '${app.image}', event)"
+                                 onpointercancel="handlePointerCancel(this)"
+                                 onpointerleave="handlePointerCancel(this)">
+                                <div class="app-icon">
+                                    ${iconContent}
+                                    ${app.isRadio ? '<div class="live-badge">LIVE</div>' : ''}
+                                    ${app.isRadio ? `<div class="radio-state-overlay">${stopSvgHTML}</div>` : ''}
+                                    <span class="${favClass}">★</span>
                                 </div>
-                            `;
-                        });
-                        favSectionHTML += `</div></div>`;
-                        container.innerHTML += favSectionHTML;
-                    }
+                                <span class="app-name">${app.name}</span>
+                            </div>
+                        `;
+                    });
+                    favSectionHTML += `</div></div>`;
+                    container.innerHTML += favSectionHTML;
+                }
 
-                    if (activeCategory === 'radio' && recentStations.length > 0 && !selectedLetter && activeGenre === 'all') {
+                if (activeCategory === 'radio' && recentStations.length > 0 && !selectedLetter && activeGenre === 'all') {
+                    let filteredRecentStations = recentStations.filter(app => !favorites.includes(app.url));
+                    if (filteredRecentStations.length > 0) {
                         let recentSectionHTML = `
                             <div class="category-section is-category">
                                 <h2 class="category-title">⏱ Zuletzt gehört</h2>
                                 <div class="app-grid">
                         `;
-                        recentStations.forEach(app => {
+                        filteredRecentStations.forEach(app => {
                             let isPlaying = (currentPlayingId === app.id && !globalAudio.paused);
                             let isPlayingClass = isPlaying && app.isRadio ? ' app-item playing' : 'app-item';
                             isPlayingClass += ' is-recent-tile';
@@ -2608,13 +2605,16 @@
                         });
                         recentSectionHTML += `</div></div>`;
                         container.innerHTML += recentSectionHTML;
-                    } else if (activeCategory !== 'radio' && recentApps.length > 0 && !selectedLetter) {
+                    }
+                } else if (activeCategory !== 'radio' && recentApps.length > 0 && !selectedLetter) {
+                    let filteredRecentApps = recentApps.filter(app => !favorites.includes(app.url));
+                    if (filteredRecentApps.length > 0) {
                         let recentAppsSectionHTML = `
                             <div class="category-section is-category">
                                 <h2 class="category-title">⏱ Zuletzt genutzt</h2>
                                 <div class="app-grid">
                         `;
-                        recentApps.forEach(app => {
+                        filteredRecentApps.forEach(app => {
                             let isFav = isFavorite(app.url);
                             let favClass = isFav ? 'fav-btn is-fav' : 'fav-btn';
                             let iconContent = app.image 
@@ -2639,9 +2639,12 @@
                         recentAppsSectionHTML += `</div></div>`;
                         container.innerHTML += recentAppsSectionHTML;
                     }
+                }
 
+                targetCategories.forEach(category => {
                     if (category.subcategories) {
                         let sectionHTML = `<div class="category-section is-category">`;
+                        let hasContent = false;
 
                         category.subcategories.forEach(sub => {
                             const filteredSubApps = sub.apps
@@ -2655,14 +2658,12 @@
                                     if (activeCategory === 'radio' && isRecent(app.id, true)) {
                                         return false; 
                                     }
-                                    let firstChar = app.name.trim()[0].toUpperCase();
-                                    let sortKey = /^[0-9]$/.test(firstChar) ? '#' : firstChar;
-                                    let matchesKey = selectedLetter ? (sortKey === selectedLetter) : true;
-                                    return matchesKey;
+                                    return true;
                                 })
                                 .sort((a, b) => a.name.localeCompare(b.name, 'de', { sensitivity: 'base' }));
 
                             if (filteredSubApps.length === 0) return;
+                            hasContent = true;
 
                             sectionHTML += `<div style="margin-top: 14px;"><h3 class="sub-category-title">${sub.title}</h3>`;
                             sectionHTML += `<div class="app-grid">`;
@@ -2697,8 +2698,8 @@
                         });
 
                         sectionHTML += `</div>`;
-                        if (sectionHTML !== `<div class="category-section is-category"></div>`) {
-                            container.innerHTML += sectionHTML;
+                        if (hasContent) {
+                            container.innerHTML += `<div class="category-section is-category"><h2 class="category-title" title="${category.title}">${category.title}</h2>` + sectionHTML + `</div>`;
                         }
 
                     } else {
@@ -2710,10 +2711,7 @@
                                 if (activeCategory !== 'radio' && isRecent(app.id, false)) {
                                     return false; 
                                 }
-                                let firstChar = app.name.trim()[0].toUpperCase();
-                                let sortKey = /^[0-9]$/.test(firstChar) ? '#' : firstChar;
-                                let matchesKey = selectedLetter ? (sortKey === selectedLetter) : true;
-                                return matchesKey;
+                                return true;
                             })
                             .sort((a, b) => a.name.localeCompare(b.name, 'de', { sensitivity: 'base' }));
 
